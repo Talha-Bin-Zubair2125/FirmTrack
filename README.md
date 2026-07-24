@@ -4,23 +4,22 @@ FirmTrack is a Flutter-based employee attendance management app designed to help
 
 ## Features
 
-- 📋 Employee attendance marking (Present / Absent / Leave)
-- 👥 Employee records management
-- 📊 Attendance history and summaries
+- 🔐 Login screen for authentication
+- 🏠 Home dashboard
+- 📅 Calendar view for attendance tracking
+- 📷 QR scanner — employees scan a QR code (generated on the admin's web dashboard) to mark attendance
+- 🕒 Attendance history
+- 👤 Employee profile
+- 📜 Rules/policy screen
 - 🎨 Consistent, polished UI across all screens
-- 🔐 Role-based access (if applicable to your setup)
-- 📱 Built with Flutter for cross-platform support
+- 💾 Offline-first local data storage with Hive
 
 ## Tech Stack
 
 - **Framework:** Flutter
 - **Language:** Dart
-- **State Management:** *(add: Provider / Riverpod / Bloc — whichever you used)*
-- **Backend/Storage:** *(add: Firebase / SQLite / Hive — whichever you used)*
-
-## Screenshots
-
-*(Add screenshots here to showcase the app UI)*
+- **State Management:** setState
+- **Storage:** Hive (local database)
 
 ## Getting Started
 
@@ -49,18 +48,17 @@ flutter run
 
 ```
 lib/
-├── models/          # Data models
-├── screens/         # UI screens
-├── widgets/         # Reusable widgets
-├── services/        # Business logic / API calls
-└── main.dart        # App entry point
+├── main.dart               # App entry point
+├── splash_screen.dart      # Splash screen
+├── login_screen.dart       # Login/authentication
+├── home_screen.dart        # Home dashboard
+├── custom_drawer.dart      # Navigation drawer
+├── calendar_screen.dart    # Calendar view
+├── scanner_screen.dart     # Scans admin's web dashboard QR code to mark attendance
+├── history_screen.dart     # Attendance history
+├── profile_screen.dart     # Employee profile
+└── rules_screen.dart       # Rules/policy screen
 ```
-
-## Roadmap
-
-- [ ] Add push notifications for attendance reminders
-- [ ] Export attendance reports (PDF/Excel)
-- [ ] Multi-firm support
 
 ## Author
 
