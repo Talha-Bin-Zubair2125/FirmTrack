@@ -4,7 +4,7 @@ dns.setServers(["8.8.8.8", "1.1.1.1"]);
 const express = require("express");
 const cookieParser = require("cookie-parser");
 const cors = require("cors");
-const cron = require("node-cron");
+
 require("dotenv").config();
 
 const ConnectDB = require("./db");
@@ -67,28 +67,7 @@ const markAbsentForDate = async (dateStr) => {
   return await backfillAbsentForDate(dateStr);
 };
 
-// Cron Job
-cron.schedule(
-  "59 18 * * *",
-  async () => {
-    console.log("Running absent marking cron...");
 
-    try {
-      const pktNow = new Date(new Date().getTime() + 5 * 60 * 60000);
-
-      const todayStr = pktNow.toISOString().split("T")[0];
-
-      const count = await markAbsentForDate(todayStr);
-
-      console.log(`Absent records created: ${count}`);
-    } catch (error) {
-      console.error("Cron Error:", error);
-    }
-  },
-  {
-    timezone: "UTC",
-  },
-);
 
 // Backfill Route
 app.get("/api/test/markabsent", async (req, res) => {
