@@ -32,7 +32,7 @@ function ProfileScreen() {
 
   
       const attRes = await API.get(
-        "/api/admin/attendance/getall",
+        "/admin/attendance/getall",
         { withCredentials: true }
       );
       const allAttendance = attRes.data.attendance || [];
