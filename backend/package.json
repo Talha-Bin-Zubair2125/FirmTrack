@@ -1,4 +1,12 @@
 {
+  "name": "firmtrack-backend",
+  "version": "1.0.0",
+  "main": "server.js",
+
+  "scripts": {
+    "start": "node server.js"
+  },
+
   "dependencies": {
     "bcryptjs": "^3.0.3",
     "cookie-parser": "^1.4.7",
@@ -12,8 +20,5 @@
     "node-cron": "^4.2.1",
     "qrcode": "^1.5.4",
     "uuid": "^14.0.0"
-  },
-   "scripts": {
-    "start": "node server.js"
   }
 }
