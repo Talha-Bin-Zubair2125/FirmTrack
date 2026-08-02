@@ -57,10 +57,14 @@ const adminLogin = async (req, res) => {
 // Get admin profile controller
 const getAdminProfile = async (req, res) => {
   try {
-    const admin = await Admin_Model.findById(req.admin.admin_id).select("-password");
-    
+    const admin = await Admin_Model.findById(req.admin.admin_id).select(
+      "-password",
+    );
+
     if (!admin) {
-      return res.status(404).json({ message: "Admin not found inside database" });
+      return res
+        .status(404)
+        .json({ message: "Admin not found inside database" });
     }
     res.status(200).json({ user: admin });
   } catch (error) {
@@ -77,22 +81,30 @@ const UpdateAdminProfile = async (req, res) => {
   }
   try {
     const admin = await Admin_Model.findById(req.admin.admin_id);
-    
+
     if (!admin) {
-      return res.status(404).json({ message: "Admin not found inside database" });
+      return res
+        .status(404)
+        .json({ message: "Admin not found inside database" });
     }
-    
+
     const { adminID, oldPassword, password } = req.body;
     const updateData = { adminID };
 
     if (password && password.trim() !== "") {
       if (!oldPassword) {
-        return res.status(400).json({ message: "Current password is required to set a new password." });
+        return res
+          .status(400)
+          .json({
+            message: "Current password is required to set a new password.",
+          });
       }
 
       const passwordMatch = await bcrypt.compare(oldPassword, admin.password);
       if (!passwordMatch) {
-        return res.status(400).json({ message: "Current password is incorrect." });
+        return res
+          .status(400)
+          .json({ message: "Current password is incorrect." });
       }
 
       const hashedPassword = await bcrypt.hash(password, 10);
@@ -102,16 +114,18 @@ const UpdateAdminProfile = async (req, res) => {
     const updatedAdmin = await Admin_Model.findByIdAndUpdate(
       admin._id,
       updateData,
-      { new: true }
+      { new: true },
     ).select("-password");
 
     if (!updatedAdmin) {
-      return res.status(404).json({ message: "Admin not found inside database" });
+      return res
+        .status(404)
+        .json({ message: "Admin not found inside database" });
     }
 
     res.status(200).json({
       message: "Profile updated successfully",
-      user: updatedAdmin, 
+      user: updatedAdmin,
     });
   } catch (error) {
     console.error("Error updating admin profile:", error);
@@ -130,4 +144,9 @@ const LogoutProfile = async (req, res) => {
   }
 };
 
-module.exports = { adminLogin, UpdateAdminProfile, LogoutProfile, getAdminProfile };
+module.exports = {
+  adminLogin,
+  UpdateAdminProfile,
+  LogoutProfile,
+  getAdminProfile,
+};

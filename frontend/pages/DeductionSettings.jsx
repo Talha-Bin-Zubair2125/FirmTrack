@@ -246,7 +246,7 @@ function DeductionSettings() {
           </div>
         </div>
 
-        {/* ── Buttons ── */}
+        {/*  Buttons  */}
         <div className="deduction-btn-row">
           <button
             type="button"

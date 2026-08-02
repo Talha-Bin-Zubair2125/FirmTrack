@@ -17,9 +17,6 @@ function ViewReports() {
   const [selectedEmployee, setSelectedEmployee] = useState("");
   const [activeTab, setActiveTab] = useState("summary");
 
-  // 🔧 FIX: Detailed View ke liye alag se state — ye backend ke
-  // /report/bymonth route se aata hai jo virtual "absent" rows
-  // (jaise FirmTrack app dikhata hai) bhi include karta hai.
   const [detailedAttendance, setDetailedAttendance] = useState([]);
   const [detailedLoading, setDetailedLoading] = useState(false);
 
@@ -32,8 +29,7 @@ function ViewReports() {
     "July", "August", "September", "October", "November", "December"
   ];
 
-  // 🔧 FIX: PKT ke hisaab se "aaj ki date" nikalne wala helper, taake
-  // joining date aur "today" dono same timezone basis pe compare hon.
+
   const getPKTDateParts = () => {
     const now = new Date();
     const pktNow = new Date(now.getTime() + 5 * 60 * 60 * 1000);
@@ -44,9 +40,7 @@ function ViewReports() {
     };
   };
 
-  // 🔧 FIX: joiningDate ko bhi PKT/UTC-consistent tareeqe se parse kar rahe hain
-  // (pehle local timezone se parse ho raha tha jabke "today" PKT offset se nikalti thi,
-  // is wajah se UTC-midnight wali dates kabhi kabhi 1 din peechay chali jati thin).
+
   const getJoiningDateParts = (joiningDate) => {
     if (!joiningDate) return null;
     const joining = new Date(joiningDate);
@@ -152,11 +146,6 @@ function ViewReports() {
     fetchReport();
   }, [selectedMonth, selectedYear]);
 
-  // 🔧 FIX: Detailed View ab is route se data leta hai jo backend mein
-  // pehle se maujood hai (controller: getAttendanceByMonth). Ye route
-  // virtual "absent" rows generate karta hai un dino ke liye jin ka
-  // koi record DB mein nahi — isi liye FirmTrack app mein 20 June ka
-  // absent dikh raha tha lekin web ki Detailed View mein nahi.
   const fetchDetailedReport = async (employeeId) => {
     if (!employeeId) {
       setDetailedAttendance([]);
@@ -249,19 +238,16 @@ function ViewReports() {
 
   const getDetailedData = () => {
     if (!selectedEmployee) return [];
-    // 🔧 FIX: ab detailedAttendance se aata hai (backend ke virtual
-    // absent rows samet), na ke sirf getAllAttendance wale real records se.
+
     return detailedAttendance;
   };
 
-  // 🔥 UPDATE: Yahan par data ko Employee ID ke hisaab se sort kar diya gaya hai
   const summaryData = getSummaryData().sort((a, b) => 
     (a.employeeID || "").localeCompare(b.employeeID || "", undefined, { numeric: true, sensitivity: 'base' })
   );
   
   const detailedData = getDetailedData();
 
-  // 🔥 FILTER: Custom Dropdown ki suggestions ke liye
   const filteredDropdownEmployees = employees.filter(emp =>
     (emp.EmployeeName?.toLowerCase() || "").includes(employeeSearchTerm.toLowerCase()) ||
     (emp.employeeID?.toLowerCase() || "").includes(employeeSearchTerm.toLowerCase())

@@ -20,7 +20,7 @@ function ProfileScreen() {
 
   const fetchDashboardStats = async () => {
     try {
-      // 1. Fetch total employees
+     
       const empRes = await axios.get(
         "http://localhost:3000/api/admin/employees/getallemployees",
         { withCredentials: true }
@@ -29,20 +29,19 @@ function ProfileScreen() {
       const total = allEmployees.length;
       setTotalEmployees(total);
 
-      // 2. Fetch attendance
+  
       const attRes = await axios.get(
         "http://localhost:3000/api/admin/attendance/getall",
         { withCredentials: true }
       );
       const allAttendance = attRes.data.attendance || [];
 
-      // 3. Current PKT Date calculate karna
+     
       const now = new Date();
       const pktOffset = 5 * 60;
       const pktNow = new Date(now.getTime() + pktOffset * 60000);
       const todayStr = pktNow.toISOString().split("T")[0];
 
-      // 4. Sirf aaj ki attendance filter karna
       const todayRecords = allAttendance.filter((record) => {
         if (!record.date) return false;
         const recDate = new Date(record.date);
@@ -50,7 +49,6 @@ function ProfileScreen() {
         return recPKT.toISOString().split("T")[0] === todayStr;
       });
 
-      // 🔥 5. Real Data Calculation (Sirf wo jo DB mein hai)
       let present = 0, late = 0, halfDay = 0, absent = 0;
 
       todayRecords.forEach(record => {
@@ -63,8 +61,8 @@ function ProfileScreen() {
 
       setPresentToday(present);
       setLateToday(late);
-      setHalfDayToday(halfDay); // ✅ Half Day set ho gaya
-      setAbsentToday(absent);   // ✅ Ab koi fake absent nahi, sirf real DB data
+      setHalfDayToday(halfDay); 
+      setAbsentToday(absent);   
 
     } catch (error) {
       console.error("Error fetching dashboard stats:", error);

@@ -2,7 +2,7 @@ const brypt = require("bcryptjs");
 const joi = require("joi");
 const Employee = require("../models/Employee_Model");
 
-// Joi schema for adding employee — no EmployeeJoiningDate 
+// Joi schema for adding employee — no EmployeeJoiningDate
 const employeeSchema = joi.object({
   employeeID: joi.string().required(),
   EmployeeName: joi.string().required(),
@@ -12,14 +12,15 @@ const employeeSchema = joi.object({
     .pattern(/^(03)[0-9]{9}$/)
     .required()
     .messages({
-      "string.pattern.base": "Phone must be a valid Pakistani number e.g. 03001234567",
+      "string.pattern.base":
+        "Phone must be a valid Pakistani number e.g. 03001234567",
     }),
   EmployeeSalary: joi.number().positive().required(),
   EmployeeRole: joi.string().required(),
   EmployeePassword: joi.string().min(8).required(),
 });
 
-// Joi schema for updating employee — no EmployeeJoiningDate 
+// Joi schema for updating employee — no EmployeeJoiningDate
 const employeeUpdateSchema = joi.object({
   employeeID: joi.string().required(),
   EmployeeName: joi.string().required(),
@@ -29,7 +30,8 @@ const employeeUpdateSchema = joi.object({
     .pattern(/^(03)[0-9]{9}$/)
     .required()
     .messages({
-      "string.pattern.base": "Phone must be a valid Pakistani number e.g. 03001234567",
+      "string.pattern.base":
+        "Phone must be a valid Pakistani number e.g. 03001234567",
     }),
   EmployeeSalary: joi.number().positive().required(),
   EmployeeRole: joi.string().required(),
@@ -69,7 +71,9 @@ const addEmployee = async (req, res) => {
       //  no EmployeeJoiningDate — createdAt set automatically by timestamps
     });
     await newEmployee.save();
-    res.status(201).json({ message: "Employee added successfully", employee: newEmployee });
+    res
+      .status(201)
+      .json({ message: "Employee added successfully", employee: newEmployee });
   } catch (error) {
     console.error("Error adding employee:", error);
     res.status(500).json({ message: "Server error while adding employee" });
@@ -112,11 +116,18 @@ const updateEmployee = async (req, res) => {
   }
 
   try {
-    const updatedEmployee = await Employee.findByIdAndUpdate(id, req.body, { new: true });
+    const updatedEmployee = await Employee.findByIdAndUpdate(id, req.body, {
+      new: true,
+    });
     if (!updatedEmployee) {
       return res.status(404).json({ message: "Employee not found" });
     }
-    res.status(200).json({ message: "Employee updated successfully", employee: updatedEmployee });
+    res
+      .status(200)
+      .json({
+        message: "Employee updated successfully",
+        employee: updatedEmployee,
+      });
   } catch (error) {
     console.error("Error updating employee:", error);
     res.status(500).json({ message: "Server error while updating employee" });
@@ -146,8 +157,8 @@ const searchEmployees = async (req, res) => {
       $or: [
         { EmployeeName: { $regex: query, $options: "i" } },
         { employeeID: { $regex: query, $options: "i" } },
-        { EmployeeRole: { $regex: query, $options: "i" } }
-      ]
+        { EmployeeRole: { $regex: query, $options: "i" } },
+      ],
     });
     res.status(200).json({ employees });
   } catch (error) {
@@ -168,12 +179,19 @@ const employeeLogin = async (req, res) => {
   try {
     const employee = await Employee.findOne({ employeeID });
     if (!employee) {
-      return res.status(401).json({ message: "Invalid Employee ID or Password" });
+      return res
+        .status(401)
+        .json({ message: "Invalid Employee ID or Password" });
     }
 
-    const passwordMatch = await brypt.compare(password, employee.EmployeePassword);
+    const passwordMatch = await brypt.compare(
+      password,
+      employee.EmployeePassword,
+    );
     if (!passwordMatch) {
-      return res.status(401).json({ message: "Invalid Employee ID or Password" });
+      return res
+        .status(401)
+        .json({ message: "Invalid Employee ID or Password" });
     }
 
     res.status(200).json({
@@ -209,7 +227,9 @@ const changePassword = async (req, res) => {
     employee.EmployeePassword = await brypt.hash(newPassword, 10);
     await employee.save();
 
-    res.status(200).json({ success: true, message: "Password updated successfully!" });
+    res
+      .status(200)
+      .json({ success: true, message: "Password updated successfully!" });
   } catch (error) {
     console.error("Error changing password:", error);
     res.status(500).json({ message: "Server error changing password." });
@@ -224,5 +244,5 @@ module.exports = {
   deleteEmployee,
   searchEmployees,
   employeeLogin,
-  changePassword
+  changePassword,
 };

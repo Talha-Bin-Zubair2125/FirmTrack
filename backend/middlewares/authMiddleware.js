@@ -1,13 +1,12 @@
 const cookieParser = require("cookie-parser");
 
 const protect = (req, res, next) => {
-
-  const token = (req.signedCookies && req.signedCookies.admin_id) || (req.cookies && req.cookies.admin_id);
+  const token =
+    (req.signedCookies && req.signedCookies.admin_id) ||
+    (req.cookies && req.cookies.admin_id);
 
   if (!token) {
-    return res
-      .status(401)
-      .json({ message: "Access denied." });
+    return res.status(401).json({ message: "Access denied." });
   }
 
   try {

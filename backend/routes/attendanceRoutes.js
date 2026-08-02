@@ -4,13 +4,12 @@ const { protect } = require("../middlewares/authMiddleware");
 const attendanceController = require("../controllers/attendanceController");
 const employeeController = require("../controllers/employeeController");
 
-// ✅ FIX: Sare functions directly destructure karo
 const {
   markAttendance,
   getAllAttendance,
   getAttendanceByMonth,
   getTodayAttendanceStatus,
-  backfillAbsentForDate
+  backfillAbsentForDate,
 } = attendanceController;
 
 // Mobile App
