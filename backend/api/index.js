@@ -1,7 +1,6 @@
 const express = require("express");
 const cors = require("cors");
 const cookieParser = require("cookie-parser");
-
 require("dotenv").config();
 
 const ConnectDB = require("../db");
@@ -18,9 +17,8 @@ const app = express();
 
 app.use(
   cors({
-    origin:[
+    origin: [
       "http://localhost:5173",
-      "http://localhost:5174",
       "https://firm-track.vercel.app"
     ],
     credentials:true
@@ -28,9 +26,8 @@ app.use(
 );
 
 
-app.use(express.json());
-
 app.use(cookieParser(process.env.CookieSecret));
+app.use(express.json());
 
 
 // Database
@@ -38,12 +35,12 @@ ConnectDB();
 
 
 // Routes
-app.use("/api/auth",authRoutes);
+app.use("/api/auth", authRoutes);
 
-app.use("/api/admin",employeeRoutes);
-app.use("/api/admin",qrRoutes);
-app.use("/api/admin",deductionRoutes);
-app.use("/api/admin",attendanceRoutes);
+app.use("/api/admin", employeeRoutes);
+app.use("/api/admin", qrRoutes);
+app.use("/api/admin", deductionRoutes);
+app.use("/api/admin", attendanceRoutes);
 
 
 
@@ -56,7 +53,7 @@ app.get("/",(req,res)=>{
 
 app.get("/api/test",(req,res)=>{
     res.json({
-        message:"Backend working successfully"
+        message:"API working"
     });
 });
 
