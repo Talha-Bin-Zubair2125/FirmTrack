@@ -10,21 +10,17 @@ const qrRoutes = require("../backend/routes/qrRoutes");
 const deductionRoutes = require("../backend/routes/deductionRoutes");
 const attendanceRoutes = require("../backend/routes/attendanceRoutes");
 
-
 const app = express();
-
 
 app.use(
   cors({
     origin: [
       "http://localhost:5173",
-      "http://localhost:5174",
       "https://firm-track.vercel.app"
     ],
-    credentials:true
+    credentials: true
   })
 );
-
 
 app.use(express.json());
 
@@ -39,17 +35,9 @@ app.use("/api/admin", deductionRoutes);
 app.use("/api/admin", attendanceRoutes);
 
 
-
 app.get("/", (req,res)=>{
     res.json({
-        message:"Backend running successfully"
-    });
-});
-
-
-app.get("/api/test",(req,res)=>{
-    res.json({
-        message:"API working"
+        message:"FirmTrack Backend Running"
     });
 });
 
