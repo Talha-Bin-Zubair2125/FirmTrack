@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import "../stylings/QRCode.css";
+import API from "../src/api/axios";
 
 function QRCode() {
   const [qrImage, setQrImage] = useState(null); 
@@ -32,8 +33,8 @@ function QRCode() {
   const generateNewQR = async () => {
     setLoading(true);
     try {
-      const response = await axios.post(
-        "http://localhost:3000/api/admin/qr/generate",
+      const response = await API.post(
+        "/admin/qr/generate",
         {},
         { withCredentials: true }
       );

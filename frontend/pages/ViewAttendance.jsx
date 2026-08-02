@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import "../stylings/ViewAttendance.css";
+import API from "../src/api/axios";
 
 function ViewAttendance() {
   const navigate = useNavigate();
@@ -25,12 +26,11 @@ function ViewAttendance() {
   const fetchAttendance = async () => {
     setLoading(true);
     try {
-      const response = await axios.get(
-        "http://localhost:3000/api/admin/attendance/getall",
+      const response = await API.get(
+        "/admin/attendance/getall",
         { withCredentials: true }
       );
       
-      // 🔥 FIX: Jo employees delete ho chuke hain unko list se hata diya
       const validRecords = response.data.attendance.filter(
         (record) => record.employeeId !== null && record.employeeId !== undefined
       );

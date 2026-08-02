@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import "../stylings/ViewAllEmployees.css";
+import API from "../src/api/axios";
 
 function ViewAllEmployees() {
   const navigate = useNavigate();
@@ -29,7 +30,6 @@ function ViewAllEmployees() {
     return () => clearTimeout(debounce);
   }, [search]);
 
-  // 🔥 NAYA FUNCTION: Employees ko Employee ID ke hisaab se proper sequence mein sort karne ke liye
   const sortEmployeesSequence = (employeeList) => {
     return [...employeeList].sort((a, b) => {
       const idA = a.employeeID || "";
@@ -42,12 +42,11 @@ function ViewAllEmployees() {
   const fetchEmployees = async () => {
     setLoading(true);
     try {
-      const response = await axios.get(
-        "http://localhost:3000/api/admin/employees/getallemployees",
+      const response = await API.get(
+        "/admin/employees/getallemployees",
         { withCredentials: true }
       );
       
-      // Data set karne se pehle sort kiya
       const sortedData = sortEmployeesSequence(response.data.employees || []);
       
       setEmployees(sortedData);
@@ -62,12 +61,11 @@ function ViewAllEmployees() {
   const SearchUser = async (query) => {
     setSearching(true);
     try {
-      const response = await axios.get(
-        `http://localhost:3000/api/admin/employees/search?query=${query}`,
+      const response = await API.get(
+        `/admin/employees/search?query=${query}`,
         { withCredentials: true }
       );
       
-      // Search result ko bhi sort kar diya
       const sortedSearchData = sortEmployeesSequence(response.data.employees || []);
       setEmployees(sortedSearchData);
       
@@ -85,8 +83,8 @@ function ViewAllEmployees() {
 
   const handleDelete = async (id) => {
     try {
-      await axios.delete(
-        `http://localhost:3000/api/admin/employees/deleteemployee/${id}`,
+      await API.delete(
+        `/admin/employees/deleteemployee/${id}`,
         { withCredentials: true }
       );
       const updated = employees.filter((emp) => emp._id !== id);

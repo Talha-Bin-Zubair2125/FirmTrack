@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import "../stylings/AddEmployeeRecords.css";
+import API from "../src/api/axios";
 
 function AddEmployeeRecords() {
   const navigate = useNavigate();
@@ -35,8 +36,8 @@ function AddEmployeeRecords() {
 
     setLoading(true);
     try {
-      await axios.post(
-        "http://localhost:3000/api/admin/employees/addemployee",
+      await API.post(
+        "/admin/employees/addemployee",
         {
           employeeID,
           EmployeeName,

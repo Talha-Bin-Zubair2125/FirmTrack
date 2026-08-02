@@ -4,6 +4,7 @@ import axios from "axios";
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
 import "../stylings/Reports.css";
+import API from "../src/api/axios";
 
 function ViewReports() {
   const navigate = useNavigate();
@@ -20,7 +21,6 @@ function ViewReports() {
   const [detailedAttendance, setDetailedAttendance] = useState([]);
   const [detailedLoading, setDetailedLoading] = useState(false);
 
-  // 🔥 NAYI STATES: Searchable Dropdown ke liye
   const [employeeSearchTerm, setEmployeeSearchTerm] = useState("");
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
@@ -68,8 +68,6 @@ function ViewReports() {
 
     let endDay = daysInMonth;
     if (year === todayYear && month === todayMonth) {
-      // 🔧 FIX: aaj ka din sirf tab tak ginna chahiye jab tak wo guzar na jaye,
-      // warna current din premature "absent" ban jata tha report generate hotay hi.
       endDay = Math.max(0, todayDay - 1);
     }
 
@@ -84,8 +82,8 @@ function ViewReports() {
   useEffect(() => {
     const fetchEmployees = async () => {
       try {
-        const res = await axios.get(
-          "http://localhost:3000/api/admin/employees/getallemployees",
+        const res = await API.get(
+          "/admin/employees/getallemployees",
           { withCredentials: true }
         );
         setEmployees(res.data.employees || []);
@@ -99,8 +97,8 @@ function ViewReports() {
   useEffect(() => {
     const fetchSettings = async () => {
       try {
-        const res = await axios.get(
-          "http://localhost:3000/api/admin/settings/deduction",
+        const res = await API.get(
+          "/admin/settings/deduction",
           { withCredentials: true }
         );
         setDeductionSettings(res.data);
@@ -115,8 +113,8 @@ function ViewReports() {
     setLoading(true);
     setError("");
     try {
-      const res = await axios.get(
-        "http://localhost:3000/api/admin/attendance/getall",
+      const res = await API.get(
+        "/admin/attendance/getall",
         { withCredentials: true }
       );
 
@@ -159,8 +157,8 @@ function ViewReports() {
 
     setDetailedLoading(true);
     try {
-      const res = await axios.get(
-        "http://localhost:3000/api/admin/report/bymonth",
+      const res = await API.get(
+        "/admin/report/bymonth",
         {
           params: {
             month: selectedMonth,

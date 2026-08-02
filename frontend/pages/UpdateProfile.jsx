@@ -3,6 +3,7 @@ import { AuthContext } from "../context/authContext";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import "../stylings/UpdateProfile.css";
+import API from "../src/api/axios";
 
 function UpdateProfile() {
   const { adminInfo, setAdminInfo } = useContext(AuthContext);
@@ -18,8 +19,8 @@ function UpdateProfile() {
   useEffect(() => {
     const fetchProfile = async () => {
       try {
-        const response = await axios.get(
-          "http://localhost:3000/api/auth/admin/getprofile",
+        const response = await API.get(
+          "/auth/admin/getprofile",
           { withCredentials: true }
         );
         console.log(response.data.user);
@@ -60,8 +61,8 @@ function UpdateProfile() {
         payload.password = newPassword; 
       }
 
-      const response = await axios.put(
-        "http://localhost:3000/api/auth/admin/updateprofile",
+      const response = await API.put(
+        "/auth/admin/updateprofile",
         payload,
         { withCredentials: true }
       );

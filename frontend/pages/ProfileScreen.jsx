@@ -3,6 +3,7 @@ import { AuthContext } from "../context/authContext";
 import { useNavigate, useLocation } from "react-router-dom";
 import axios from "axios";
 import "../stylings/ProfileScreen.css";
+import API from "../src/api/axios";
 
 function ProfileScreen() {
   const { adminInfo, setAdminInfo } = useContext(AuthContext);
@@ -11,7 +12,7 @@ function ProfileScreen() {
   const [totalEmployees, setTotalEmployees] = useState(0);
   const [presentToday, setPresentToday] = useState(0);
   const [lateToday, setLateToday] = useState(0);
-  const [halfDayToday, setHalfDayToday] = useState(0); // 🔥 Naya state Half Day ke liye
+  const [halfDayToday, setHalfDayToday] = useState(0); 
   const [absentToday, setAbsentToday] = useState(0);
 
   useEffect(() => {
@@ -21,8 +22,8 @@ function ProfileScreen() {
   const fetchDashboardStats = async () => {
     try {
      
-      const empRes = await axios.get(
-        "http://localhost:3000/api/admin/employees/getallemployees",
+      const empRes = await API.get(
+        "/admin/employees/getallemployees",
         { withCredentials: true }
       );
       const allEmployees = empRes.data.employees || [];
@@ -30,8 +31,8 @@ function ProfileScreen() {
       setTotalEmployees(total);
 
   
-      const attRes = await axios.get(
-        "http://localhost:3000/api/admin/attendance/getall",
+      const attRes = await API.get(
+        "/api/admin/attendance/getall",
         { withCredentials: true }
       );
       const allAttendance = attRes.data.attendance || [];
@@ -71,8 +72,8 @@ function ProfileScreen() {
 
   const handleLogout = async () => {
     try {
-      await axios.post(
-        "http://localhost:3000/api/auth/admin/logout",
+      await API.post(
+        "/auth/admin/logout",
         {},
         { withCredentials: true }
       );

@@ -3,6 +3,7 @@ import { AuthContext } from "../context/authContext";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import "../stylings/LoginPage.css";
+import API from "../src/api/axios";
 
 function LoginPage() {
   const { setAdminInfo } = useContext(AuthContext);
@@ -17,8 +18,8 @@ function LoginPage() {
     setError("");
     setLoading(true);
     try {
-      const response = await axios.post(
-        "http://localhost:3000/api/auth/admin/login",
+      const response = await API.post(
+        "/auth/admin/login",
         { adminID, password },
         { withCredentials: true }
       );

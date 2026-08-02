@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
 import "../stylings/EditEmployee.css";
+import API from "../src/api/axios";
 
 function EditEmployee() {
   const { id } = useParams();
@@ -22,8 +23,8 @@ function EditEmployee() {
 
   const fetchEmployeeData = async () => {
     try {
-      const response = await axios.get(
-        `http://localhost:3000/api/admin/employees/getemployee/${id}`,
+      const response = await API.get(
+        `/admin/employees/getemployee/${id}`,
         { withCredentials: true }
       );
       const emp = response.data.employee;
@@ -45,8 +46,8 @@ function EditEmployee() {
     setSuccess("");
     setLoading(true);
     try {
-      await axios.put(
-        `http://localhost:3000/api/admin/employees/updateemployee/${id}`,
+      await API.put(
+        `/admin/employees/updateemployee/${id}`,
         {
           employeeID: UpdatedemployeeID,
           EmployeeName: UpdatedEmployeeName,

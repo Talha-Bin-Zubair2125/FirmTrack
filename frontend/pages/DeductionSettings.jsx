@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import "../stylings/DeductionSettings.css";
+import API from "../src/api/axios";
 
 function DeductionSettings() {
   const navigate = useNavigate();
@@ -25,8 +26,8 @@ function DeductionSettings() {
 
   const fetchDeductionSettings = async () => {
     try {
-      const response = await axios.get(
-        "http://localhost:3000/api/admin/settings/deduction",
+      const response = await API.get(
+        "/admin/settings/deduction",
         { withCredentials: true }
       );
       const settings = response.data;
@@ -65,8 +66,8 @@ function DeductionSettings() {
     setSuccess("");
     setLoading(true);
     try {
-      const response = await axios.post(
-        "http://localhost:3000/api/admin/add/deduction",
+      const response = await API.post(
+        "/admin/add/deduction",
         getFormData(),
         { withCredentials: true }
       );
@@ -88,8 +89,8 @@ function DeductionSettings() {
     setSuccess("");
     setLoading(true);
     try {
-      const response = await axios.put(
-        "http://localhost:3000/api/admin/update/deduction",
+      const response = await API.put(
+        "/admin/update/deduction",
         getFormData(),
         { withCredentials: true }
       );
