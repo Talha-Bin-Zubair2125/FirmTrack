@@ -2,13 +2,13 @@ const express = require("express");
 const cors = require("cors");
 require("dotenv").config();
 
-const ConnectDB = require("../backend/db");
+const ConnectDB = require("../db");
 
-const authRoutes = require("../backend/routes/authRoutes");
-const employeeRoutes = require("../backend/routes/employeeRoutes");
-const qrRoutes = require("../backend/routes/qrRoutes");
-const deductionRoutes = require("../backend/routes/deductionRoutes");
-const attendanceRoutes = require("../backend/routes/attendanceRoutes");
+const authRoutes = require("../routes/authRoutes");
+const employeeRoutes = require("../routes/employeeRoutes");
+const qrRoutes = require("../routes/qrRoutes");
+const deductionRoutes = require("../routes/deductionRoutes");
+const attendanceRoutes = require("../routes/attendanceRoutes");
 
 const app = express();
 
