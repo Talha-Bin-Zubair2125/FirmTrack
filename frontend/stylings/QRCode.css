@@ -1,261 +1,251 @@
-@import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap');
-
-:root {
-  --primary: #1a1a2e;
-  --accent: #e94560;
-  --bg: #f8f9fc;
-  --text: #1a1a2e;
-  --text-muted: #6b7280;
-  --border: #e5e7eb;
-}
-
 .qr-wrapper {
   min-height: 100vh;
-  background: var(--bg);
-  font-family: 'DM Sans', sans-serif;
-  padding: 40px;
+  background-color: #f8fafc;
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: center;
+  padding: 30px 20px;
+  font-family:
+    -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  box-sizing: border-box;
+  position: relative;
 }
-
-/* ── Back Button ── */
+.qr-toast {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  background-color: #10b981;
+  color: #ffffff;
+  padding: 12px 24px;
+  border-radius: 8px;
+  font-weight: 500;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  z-index: 9999;
+  animation: slideIn 0.3s ease-out;
+}
+@keyframes slideIn {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
 .qr-back {
-  align-self: flex-start;
-  background: none;
+  background: transparent;
   border: none;
-  color: var(--text-muted);
-  font-family: 'DM Sans', sans-serif;
-  font-size: 14px;
+  color: #3b82f6;
+  font-size: 15px;
+  font-weight: 600;
   cursor: pointer;
-  margin-bottom: 32px;
-  padding: 8px 0;
-  transition: color 0.2s;
-  display: flex;
-  align-items: center;
-  gap: 6px;
+  margin-bottom: 20px;
+  align-self: flex-start;
+  max-width: 440px;
+  width: 100%;
+  margin-left: auto;
+  margin-right: auto;
+  text-align: left;
+  transition: color 0.2s ease;
 }
-
-.qr-back:hover { color: var(--accent); }
-
-/* ── Header ── */
+.qr-back:hover {
+  color: #1d4ed8;
+}
 .qr-header {
   text-align: center;
-  margin-bottom: 40px;
+  margin-bottom: 24px;
 }
-
 .qr-header h1 {
-  font-family: 'Syne', sans-serif;
-  font-size: 32px;
-  font-weight: 800;
-  color: var(--text);
-  margin-bottom: 8px;
+  margin: 0 0 6px 0;
+  font-size: 26px;
+  color: #1e293b;
 }
-
 .qr-header p {
-  color: var(--text-muted);
-  font-size: 15px;
+  margin: 0;
+  font-size: 14px;
+  color: #64748b;
 }
-
-/* ── Main Card ── */
 .qr-card {
-  background: white;
-  border-radius: 24px;
-  padding: 48px;
+  background: #ffffff;
   width: 100%;
-  max-width: 480px;
-  border: 1px solid var(--border);
-  box-shadow: 0 4px 40px rgba(0,0,0,0.06);
+  max-width: 440px;
+  border-radius: 20px;
+  padding: 32px;
+  box-shadow:
+    0 10px 25px -5px rgba(0, 0, 0, 0.05),
+    0 8px 10px -6px rgba(0, 0, 0, 0.01);
+  box-sizing: border-box;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 32px;
-  animation: slideUp 0.4s ease;
 }
-
-@keyframes slideUp {
-  from { opacity: 0; transform: translateY(20px); }
-  to { opacity: 1; transform: translateY(0); }
+.qr-status {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background-color: #f0fdf4;
+  color: #16a34a;
+  padding: 6px 14px;
+  border-radius: 20px;
+  font-size: 13px;
+  font-weight: 600;
+  margin-bottom: 24px;
 }
-
-/* ── QR Image Container ── */
+.qr-status-dot {
+  width: 8px;
+  height: 8px;
+  background-color: #22c55e;
+  border-radius: 50%;
+  animation: pulse 2s infinite;
+}
+@keyframes pulse {
+  0% {
+    transform: scale(0.95);
+    box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.7);
+  }
+  70% {
+    transform: scale(1);
+    box-shadow: 0 0 0 6px rgba(34, 197, 94, 0);
+  }
+  100% {
+    transform: scale(0.95);
+    box-shadow: 0 0 0 0 rgba(34, 197, 94, 0);
+  }
+}
 .qr-image-container {
-  position: relative;
-  width: 260px;
-  height: 260px;
+  width: 240px;
+  height: 240px;
+  border: 2px dashed #e2e8f0;
   border-radius: 16px;
-  overflow: hidden;
-  border: 3px solid var(--border);
   display: flex;
   align-items: center;
   justify-content: center;
-  background: #fafafa;
+  margin-bottom: 24px;
+  position: relative;
+  overflow: hidden;
+  background-color: #fafafa;
 }
-
 .qr-image-container img {
   width: 100%;
   height: 100%;
   object-fit: contain;
-  padding: 8px;
-  animation: fadeIn 0.3s ease;
+  padding: 12px;
+  box-sizing: border-box;
 }
-
-@keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
-}
-
-/* ── Loading State ── */
 .qr-loading {
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 12px;
-  color: var(--text-muted);
+  color: #64748b;
   font-size: 14px;
 }
-
 .qr-spinner {
-  width: 40px;
-  height: 40px;
-  border: 3px solid var(--border);
-  border-top-color: var(--accent);
+  width: 32px;
+  height: 32px;
+  border: 3px solid #e2e8f0;
+  border-top-color: #3b82f6;
   border-radius: 50%;
-  animation: spin 0.8s linear infinite;
+  animation: spin 1s linear infinite;
 }
-
-@keyframes spin { to { transform: rotate(360deg); } }
-
-/* ── Countdown ── */
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
 .qr-countdown {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 10px;
   width: 100%;
+  text-align: center;
+  margin-bottom: 24px;
 }
-
 .qr-countdown-label {
-  font-size: 13px;
-  color: var(--text-muted);
+  margin: 0 0 4px 0;
+  font-size: 12px;
+  color: #94a3b8;
   text-transform: uppercase;
   letter-spacing: 0.5px;
-  font-weight: 500;
+  font-weight: 600;
 }
-
 .qr-countdown-timer {
-  font-family: 'Syne', sans-serif;
-  font-size: 48px;
-  font-weight: 800;
-  color: var(--text);
-  line-height: 1;
+  margin: 0 0 10px 0;
+  font-size: 28px;
+  font-weight: 700;
+  color: #1e293b;
+  transition: color 0.3s ease;
 }
-
 .qr-countdown-timer.urgent {
-  color: var(--accent); /* turns red when <= 5 seconds */
+  color: #ef4444;
 }
-
-/* ── Progress Bar ── */
 .qr-progress-bar {
   width: 100%;
   height: 6px;
-  background: var(--border);
+  background-color: #f1f5f9;
   border-radius: 10px;
   overflow: hidden;
 }
-
 .qr-progress-fill {
   height: 100%;
-  background: var(--accent);
-  border-radius: 10px;
-  transition: width 1s linear;
+  background-color: #3b82f6;
+  transition:
+    width 1s linear,
+    background-color 0.3s ease;
 }
-
-/* ── Status Badge ── */
-.qr-status {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 8px 16px;
-  background: #f0fdf4;
-  border: 1px solid #bbf7d0;
-  border-radius: 20px;
-  font-size: 13px;
-  color: #15803d;
-  font-weight: 500;
+.qr-countdown-timer.urgent + .qr-progress-bar .qr-progress-fill {
+  background-color: #ef4444;
 }
-
-.qr-status-dot {
-  width: 8px;
-  height: 8px;
-  background: #22c55e;
-  border-radius: 50%;
-  animation: pulse 1.5s ease infinite;
-}
-
-@keyframes pulse {
-  0%, 100% { opacity: 1; transform: scale(1); }
-  50% { opacity: 0.5; transform: scale(0.8); }
-}
-
-/* ── Refresh Button ── */
 .qr-refresh-btn {
   width: 100%;
-  padding: 14px;
-  background: var(--primary);
-  color: white;
+  padding: 12px;
+  background-color: #3b82f6;
+  color: #ffffff;
   border: none;
-  border-radius: 12px;
-  font-family: 'Syne', sans-serif;
+  border-radius: 10px;
   font-size: 15px;
   font-weight: 600;
   cursor: pointer;
-  transition: all 0.2s;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
+  transition: background-color 0.2s ease;
+  margin-bottom: 24px;
 }
-
-.qr-refresh-btn:hover {
-  background: var(--accent);
-  box-shadow: 0 6px 20px rgba(233,69,96,0.3);
+.qr-refresh-btn:hover:not(:disabled) {
+  background-color: #2563eb;
 }
-
 .qr-refresh-btn:disabled {
-  opacity: 0.6;
+  background-color: #94a3b8;
   cursor: not-allowed;
 }
-
-/* ── Info Footer ── */
 .qr-info {
   display: flex;
-  gap: 24px;
-  margin-top: 8px;
+  justify-content: space-between;
+  width: 100%;
+  border-top: 1px solid #f1f5f9;
+  padding-top: 20px;
 }
-
 .qr-info-item {
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 4px;
-  text-align: center;
 }
-
 .qr-info-item span {
-  font-size: 20px;
+  font-size: 18px;
 }
-
 .qr-info-item p {
+  margin: 0;
   font-size: 12px;
-  color: var(--text-muted);
+  color: #64748b;
   font-weight: 500;
 }
-
-/* ── Responsive ── */
-@media (max-width: 540px) {
-  .qr-wrapper { padding: 20px; }
-  .qr-card { padding: 28px 20px; }
-  .qr-image-container { width: 220px; height: 220px; }
-  .qr-countdown-timer { font-size: 40px; }
+@media (max-width: 480px) {
+  .qr-card {
+    padding: 20px;
+  }
+  .qr-image-container {
+    width: 200px;
+    height: 200px;
+  }
 }

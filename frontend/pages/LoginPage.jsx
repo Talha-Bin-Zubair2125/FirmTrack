@@ -1,11 +1,11 @@
-import React, { useContext, useState } from "react";
+import { useContext, useState } from "react";
 import { AuthContext } from "../context/authContext";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
 import "../stylings/LoginPage.css";
 import API from "../src/api/axios";
 
 function LoginPage() {
+
   const { setAdminInfo } = useContext(AuthContext);
   const navigate = useNavigate();
   const [adminID, setAdminID] = useState("");
@@ -21,7 +21,7 @@ function LoginPage() {
       const response = await API.post(
         "/auth/admin/login",
         { adminID, password },
-        { withCredentials: true }
+        { withCredentials: true },
       );
       setAdminInfo(response.data.user);
       navigate("/profile");
@@ -33,11 +33,12 @@ function LoginPage() {
       } else {
         setError("Server error. Please try again.");
       }
+      setTimeout(() => setError(""), 3000);
     } finally {
       setLoading(false);
     }
   };
-
+  
   return (
     <div className="login-wrapper">
       <div className="login-left">
@@ -45,28 +46,35 @@ function LoginPage() {
           <div className="login-brand-icon">A</div>
           <span>AttendX</span>
         </div>
-        <h1>Attendance<br />Management<br /><span>System</span></h1>
-        <p>Manage your workforce smarter. Track attendance, salaries and reports — all in one place.</p>
+        <h1>
+          Attendance
+          <br />
+          Management
+          <br />
+          <span>System</span>
+        </h1>
+        <p>
+          Manage your workforce smarter. Track attendance, salaries and reports
+          — all in one place.
+        </p>
         <div className="login-dots">
-          <span></span><span></span><span></span>
+          <span></span>
+          <span></span>
+          <span></span>
         </div>
       </div>
-
       <div className="login-right">
         <div className="login-card">
           <div className="login-card-header">
             <h2>Admin Login</h2>
             <p>Sign in to access your dashboard</p>
           </div>
-
-          {/* Error Notification */}
           {error && (
             <div className="login-error">
               <span className="login-error-icon">⚠</span>
               {error}
             </div>
           )}
-
           <form className="login-form" onSubmit={UserLogin}>
             <div className="login-field">
               <label>Admin ID</label>
@@ -79,7 +87,6 @@ function LoginPage() {
                 required
               />
             </div>
-
             <div className="login-field">
               <label>Password</label>
               <input
@@ -91,17 +98,8 @@ function LoginPage() {
                 required
               />
             </div>
-
-            <button
-              type="submit"
-              className="login-btn"
-              disabled={loading}
-            >
-              {loading ? (
-                <span className="login-spinner"></span>
-              ) : (
-                "Sign In →"
-              )}
+            <button type="submit" className="login-btn" disabled={loading}>
+              {loading ? <span className="login-spinner"></span> : "Sign In →"}
             </button>
           </form>
         </div>
@@ -109,5 +107,4 @@ function LoginPage() {
     </div>
   );
 }
-
 export default LoginPage;

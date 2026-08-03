@@ -1,11 +1,11 @@
-import React, { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { AuthContext } from "../context/authContext";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
 import "../stylings/UpdateProfile.css";
 import API from "../src/api/axios";
 
 function UpdateProfile() {
+
   const { adminInfo, setAdminInfo } = useContext(AuthContext);
   const navigate = useNavigate();
   const [UpdateAdminID, setUpdateAdminID] = useState("");
@@ -19,12 +19,8 @@ function UpdateProfile() {
   useEffect(() => {
     const fetchProfile = async () => {
       try {
-        const response = await API.get(
-          "/auth/admin/getprofile",
-          { withCredentials: true }
-        );
+        const response = await API.get("/auth/admin/getprofile", { withCredentials: true });
         console.log(response.data.user);
-        
         setAdminInfo(response.data.user);
         setUpdateAdminID(response.data.user?.adminID || "");
       } catch (error) {
@@ -32,63 +28,53 @@ function UpdateProfile() {
       }
     };
     fetchProfile();
-  }, [setAdminInfo]); 
+  }, [setAdminInfo]);
 
   const UpdateAdminProfile = async (e) => {
     e.preventDefault();
     setError("");
     setSuccess("");
-
     const isChangingPassword = oldPassword || newPassword || confirmPassword;
-
     if (isChangingPassword) {
       if (!oldPassword || !newPassword || !confirmPassword) {
         setError("To change password, please fill all password fields.");
+        setTimeout(() => setError(""), 3000);
         return;
       }
       if (newPassword !== confirmPassword) {
         setError("New password and confirm password do not match.");
+        setTimeout(() => setError(""), 3000);
         return;
       }
     }
-
     setLoading(true);
     try {
       const payload = { adminID: UpdateAdminID };
-
       if (isChangingPassword) {
         payload.oldPassword = oldPassword;
-        payload.password = newPassword; 
+        payload.password = newPassword;
       }
-
-      const response = await API.put(
-        "/auth/admin/updateprofile",
-        payload,
-        { withCredentials: true }
-      );
-      
+      const response = await API.put("/auth/admin/updateprofile", payload, { withCredentials: true });
       setAdminInfo(response.data.user);
       setSuccess("Profile updated successfully!");
-      
-      // Fields reset after success
+      setTimeout(() => setSuccess(""), 3000);
       setOldPassword("");
       setNewPassword("");
       setConfirmPassword("");
     } catch (error) {
       const serverMessage = error.response?.data?.message || error.response?.data || "Failed to update profile";
       setError(typeof serverMessage === 'string' ? serverMessage : "Route endpoint mismatch (404)");
+      setTimeout(() => setError(""), 3000);
     } finally {
       setLoading(false);
     }
   };
-
+  
   return (
     <div className="update-wrapper">
-      {/* Back Button */}
       <button className="update-back" onClick={() => navigate("/profile")}>
         &larr; Back to Dashboard
       </button>
-
       <div className="update-card">
         <div className="update-card-header">
           <div className="update-avatar">
@@ -99,21 +85,16 @@ function UpdateProfile() {
             <p>Change your Admin ID or password</p>
           </div>
         </div>
-
-        {/* Error Notification */}
         {error && (
           <div className="update-notification error">
             <span>&#9888;</span> {error}
           </div>
         )}
-
-        {/* Success Notification */}
         {success && (
           <div className="update-notification success">
             <span>&#10003;</span> {success}
           </div>
         )}
-
         <form className="update-form" onSubmit={UpdateAdminProfile}>
           <div className="update-field">
             <label>Admin ID</label>
@@ -126,7 +107,6 @@ function UpdateProfile() {
               required
             />
           </div>
-
           <div className="update-field">
             <label>Current Password</label>
             <input
@@ -137,7 +117,6 @@ function UpdateProfile() {
               onChange={(e) => setOldPassword(e.target.value)}
             />
           </div>
-
           <div className="update-field">
             <label>New Password</label>
             <input
@@ -148,7 +127,6 @@ function UpdateProfile() {
               onChange={(e) => setNewPassword(e.target.value)}
             />
           </div>
-
           <div className="update-field">
             <label>Confirm New Password</label>
             <input
@@ -160,7 +138,6 @@ function UpdateProfile() {
             />
             <span className="update-hint">Leave password fields blank to keep current password</span>
           </div>
-
           <div className="update-btn-row">
             <button
               type="button"
@@ -182,5 +159,4 @@ function UpdateProfile() {
     </div>
   );
 }
-
 export default UpdateProfile;

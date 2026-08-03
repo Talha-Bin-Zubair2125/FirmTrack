@@ -1,10 +1,10 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
 import "../stylings/AddEmployeeRecords.css";
 import API from "../src/api/axios";
 
 function AddEmployeeRecords() {
+  
   const navigate = useNavigate();
   const [employeeID, setEmployeeID] = useState("");
   const [EmployeeName, setEmployeeName] = useState("");
@@ -47,7 +47,7 @@ function AddEmployeeRecords() {
           EmployeeRole,
           EmployeePassword,
         },
-        { withCredentials: true }
+        { withCredentials: true },
       );
       setSuccess("Employee added successfully!");
       setEmployeeID("");
@@ -69,9 +69,8 @@ function AddEmployeeRecords() {
 
   return (
     <div className="addemployee-wrapper">
-
       <button className="addemployee-back" onClick={() => navigate("/profile")}>
-        ← Back to Dashboard
+        &larr; Back to Dashboard
       </button>
 
       <div className="addemployee-card">
@@ -97,7 +96,6 @@ function AddEmployeeRecords() {
 
         <form className="addemployee-form" onSubmit={EmployeeInfo}>
           <div className="addemployee-grid">
-
             <div className="addemployee-field">
               <label>Employee ID</label>
               <input
@@ -152,7 +150,7 @@ function AddEmployeeRecords() {
                 required
               />
             </div>
-            
+
             <div className="addemployee-field full-width">
               <label>Role / Position</label>
               <select
@@ -208,10 +206,14 @@ function AddEmployeeRecords() {
                   value={ConfirmPassword}
                   onChange={(e) => setConfirmPassword(e.target.value)}
                   required
-                  className={ConfirmPassword && !passwordMatch ? "input-error" : ""}
+                  className={
+                    ConfirmPassword && !passwordMatch ? "input-error" : ""
+                  }
                 />
                 {ConfirmPassword && (
-                  <span className="password-match-indicator">
+                  <span
+                    className={`password-match-indicator ${passwordMatch ? "valid" : "invalid"}`}
+                  >
                     {passwordMatch ? "✓" : "✗"}
                   </span>
                 )}
@@ -224,18 +226,32 @@ function AddEmployeeRecords() {
             <div className="addemployee-field full-width">
               <div className="default-password-info">
                 <span>ℹ</span>
-                <p>Default password is <strong>employee@123</strong> — employee can change it after first login</p>
+                <p>
+                  Default password is <strong>employee@123</strong> — employee
+                  can change it after first login
+                </p>
               </div>
             </div>
-
           </div>
 
           <div className="addemployee-btn-row">
-            <button type="button" className="btn-cancel" onClick={() => navigate("/profile")}>
+            <button
+              type="button"
+              className="btn-cancel"
+              onClick={() => navigate("/profile")}
+            >
               Cancel
             </button>
-            <button type="submit" className="btn-submit" disabled={loading || !passwordMatch}>
-              {loading ? <span className="addemployee-spinner"></span> : "Add Employee →"}
+            <button
+              type="submit"
+              className="btn-submit"
+              disabled={loading || !passwordMatch}
+            >
+              {loading ? (
+                <span className="addemployee-spinner"></span>
+              ) : (
+                "Add Employee →"
+              )}
             </button>
           </div>
         </form>
