@@ -20,15 +20,12 @@ function ProfileScreen() {
       const empRes = await API.get("/admin/employees/getallemployees", {
         withCredentials: true,
       });
-      console.log("Employee Response:", empRes.data);
       const allEmployees = empRes.data.employees || [];
       const total = allEmployees.length;
-      console.log("Total Employees:", total);
       setTotalEmployees(total);
       const attRes = await API.get("/admin/attendance/getall", {
         withCredentials: true,
       });
-      console.log("Attendance Response:", attRes.data);
       const allAttendance = attRes.data.attendance || [];
       const now = new Date();
       const pktOffset = 5 * 60;
@@ -40,7 +37,6 @@ function ProfileScreen() {
         const recPKT = new Date(recDate.getTime() + pktOffset * 60000);
         return recPKT.toISOString().split("T")[0] === todayStr;
       });
-      console.log("Today's Attendance Records:", todayRecords);
       let present = 0,
         late = 0,
         halfDay = 0,
@@ -52,10 +48,6 @@ function ProfileScreen() {
         else if (status.includes("half")) halfDay++;
         else if (status === "absent") absent++;
       });
-      console.log("Present:", present);
-      console.log("Late:", late);
-      console.log("Half Day:", halfDay);
-      console.log("Absent:", absent);
       setPresentToday(present);
       setLateToday(late);
       setHalfDayToday(halfDay);
