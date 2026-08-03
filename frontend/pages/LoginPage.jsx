@@ -42,17 +42,13 @@ function LoginPage() {
     <div className="login-wrapper">
       <div className="login-left">
         <div className="login-brand">
-          <div className="login-brand-icon">A</div>
-          <span>AttendX</span>
+          <div className="login-brand-icon">N</div>
+          <span>NutroAttend</span>
         </div>
 
         <div className="login-hero-text">
           <h1>
-            Attendance
-            <br />
-            Management
-            <br />
-            <span>System</span>
+            Smart Attendance & Payroll Management System
           </h1>
           <p>
             Manage your workforce smarter. Track attendance, salaries and
