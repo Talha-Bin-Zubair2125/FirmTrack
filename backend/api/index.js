@@ -29,13 +29,17 @@ app.use(
         callback(new Error("Not allowed by CORS"));
       }
     },
+
     credentials: true,
+
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+
     allowedHeaders: ["Content-Type", "Authorization"],
   }),
 );
 
 app.use(cookieParser(process.env.CookieSecret));
+
 app.use(express.json());
 
 // Database
@@ -43,7 +47,6 @@ ConnectDB();
 
 // Routes
 app.use("/api/auth", authRoutes);
-
 app.use("/api/admin", employeeRoutes);
 app.use("/api/admin", qrRoutes);
 app.use("/api/admin", deductionRoutes);
