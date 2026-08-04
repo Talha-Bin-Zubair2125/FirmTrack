@@ -9,7 +9,6 @@ function ProfileScreen() {
   const { adminInfo, setAdminInfo } = useContext(AuthContext);
   const navigate = useNavigate();
   const [employeeRecords, setemployeeRecords] = useState([]);
-  const [previousDayRecords, setPreviousDayRecords] = useState([]);
   const [totalEmployees, setTotalEmployees] = useState(0);
   const [presentToday, setPresentToday] = useState(0);
   const [lateToday, setLateToday] = useState(0);
@@ -58,17 +57,23 @@ function ProfileScreen() {
         else if (status === "absent") absent++;
       });
 
-      // Prev day records of attendance
-      const prevDayRecords = allAttendance.filter((record) => {
+      // attendance records only for the previous day
+     const prevDate = new Date(pktNow);
+      prevDate.setDate(prevDate.getDate() - 1);
+      const prevDateStr = prevDate.toISOString().split("T")[0];
+      const prevRecords = allAttendance.filter((record) => {
         if (!record.date) return false;
         const recDate = new Date(record.date);
         const recPKT = new Date(recDate.getTime() + pktOffset * 60000);
-        const recDateStr = recPKT.toISOString().split("T")[0];
-        return recDateStr < todayStr;
+        return recPKT.toISOString().split("T")[0] === prevDateStr;
       }
       );
-      let pPres = 0, pLate = 0, pHalf = 0, pAbs = 0;
-      prevDayRecords.forEach((record) => {
+
+      let pPres = 0,
+        pLate = 0,
+        pHalf = 0,
+        pAbs = 0;
+      prevRecords.forEach((record) => {
         const status = record.status?.toLowerCase().trim() || "";
         if (status === "present") pPres++;
         else if (status === "late") pLate++;
@@ -258,14 +263,14 @@ function ProfileScreen() {
                   {employeeRecords.map((emp) => (
                     <tr key={emp._id}>
                       <td>
-                        <span className="emp-id-badge">{emp._id}</span>
+                        <span className="emp-id-badge">{emp?.employeeID}</span>
                       </td>
-                      <td className="emp-name">{emp.name}</td>
-                      <td>{emp.email}</td>
+                      <td className="emp-name">{emp?.EmployeeName}</td>
+                      <td>{emp?.EmployeeEmail}</td>
                       <td>
-                        <span className="role-badge">{emp.role}</span>
+                        <span className="role-badge">{emp?.EmployeeRole}</span>
                       </td>
-                      <td>{new Date(emp.joiningDate).toLocaleDateString()}</td>
+                      <td>{new Date(emp?.createdAt).toLocaleDateString()}</td>
                     </tr>
                   ))}
                 </tbody>
