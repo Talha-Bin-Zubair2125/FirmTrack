@@ -467,7 +467,7 @@ function ViewReports() {
             </div>
           ) : (
             <div className="reports-table-wrapper">
-              <table className="reports-table">
+              <table className="reports-table" style={{ minWidth: "750px" }}>
                 <thead>
                   <tr>
                     <th>#</th>
@@ -553,7 +553,8 @@ function ViewReports() {
                         <li
                           key={emp._id}
                           className="dropdown-item"
-                          onClick={() => {
+                          onMouseDown={(e) => {
+                            e.preventDefault();
                             setSelectedEmployee(emp._id);
                             setEmployeeSearchTerm(
                               `${emp.employeeID} - ${emp.EmployeeName}`,

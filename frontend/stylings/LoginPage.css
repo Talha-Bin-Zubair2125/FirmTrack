@@ -1,8 +1,24 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+  overflow-x: hidden;
+}
+
 @import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap");
 
 .login-wrapper {
   display: flex;
   min-height: 100vh;
+  width: 100vw;
   background-color: #f8fafc;
   font-family: "Inter", sans-serif;
   color: #1e293b;
