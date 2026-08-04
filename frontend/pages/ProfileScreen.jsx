@@ -49,8 +49,6 @@ function ProfileScreen() {
         else if (status === "absent") absent++;
       });
 
-      
-
       setPresentToday(present);
       setLateToday(late);
       setHalfDayToday(halfDay);

@@ -64,44 +64,43 @@ const markAttendance = async (req, res) => {
     }
 
     const settings = await Deduction.findOne();
+    console.log("Deduction settings:", settings);
 
     let status = "present";
     let deduction = 0;
-    
+
     if (currentTimeStr > "12:00") {
       status = "half-day";
       deduction = settings?.deductionPerHalfDay || 0;
     } else if (currentTimeStr > "11:00") {
       status = "late";
       deduction = settings?.deductionPerLate || 0;
-    }
-    else if (currentTimeStr > "10:00") {
-
-    const attendance = await Attendance.create({
-      employeeId: employee._id,
-      date: now,
-      checkInTime: now,
-      status,
-      month: pktTime.getUTCMonth() + 1,
-      year: pktTime.getUTCFullYear(),
-      deduction,
-    });
-
-    res.status(201).json({
-      message: `Attendance marked as ${status}`,
-      attendance: {
-        employeeName: employee.EmployeeName,
+    } else if (currentTimeStr > "10:00") {
+      const attendance = await Attendance.create({
+        employeeId: employee._id,
+        date: now,
+        checkInTime: now,
         status,
-        checkInTime: attendance.checkInTime,
+        month: pktTime.getUTCMonth() + 1,
+        year: pktTime.getUTCFullYear(),
         deduction,
-      },
-    });
+      });
+
+      res.status(201).json({
+        message: `Attendance marked as ${status}`,
+        attendance: {
+          employeeName: employee.EmployeeName,
+          status,
+          checkInTime: attendance.checkInTime,
+          deduction,
+        },
+      });
+    }
   } catch (error) {
     console.error("Error marking attendance:", error);
     res.status(500).json({ message: "Server error marking attendance" });
   }
 };
-
 //  Get All Attendance (admin)
 const getAllAttendance = async (req, res) => {
   try {
@@ -134,13 +133,11 @@ const getAttendanceByMonth = async (req, res) => {
       if (employeeObj) {
         filter.employeeId = employeeObj._id;
       } else {
-        return res
-          .status(200)
-          .json({
-            attendance: [],
-            employeeCreatedAt: null,
-            defaultAbsentDeduction: 0,
-          });
+        return res.status(200).json({
+          attendance: [],
+          employeeCreatedAt: null,
+          defaultAbsentDeduction: 0,
+        });
       }
     }
 
