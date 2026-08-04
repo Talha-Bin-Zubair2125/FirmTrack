@@ -27,6 +27,7 @@ function ProfileScreen() {
         withCredentials: true,
       });
       setemployeeRecords(empRes.data.employees);
+      console.log("Fetched employee records:", empRes.data.employees);
       const allEmployees = empRes.data.employees || [];
       setTotalEmployees(allEmployees.length);
       const attRes = await API.get("/admin/attendance/getall", {
@@ -57,23 +58,17 @@ function ProfileScreen() {
         else if (status === "absent") absent++;
       });
 
-      const previousDayRecordsList = allAttendance
-        .filter((record) => {
-          if (!record.date) return false;
-          const recDate = new Date(record.date);
-          const recPKT = new Date(recDate.getTime() + pktOffset * 60000);
-          return recPKT.toISOString().split("T")[0] < todayStr;
-        })
-        .sort((a, b) => new Date(b.date) - new Date(a.date))
-        .slice(0, 5);
-
-      setPreviousDayRecords(previousDayRecordsList);
-
-      let pPres = 0,
-        pLate = 0,
-        pHalf = 0,
-        pAbs = 0;
-      previousDayRecordsList.forEach((record) => {
+      // Prev day records of attendance
+      const prevDayRecords = allAttendance.filter((record) => {
+        if (!record.date) return false;
+        const recDate = new Date(record.date);
+        const recPKT = new Date(recDate.getTime() + pktOffset * 60000);
+        const recDateStr = recPKT.toISOString().split("T")[0];
+        return recDateStr < todayStr;
+      }
+      );
+      let pPres = 0, pLate = 0, pHalf = 0, pAbs = 0;
+      prevDayRecords.forEach((record) => {
         const status = record.status?.toLowerCase().trim() || "";
         if (status === "present") pPres++;
         else if (status === "late") pLate++;
@@ -263,7 +258,7 @@ function ProfileScreen() {
                   {employeeRecords.map((emp) => (
                     <tr key={emp._id}>
                       <td>
-                        <span className="emp-id-badge">{emp.employeeID}</span>
+                        <span className="emp-id-badge">{emp._id}</span>
                       </td>
                       <td className="emp-name">{emp.name}</td>
                       <td>{emp.email}</td>
