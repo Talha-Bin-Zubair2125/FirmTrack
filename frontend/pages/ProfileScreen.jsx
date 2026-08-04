@@ -26,7 +26,6 @@ function ProfileScreen() {
       const attRes = await API.get("/admin/attendance/getall", {
         withCredentials: true,
       });
-      console.log("Attendance response for dashboard stats:", attRes.data);
       const allAttendance = attRes.data.attendance || [];
       const now = new Date();
       const pktOffset = 5 * 60;
@@ -38,6 +37,7 @@ function ProfileScreen() {
         const recPKT = new Date(recDate.getTime() + pktOffset * 60000);
         return recPKT.toISOString().split("T")[0] === todayStr;
       });
+      console.log("Today's attendance records:", todayRecords);
       let present = 0,
         late = 0,
         halfDay = 0,
