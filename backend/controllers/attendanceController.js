@@ -64,6 +64,7 @@ const markAttendance = async (req, res) => {
     }
 
     const settings = await Deduction.findOne();
+    
 
     if (!settings) {
       return res.status(500).json({
@@ -110,7 +111,9 @@ const markAttendance = async (req, res) => {
       deduction,
     });
 
-    console.log(`✅ Attendance marked for ${employee.EmployeeName} as ${status} at ${currentTimeStr}. Deduction: ${deduction}`);
+    console.log(
+      `✅ Attendance marked for ${employee.EmployeeName} as ${status} at ${currentTimeStr}. Deduction: ${deduction}`
+    );
 
     res.status(201).json({
       message: `Attendance marked as ${status}`,
@@ -120,6 +123,7 @@ const markAttendance = async (req, res) => {
         checkInTime: attendance.checkInTime,
         deduction,
       },
+
     });
   } catch (error) {
     console.error("Error marking attendance:", error);
@@ -138,6 +142,7 @@ const getAllAttendance = async (req, res) => {
       .sort({ date: -1 });
 
     res.status(200).json({ attendance });
+    console.log("Fetched all attendance records:", attendance);
   } catch (error) {
     console.error("Error fetching attendance:", error);
     res.status(500).json({ message: "Server error fetching attendance" });
