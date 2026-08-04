@@ -46,7 +46,6 @@ const adminLogin = async (req, res) => {
 
     res.status(200).json({
       message: "Login successful",
-      user: admin,
     });
   } catch (error) {
     console.error("Error during admin login:", error);
@@ -57,16 +56,17 @@ const adminLogin = async (req, res) => {
 // Get admin profile controller
 const getAdminProfile = async (req, res) => {
   try {
-    const admin = await Admin_Model.findById(req.admin.admin_id).select(
-      "-password",
-    );
+    const admin = req.admin;
 
     if (!admin) {
       return res
         .status(404)
         .json({ message: "Admin not found inside database" });
     }
-    res.status(200).json({ user: admin });
+
+    const adminData = await Admin_Model.findById(admin._id).select("-password");
+
+    res.status(200).json({ user: adminData });
   } catch (error) {
     console.error("Error fetching admin profile:", error);
     res.status(500).json({ message: "Server error fetching admin profile" });
@@ -80,7 +80,7 @@ const UpdateAdminProfile = async (req, res) => {
     return res.status(400).json({ message: error.details[0].message });
   }
   try {
-    const admin = await Admin_Model.findById(req.admin.admin_id);
+    const admin = req.admin;
 
     if (!admin) {
       return res
