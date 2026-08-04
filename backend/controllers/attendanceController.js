@@ -67,7 +67,7 @@ const markAttendance = async (req, res) => {
 
     let status = "present";
     let deduction = 0;
-
+    
     if (currentTimeStr > "12:00") {
       status = "half-day";
       deduction = settings?.deductionPerHalfDay || 0;
@@ -75,6 +75,7 @@ const markAttendance = async (req, res) => {
       status = "late";
       deduction = settings?.deductionPerLate || 0;
     }
+    else if (currentTimeStr > "10:00") {
 
     const attendance = await Attendance.create({
       employeeId: employee._id,

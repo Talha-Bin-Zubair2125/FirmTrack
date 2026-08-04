@@ -31,13 +31,16 @@ function ProfileScreen() {
       const pktOffset = 5 * 60;
       const pktNow = new Date(now.getTime() + pktOffset * 60000);
       const todayStr = pktNow.toISOString().split("T")[0];
+      console.log("Today's date (PKT):", todayStr);
+      console.log("PKT now:", pktNow.toISOString());
+      
       const todayRecords = allAttendance.filter((record) => {
         if (!record.date) return false;
         const recDate = new Date(record.date);
         const recPKT = new Date(recDate.getTime() + pktOffset * 60000);
         return recPKT.toISOString().split("T")[0] === todayStr;
       });
-      console.log("Today's attendance records:", todayRecords);
+      
       let present = 0,
         late = 0,
         halfDay = 0,
