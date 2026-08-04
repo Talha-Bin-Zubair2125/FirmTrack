@@ -31,9 +31,7 @@ function ProfileScreen() {
       const pktOffset = 5 * 60;
       const pktNow = new Date(now.getTime() + pktOffset * 60000);
       const todayStr = pktNow.toISOString().split("T")[0];
-      console.log("Today's date (PKT):", todayStr);
-      console.log("PKT now:", pktNow.toISOString());
-      
+
       const todayRecords = allAttendance.filter((record) => {
         if (!record.date) return false;
         const recDate = new Date(record.date);
@@ -41,10 +39,8 @@ function ProfileScreen() {
         return recPKT.toISOString().split("T")[0] === todayStr;
       });
       
-      let present = 0,
-        late = 0,
-        halfDay = 0,
-        absent = 0;
+      let present = 0, late = 0, halfDay = 0, absent = 0;
+
       todayRecords.forEach((record) => {
         const status = record.status?.toLowerCase().trim() || "";
         if (status === "present") present++;
@@ -52,6 +48,24 @@ function ProfileScreen() {
         else if (status.includes("half")) halfDay++;
         else if (status === "absent") absent++;
       });
+      
+      // Prev day absent calculation
+      const prevDay = new Date(pktNow);
+      prevDay.setDate(prevDay.getDate() - 1);
+      const prevDayStr = prevDay.toISOString().split("T")[0];
+      const prevDayRecords = allAttendance.filter((record) => {
+        if (!record.date) return false;
+        const recDate = new Date(record.date);
+        const recPKT = new Date(recDate.getTime() + pktOffset * 60000);
+        return recPKT.toISOString().split("T")[0] === prevDayStr;
+      }
+      );
+      const prevDayEmployeeIds = new Set(prevDayRecords.map((record) => record.employeeId));
+      const todayEmployeeIds = new Set(todayRecords.map((record) => record.employeeId));
+      const absentPrevDayCount = Array.from(prevDayEmployeeIds).filter(empId => !todayEmployeeIds.has(empId)).length;
+      absent += absentPrevDayCount;
+      console.log("Absent from previous day:", absentPrevDayCount);
+      
       setPresentToday(present);
       setLateToday(late);
       setHalfDayToday(halfDay);
