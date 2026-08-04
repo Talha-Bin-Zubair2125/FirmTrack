@@ -26,7 +26,6 @@ function ProfileScreen() {
         withCredentials: true,
       });
       setemployeeRecords(empRes.data.employees);
-      console.log("Fetched employee records:", empRes.data.employees);
       const allEmployees = empRes.data.employees || [];
       setTotalEmployees(allEmployees.length);
       const attRes = await API.get("/admin/attendance/getall", {
