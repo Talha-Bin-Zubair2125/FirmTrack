@@ -26,6 +26,7 @@ function ProfileScreen() {
       const attRes = await API.get("/admin/attendance/getall", {
         withCredentials: true,
       });
+      console.log("Attendance response for dashboard stats:", attRes.data);
       const allAttendance = attRes.data.attendance || [];
       const now = new Date();
       const pktOffset = 5 * 60;
