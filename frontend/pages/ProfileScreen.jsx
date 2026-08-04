@@ -27,6 +27,7 @@ function ProfileScreen() {
         withCredentials: true,
       });
       const allAttendance = attRes.data.attendance || [];
+      console.log("Fetched attendance records:", allAttendance);
       const now = new Date();
       const pktOffset = 5 * 60;
       const pktNow = new Date(now.getTime() + pktOffset * 60000);
