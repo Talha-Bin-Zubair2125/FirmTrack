@@ -19,7 +19,7 @@ function UpdateProfile() {
   useEffect(() => {
     const fetchProfile = async () => {
       try {
-        const response = await API.get("/auth/admin/getprofile", { withCredentials: true });
+        const response = await API.get("/auth/getprofile", { withCredentials: true });
         setAdminInfo(response.data.user);
         console.log(response.data.user);
         setUpdateAdminID(response.data.user?.adminID || "");
