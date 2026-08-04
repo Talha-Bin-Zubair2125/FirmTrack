@@ -15,11 +15,11 @@ const {
 
 // Mobile App
 router.post("/mark", markAttendance);
+router.get("/attendance/status/:employeeID", getTodayAttendanceStatus);
 
 // Web Admin
 router.get("/attendance/getall", protect, getAllAttendance);
 router.get("/report/bymonth", getAttendanceByMonth);
-router.get("/attendance/status/:employeeID", getTodayAttendanceStatus);
 router.post("/employees/change-password", employeeController.changePassword);
 
 router.get("/absent/markabsent", cronAuth, async (req, res) => {

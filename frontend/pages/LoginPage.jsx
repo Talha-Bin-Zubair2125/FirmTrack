@@ -5,6 +5,7 @@ import "../stylings/LoginPage.css";
 import API from "../src/api/axios";
 
 function LoginPage() {
+  
   const { setAdminInfo } = useContext(AuthContext);
   const navigate = useNavigate();
   const [adminID, setAdminID] = useState("");
@@ -41,42 +42,35 @@ function LoginPage() {
   return (
     <div className="login-wrapper">
       <div className="login-left">
-        <div className="login-brand">
+        <div className="login-brand-container">
           <div className="login-brand-icon">N</div>
-          <span>NutroAttend</span>
+          <span className="login-brand-name">NutroAttend</span>
         </div>
-
-        <div className="login-hero-text">
-          <h1>
-            Smart Attendance & Payroll Management System
-          </h1>
+        <div className="login-hero-content">
+          <h1>Smart Attendance & Payroll Management</h1>
           <p>
-            Manage your workforce smarter. Track attendance, salaries and
-            reports — all in one place.
+            Manage your workforce smarter, track attendance seamlessly, and
+            streamline reports all in one powerful platform.
           </p>
         </div>
-
-        <div className="login-dots">
-          <span></span>
-          <span></span>
-          <span></span>
+        <div className="login-decoration-dots">
+          <span className="dot active"></span>
+          <span className="dot"></span>
+          <span className="dot"></span>
         </div>
       </div>
-
       <div className="login-right">
         <div className="login-card">
           <div className="login-card-header">
-            <h2>Admin Login</h2>
-            <p>Sign in to access your dashboard</p>
+            <h2>Welcome Back</h2>
+            <p>Please enter your credentials to access the admin portal</p>
           </div>
-
           {error && (
             <div className="login-error">
               <span className="login-error-icon">⚠</span>
-              {error}
+              <span>{error}</span>
             </div>
           )}
-
           <form className="login-form" onSubmit={UserLogin}>
             <div className="login-field">
               <label htmlFor="adminID">Admin ID</label>
@@ -92,7 +86,6 @@ function LoginPage() {
                 />
               </div>
             </div>
-
             <div className="login-field">
               <label htmlFor="password">Password</label>
               <div className="input-container">
@@ -107,7 +100,6 @@ function LoginPage() {
                 />
               </div>
             </div>
-
             <button type="submit" className="login-btn" disabled={loading}>
               {loading ? <span className="login-spinner"></span> : "Sign In"}
             </button>

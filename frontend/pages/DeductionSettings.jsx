@@ -25,7 +25,6 @@ function DeductionSettings() {
         withCredentials: true,
       });
       const settings = response.data;
-      console.log("Fetched deduction settings:", settings);
       if (settings) {
         setLateArrivalTime(settings.lateArrivalTime || "09:00");
         setAllowedTotalLeave(settings.allowedTotalLeave || 2);

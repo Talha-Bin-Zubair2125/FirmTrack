@@ -20,6 +20,7 @@ function UpdateProfile() {
     const fetchProfile = async () => {
       try {
         const response = await API.get("/auth/admin/getprofile", { withCredentials: true });
+        console.log(response.data.user);
         setAdminInfo(response.data.user);
         setUpdateAdminID(response.data.user?.adminID || "");
       } catch (error) {
