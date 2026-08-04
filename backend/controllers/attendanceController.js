@@ -75,7 +75,8 @@ const markAttendance = async (req, res) => {
     let status = "present";
     let deduction = 0;
 
-    if (currentTimeStr > "16:00") {
+    if (alreadyMarked === false) {
+      if (currentTimeStr > "16:00") {
       status = "absent";
       const allowedTotalLeave = settings.allowedTotalLeave || 2; // total absences allowed per month
       const totalLeavesThisMonth = await Attendance.countDocuments({
@@ -119,6 +120,7 @@ const markAttendance = async (req, res) => {
         deduction,
       },
     });
+  }
   } catch (error) {
     console.error("Error marking attendance:", error);
     res.status(500).json({ message: "Server error marking attendance" });

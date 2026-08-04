@@ -39,6 +39,7 @@ function ProfileScreen() {
         return recPKT.toISOString().split("T")[0] === todayStr;
       });
       
+      console.log("Today's attendance records:", todayRecords);
       let present = 0, late = 0, halfDay = 0, absent = 0;
 
       todayRecords.forEach((record) => {
