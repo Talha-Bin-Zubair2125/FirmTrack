@@ -48,37 +48,8 @@ function ProfileScreen() {
         else if (status.includes("half")) halfDay++;
         else if (status === "absent") absent++;
       });
-      // prev day attendance records for late present half day and absent calculation
-      const prevDayRecords = allAttendance.filter((record) => {
-        if (!record.date) return false;
-        const recDate = new Date(record.date);
-        const recPKT = new Date(recDate.getTime() + pktOffset * 60000);
-        const recDateStr = recPKT.toISOString().split("T")[0];
-        return recDateStr < todayStr;
-      }
-      );
-      const prevDayEmployeeIds = new Set(prevDayRecords.map((record) => record.employeeId));
-      const allEmployeeIds = new Set(allEmployees.map((emp) => emp._id));
-      const absentEmployeeIds = new Set([...allEmployeeIds].filter((id) => !prevDayEmployeeIds.has(id)));
-      const prevdaypresent = prevDayRecords.filter((record) => record.status?.toLowerCase().trim() === "present").length;
-      const prevdaylate = prevDayRecords.filter((record) => record.status?.toLowerCase().trim() === "late").length;
-      const prevdayhalfday = prevDayRecords.filter((record) => record.status?.toLowerCase().trim().includes("half")).length;
-      present = prevdaypresent;
-      late = prevdaylate;
-      halfDay = prevdayhalfday;
-      absent = absentEmployeeIds.size;
-      
-      console.log("Absent employee IDs:", absentEmployeeIds);
-      console.log("Previous day employee IDs:", prevDayEmployeeIds);
-      console.log("Previous day records:", prevDayRecords);
-      console.log("Present previous day count:", present);
-      console.log("Late previous day count:", late);
-      console.log("Half day previous day count:", halfDay);
-      console.log("Absent previous day count:", absent);
 
       
-
-      console.log("Today's attendance stats:", { present, late, halfDay, absent });
 
       setPresentToday(present);
       setLateToday(late);
