@@ -21,12 +21,10 @@ function ViewAttendance() {
       const response = await API.get("/admin/attendance/getall", {
         withCredentials: true,
       });
-      console.log("Attendance response:", response.data);
       const validRecords = (response.data.attendance || []).filter(
         (record) =>
           record.employeeId !== null && record.employeeId !== undefined,
       );
-      console.log("Valid attendance records:", validRecords);
       setAttendance(validRecords);
     } catch (error) {
       setError("Failed to fetch attendance records");

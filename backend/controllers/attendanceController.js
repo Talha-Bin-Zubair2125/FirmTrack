@@ -64,43 +64,67 @@ const markAttendance = async (req, res) => {
     }
 
     const settings = await Deduction.findOne();
-    console.log("Deduction settings:", settings);
+
+    if (!settings) {
+      return res.status(500).json({
+        message:
+          "Deduction/attendance settings are not configured. Ask admin to set them up before marking attendance.",
+      });
+    }
 
     let status = "present";
     let deduction = 0;
 
-    if (currentTimeStr > "12:00") {
-      status = "half-day";
-      deduction = settings?.deductionPerHalfDay || 0;
-    } else if (currentTimeStr > "11:00") {
-      status = "late";
-      deduction = settings?.deductionPerLate || 0;
-    } else if (currentTimeStr > "10:00") {
-      const attendance = await Attendance.create({
+    if (currentTimeStr > "16:00") {
+      status = "absent";
+      const allowedTotalLeave = settings.allowedTotalLeave || 2; // total absences allowed per month
+      const totalLeavesThisMonth = await Attendance.countDocuments({
         employeeId: employee._id,
-        date: now,
-        checkInTime: now,
-        status,
         month: pktTime.getUTCMonth() + 1,
         year: pktTime.getUTCFullYear(),
-        deduction,
+        status: "absent",
       });
 
-      res.status(201).json({
-        message: `Attendance marked as ${status}`,
-        attendance: {
-          employeeName: employee.EmployeeName,
-          status,
-          checkInTime: attendance.checkInTime,
-          deduction,
-        },
-      });
+      if (totalLeavesThisMonth > allowedTotalLeave) {
+        deduction = settings.exceedsTotalLeaveDeduction || 0;
+      } else if (totalLeavesThisMonth === allowedTotalLeave) {
+        deduction = 0;
+      } else {
+        deduction = settings.deductionPerAbsence || 0;
+      }
+    } else if (currentTimeStr > settings.allowedHalfDayTime) {
+      status = "half-day";
+      deduction = settings.deductionPerHalfDay || 0;
+    } else if (currentTimeStr > settings.lateArrivalTime) {
+      status = "late";
+      deduction = settings.deductionPerLate || 0;
     }
+
+    const attendance = await Attendance.create({
+      employeeId: employee._id,
+      date: now,
+      checkInTime: now,
+      status,
+      month: pktTime.getUTCMonth() + 1,
+      year: pktTime.getUTCFullYear(),
+      deduction,
+    });
+
+    res.status(201).json({
+      message: `Attendance marked as ${status}`,
+      attendance: {
+        employeeName: employee.EmployeeName,
+        status,
+        checkInTime: attendance.checkInTime,
+        deduction,
+      },
+    });
   } catch (error) {
     console.error("Error marking attendance:", error);
     res.status(500).json({ message: "Server error marking attendance" });
   }
 };
+
 //  Get All Attendance (admin)
 const getAllAttendance = async (req, res) => {
   try {
@@ -271,7 +295,7 @@ const backfillAbsentForDate = async (dateStr) => {
       await Attendance.create({
         employeeId: employee._id,
         date: targetDateISO,
-        checkInTime: targetDateISO,
+        checkInTime: null,
         status: "absent",
         deduction: deductionPerAbsence,
         month: month,

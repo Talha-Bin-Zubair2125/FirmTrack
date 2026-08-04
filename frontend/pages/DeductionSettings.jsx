@@ -24,7 +24,6 @@ function DeductionSettings() {
       const response = await API.get("/admin/settings/deduction", {
         withCredentials: true,
       });
-      console.log("Fetched deduction settings:", response.data);
       const settings = response.data;
       if (settings) {
         setLateArrivalTime(settings.lateArrivalTime || "09:00");
