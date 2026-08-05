@@ -1,104 +1,114 @@
-import { useContext, useEffect, useState, useCallback } from "react";
+import { useContext, useEffect, useState, useCallback, useRef } from "react";
 import { AuthContext } from "../context/authContext";
 import { useNavigate } from "react-router-dom";
 import "../stylings/ProfileScreen.css";
 import API from "../src/api/axios";
 
 function ProfileScreen() {
-  
   const { adminInfo, setAdminInfo } = useContext(AuthContext);
   const navigate = useNavigate();
+
   const [employeeRecords, setemployeeRecords] = useState([]);
   const [totalEmployees, setTotalEmployees] = useState(0);
+
   const [presentToday, setPresentToday] = useState(0);
   const [lateToday, setLateToday] = useState(0);
   const [halfDayToday, setHalfDayToday] = useState(0);
   const [absentToday, setAbsentToday] = useState(0);
+
   const [prevPresent, setPrevPresent] = useState(0);
   const [prevLate, setPrevLate] = useState(0);
   const [prevHalfDay, setPrevHalfDay] = useState(0);
   const [prevAbsent, setPrevAbsent] = useState(0);
+
   const [toastMessage, setToastMessage] = useState("");
+  const toastTimeoutRef = useRef(null);
+
+  const showToast = (message) => {
+    setToastMessage(message);
+    if (toastTimeoutRef.current) clearTimeout(toastTimeoutRef.current);
+    toastTimeoutRef.current = setTimeout(() => setToastMessage(""), 3000);
+  };
 
   const fetchDashboardStats = useCallback(async () => {
     try {
       const empRes = await API.get("/admin/employees/getallemployees", {
         withCredentials: true,
       });
-      setemployeeRecords(empRes.data.employees);
       const allEmployees = empRes.data.employees || [];
+      setemployeeRecords(allEmployees);
       setTotalEmployees(allEmployees.length);
+
       const attRes = await API.get("/admin/attendance/getall", {
         withCredentials: true,
       });
       const allAttendance = attRes.data.attendance || [];
-      const now = new Date();
-      const pktOffset = 5 * 60;
-      const pktNow = new Date(now.getTime() + pktOffset * 60000);
-      const todayStr = pktNow.toISOString().split("T")[0];
 
-      const todayRecords = allAttendance.filter((record) => {
-        if (!record.date) return false;
-        const recDate = new Date(record.date);
-        const recPKT = new Date(recDate.getTime() + pktOffset * 60000);
-        return recPKT.toISOString().split("T")[0] === todayStr;
-      });
+      const getPKTDateString = (dateObj) => {
+        return dateObj.toLocaleDateString("en-CA", {
+          timeZone: "Asia/Karachi",
+        });
+      };
+
+      const now = new Date();
+      const todayStr = getPKTDateString(now);
+
+      const prevDate = new Date();
+      prevDate.setDate(prevDate.getDate() - 1);
+      const prevDateStr = getPKTDateString(prevDate);
 
       let present = 0,
         late = 0,
         halfDay = 0,
         absent = 0;
-      todayRecords.forEach((record) => {
-        const status = record.status?.toLowerCase().trim() || "";
-        if (status === "present") present++;
-        else if (status === "late") late++;
-        else if (status.includes("half")) halfDay++;
-        else if (status === "absent") absent++;
-      });
-
-      // attendance records only for the previous day
-     const prevDate = new Date(pktNow);
-      prevDate.setDate(prevDate.getDate() - 1);
-      const prevDateStr = prevDate.toISOString().split("T")[0];
-      const prevRecords = allAttendance.filter((record) => {
-        if (!record.date) return false;
-        const recDate = new Date(record.date);
-        const recPKT = new Date(recDate.getTime() + pktOffset * 60000);
-        return recPKT.toISOString().split("T")[0] === prevDateStr;
-      }
-      );
-
       let pPres = 0,
         pLate = 0,
         pHalf = 0,
         pAbs = 0;
-      prevRecords.forEach((record) => {
+
+      allAttendance.forEach((record) => {
+        if (!record.date) return;
+
+        const recDateStr = getPKTDateString(new Date(record.date));
         const status = record.status?.toLowerCase().trim() || "";
-        if (status === "present") pPres++;
-        else if (status === "late") pLate++;
-        else if (status.includes("half")) pHalf++;
-        else if (status === "absent") pAbs++;
+
+        if (recDateStr === todayStr) {
+          if (status === "present") present++;
+          else if (status === "late") late++;
+          else if (status.includes("half")) halfDay++;
+          else if (status === "absent") absent++;
+        }
+        else if (recDateStr === prevDateStr) {
+          if (status === "present") pPres++;
+          else if (status === "late") pLate++;
+          else if (status.includes("half")) pHalf++;
+          else if (status === "absent") pAbs++;
+        }
       });
+
+      setPresentToday(present);
+      setLateToday(late);
+      setHalfDayToday(halfDay);
+      setAbsentToday(absent);
 
       setPrevPresent(pPres);
       setPrevLate(pLate);
       setPrevHalfDay(pHalf);
       setPrevAbsent(pAbs);
-      setPresentToday(present);
-      setLateToday(late);
-      setHalfDayToday(halfDay);
-      setAbsentToday(absent);
-      setToastMessage("Data fetched successfully!");
-      setTimeout(() => setToastMessage(""), 3000);
+
+      showToast("Data fetched successfully!");
     } catch (error) {
       console.error("Error fetching dashboard stats:", error);
-      setToastMessage("Error fetching data!");
-      setTimeout(() => setToastMessage(""), 3000);
+      showToast("Error fetching data!");
     }
   }, []);
 
   useEffect(() => {
     fetchDashboardStats();
+
+    return () => {
+      if (toastTimeoutRef.current) clearTimeout(toastTimeoutRef.current);
+    };
   }, [fetchDashboardStats]);
 
   const handleLogout = async () => {
@@ -108,12 +118,14 @@ function ProfileScreen() {
       navigate("/");
     } catch (error) {
       console.error("Logout error:", error);
+      showToast("Error logging out.");
     }
   };
 
   return (
     <div className="profile-wrapper">
       {toastMessage && <div className="toast-notification">{toastMessage}</div>}
+
       <main className="profile-main">
         <div className="profile-topbar">
           <div className="topbar-welcome">
