@@ -51,11 +51,13 @@ function ViewReports() {
     if (!joiningDate) return null;
     const joining = new Date(joiningDate);
     const pktJoining = new Date(joining.getTime() + 5 * 60 * 60 * 1000);
+    console.log("Joining date parts:", pktJoining);
     return {
       year: pktJoining.getUTCFullYear(),
       month: pktJoining.getUTCMonth() + 1,
       day: pktJoining.getUTCDate(),
     };
+    
   };
 
   const getWorkingDaysFromJoining = (joiningDate, month, year) => {
@@ -67,6 +69,7 @@ function ViewReports() {
       day: todayDay,
     } = getPKTDateParts();
     const joinParts = getJoiningDateParts(joiningDate);
+    console.log("Joining date parts:", joinParts);
     if (joinParts) {
       const { year: joinYear, month: joinMonth, day: joinDay } = joinParts;
       if (joinYear > year || (joinYear === year && joinMonth > month)) return 0;
@@ -104,6 +107,7 @@ function ViewReports() {
         const res = await API.get("/admin/settings/deduction", {
           withCredentials: true,
         });
+        console.log("Deduction settings response:", res.data);
         setDeductionSettings(res.data);
       } catch (err) {
         console.error("Error fetching deduction settings:", err);
@@ -125,6 +129,7 @@ function ViewReports() {
         if (!record.date) return false;
         const recDate = new Date(record.date);
         const recPKT = new Date(recDate.getTime() + pktOffset * 60000);
+        console.log("Filtered record:", recPKT);
         return (
           recPKT.getMonth() + 1 === selectedMonth &&
           recPKT.getFullYear() === selectedYear
@@ -164,6 +169,7 @@ function ViewReports() {
           },
           withCredentials: true,
         });
+        console.log("Detailed report response:", res.data);
         setDetailedAttendance(res.data.attendance || []);
       } catch (err) {
         console.error("Error fetching detailed report:", err);
