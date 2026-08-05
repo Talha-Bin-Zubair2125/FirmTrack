@@ -81,7 +81,7 @@ function ViewReports() {
     let workingDays = 0;
     for (let d = startDay; d <= endDay; d++) {
       const date = new Date(Date.UTC(year, month - 1, d, 12, 0, 0));
-      if (date.getUTCDay() !== 0) workingDays++; // 0 is Sunday
+      if (date.getUTCDay() !== 0) workingDays++;
     }
     return workingDays;
   };
@@ -180,7 +180,31 @@ function ViewReports() {
           },
           withCredentials: true,
         });
-        setDetailedAttendance(res.data.attendance || []);
+
+        const rawDetailed = res.data.attendance || [];
+        const today = getPKTDateParts();
+
+        const syncedDetailedData = rawDetailed.filter((record) => {
+          if (!record.date) return false;
+
+          const {
+            year: recYear,
+            month: recMonth,
+            day: recDay,
+          } = getPKTDateParts(record.date);
+
+          if (
+            recYear === today.year &&
+            recMonth === today.month &&
+            recDay >= today.day
+          ) {
+            return false;
+          }
+
+          return true;
+        });
+
+        setDetailedAttendance(syncedDetailedData);
       } catch (err) {
         console.error("Error fetching detailed report:", err);
         setDetailedAttendance([]);
