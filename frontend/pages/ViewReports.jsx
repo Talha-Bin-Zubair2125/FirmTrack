@@ -6,19 +6,22 @@ import "../stylings/Reports.css";
 import API from "../src/api/axios";
 
 function ViewReports() {
-  
   const navigate = useNavigate();
+
   const [attendance, setAttendance] = useState([]);
   const [employees, setEmployees] = useState([]);
   const [deductionSettings, setDeductionSettings] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+
   const [selectedMonth, setSelectedMonth] = useState(new Date().getMonth() + 1);
   const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
   const [selectedEmployee, setSelectedEmployee] = useState("");
   const [activeTab, setActiveTab] = useState("summary");
+
   const [detailedAttendance, setDetailedAttendance] = useState([]);
   const [detailedLoading, setDetailedLoading] = useState(false);
+
   const [employeeSearchTerm, setEmployeeSearchTerm] = useState("");
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
@@ -37,52 +40,48 @@ function ViewReports() {
     "December",
   ];
 
-  const getPKTDateParts = () => {
-    const now = new Date();
-    const pktNow = new Date(now.getTime() + 5 * 60 * 60 * 1000);
-    return {
-      year: pktNow.getUTCFullYear(),
-      month: pktNow.getUTCMonth() + 1,
-      day: pktNow.getUTCDate(),
-    };
-  };
+  const getPKTDateParts = (dateInput = new Date()) => {
+    const dateObj = new Date(dateInput);
+    if (isNaN(dateObj.getTime())) return null;
 
-  const getJoiningDateParts = (joiningDate) => {
-    if (!joiningDate) return null;
-    const joining = new Date(joiningDate);
-    const pktJoining = new Date(joining.getTime() + 5 * 60 * 60 * 1000);
-    console.log("Joining date parts:", pktJoining);
-    return {
-      year: pktJoining.getUTCFullYear(),
-      month: pktJoining.getUTCMonth() + 1,
-      day: pktJoining.getUTCDate(),
-    };
-    
+    const dateStringPKT = dateObj.toLocaleDateString("en-CA", {
+      timeZone: "Asia/Karachi",
+    });
+
+    const [year, month, day] = dateStringPKT.split("-").map(Number);
+    return { year, month, day };
   };
 
   const getWorkingDaysFromJoining = (joiningDate, month, year) => {
+    if (!joiningDate) return 0;
+
+    const today = getPKTDateParts();
+    const joinParts = getPKTDateParts(joiningDate);
+    if (!joinParts) return 0;
+
+    if (
+      joinParts.year > year ||
+      (joinParts.year === year && joinParts.month > month)
+    ) {
+      return 0;
+    }
+
     const daysInMonth = new Date(year, month, 0).getDate();
     let startDay = 1;
-    const {
-      year: todayYear,
-      month: todayMonth,
-      day: todayDay,
-    } = getPKTDateParts();
-    const joinParts = getJoiningDateParts(joiningDate);
-    console.log("Joining date parts:", joinParts);
-    if (joinParts) {
-      const { year: joinYear, month: joinMonth, day: joinDay } = joinParts;
-      if (joinYear > year || (joinYear === year && joinMonth > month)) return 0;
-      if (joinYear === year && joinMonth === month) startDay = joinDay;
+
+    if (joinParts.year === year && joinParts.month === month) {
+      startDay = joinParts.day;
     }
+
     let endDay = daysInMonth;
-    if (year === todayYear && month === todayMonth) {
-      endDay = Math.max(0, todayDay - 1);
+    if (year === today.year && month === today.month) {
+      endDay = Math.max(0, today.day - 1);
     }
+
     let workingDays = 0;
     for (let d = startDay; d <= endDay; d++) {
-      const day = new Date(year, month - 1, d).getDay();
-      if (day !== 0) workingDays++;
+      const date = new Date(Date.UTC(year, month - 1, d, 12, 0, 0));
+      if (date.getUTCDay() !== 0) workingDays++; // 0 is Sunday
     }
     return workingDays;
   };
@@ -107,7 +106,6 @@ function ViewReports() {
         const res = await API.get("/admin/settings/deduction", {
           withCredentials: true,
         });
-        console.log("Deduction settings response:", res.data);
         setDeductionSettings(res.data);
       } catch (err) {
         console.error("Error fetching deduction settings:", err);
@@ -123,18 +121,30 @@ function ViewReports() {
       const res = await API.get("/admin/attendance/getall", {
         withCredentials: true,
       });
+
       const allRecords = res.data.attendance || [];
-      const pktOffset = 5 * 60;
+      const today = getPKTDateParts();
+
       const filteredData = allRecords.filter((record) => {
         if (!record.date) return false;
-        const recDate = new Date(record.date);
-        const recPKT = new Date(recDate.getTime() + pktOffset * 60000);
-        console.log("Filtered record:", recPKT);
-        return (
-          recPKT.getMonth() + 1 === selectedMonth &&
-          recPKT.getFullYear() === selectedYear
-        );
+
+        const {
+          year: recYear,
+          month: recMonth,
+          day: recDay,
+        } = getPKTDateParts(record.date);
+
+        if (
+          recYear === today.year &&
+          recMonth === today.month &&
+          recDay >= today.day
+        ) {
+          return false;
+        }
+
+        return recMonth === selectedMonth && recYear === selectedYear;
       });
+
       setAttendance(filteredData);
     } catch (err) {
       setError("Failed to fetch report data.");
@@ -159,6 +169,7 @@ function ViewReports() {
         setDetailedAttendance([]);
         return;
       }
+
       setDetailedLoading(true);
       try {
         const res = await API.get("/admin/report/bymonth", {
@@ -169,7 +180,6 @@ function ViewReports() {
           },
           withCredentials: true,
         });
-        console.log("Detailed report response:", res.data);
         setDetailedAttendance(res.data.attendance || []);
       } catch (err) {
         console.error("Error fetching detailed report:", err);
@@ -190,6 +200,7 @@ function ViewReports() {
   const getSummaryData = () => {
     const summary = {};
     const deductionPerAbsence = deductionSettings?.deductionPerAbsence || 0;
+
     employees.forEach((emp) => {
       summary[emp._id] = {
         employeeID: emp.employeeID || "Unknown",
@@ -203,37 +214,40 @@ function ViewReports() {
         totalDeduction: 0,
       };
     });
+
     attendance.forEach((record) => {
       const empId = record.employeeId?._id;
       if (!empId || !summary[empId]) return;
+
       if (summary[empId].joiningDate === null && record.employeeId?.createdAt) {
         summary[empId].joiningDate = record.employeeId.createdAt;
       }
+
       const status = record.status?.toLowerCase().trim() || "";
       if (status === "present") summary[empId].present++;
       else if (status === "late") summary[empId].late++;
       else if (status === "absent") summary[empId].absent++;
       else if (status.includes("half")) summary[empId].halfDay++;
+
       summary[empId].totalDeduction += record.deduction || 0;
     });
+
     Object.values(summary).forEach((emp) => {
       const workingDays = getWorkingDaysFromJoining(
         emp.joiningDate,
         selectedMonth,
         selectedYear,
       );
+
       const daysAccountedFor =
         emp.present + emp.late + emp.halfDay + emp.absent;
       const missingDays = Math.max(0, workingDays - daysAccountedFor);
+
       emp.absent += missingDays;
       emp.totalDeduction += missingDays * deductionPerAbsence;
     });
-    return Object.values(summary);
-  };
 
-  const getDetailedData = () => {
-    if (!selectedEmployee) return [];
-    return detailedAttendance;
+    return Object.values(summary);
   };
 
   const summaryData = getSummaryData().sort((a, b) =>
@@ -242,7 +256,9 @@ function ViewReports() {
       sensitivity: "base",
     }),
   );
-  const detailedData = getDetailedData();
+
+  const detailedData = selectedEmployee ? detailedAttendance : [];
+
   const filteredDropdownEmployees = employees.filter(
     (emp) =>
       (emp.EmployeeName?.toLowerCase() || "").includes(
@@ -283,6 +299,7 @@ function ViewReports() {
     try {
       const doc = new jsPDF();
       const monthName = months[selectedMonth - 1];
+
       if (activeTab === "summary") {
         if (summaryData.length === 0) {
           alert("No data to print!");
@@ -292,6 +309,7 @@ function ViewReports() {
         doc.text("AttendX - Monthly Summary Report", 14, 15);
         doc.setFontSize(12);
         doc.text(`Month: ${monthName} ${selectedYear}`, 14, 22);
+
         autoTable(doc, {
           head: [
             [
@@ -335,6 +353,7 @@ function ViewReports() {
         }
         const empName = currentDetailedEmp.EmployeeName || "Employee";
         const empIdText = currentDetailedEmp.employeeID || "";
+
         doc.setFontSize(16);
         doc.text("AttendX - Detailed Attendance Report", 14, 15);
         doc.setFontSize(11);
@@ -350,26 +369,34 @@ function ViewReports() {
           120,
           29,
         );
+
         autoTable(doc, {
           head: [["#", "Date", "Check In Time", "Status", "Deduction (PKR)"]],
-          body: detailedData.map((r, i) => [
-            i + 1,
-            r.date
+          body: detailedData.map((r, i) => {
+            const formattedDate = r.date
               ? new Date(r.date).toLocaleDateString("en-PK", {
+                  timeZone: "Asia/Karachi",
                   weekday: "short",
                   day: "numeric",
                   month: "short",
                 })
-              : "N/A",
-            r.checkInTime
+              : "N/A";
+            const formattedTime = r.checkInTime
               ? new Date(r.checkInTime).toLocaleTimeString("en-PK", {
+                  timeZone: "Asia/Karachi",
                   hour: "2-digit",
                   minute: "2-digit",
                 })
-              : "N/A",
-            r.status || "N/A",
-            r.deduction > 0 ? `-${r.deduction.toLocaleString()}` : "0",
-          ]),
+              : "N/A";
+
+            return [
+              i + 1,
+              formattedDate,
+              formattedTime,
+              r.status || "N/A",
+              r.deduction > 0 ? `-${r.deduction.toLocaleString()}` : "0",
+            ];
+          }),
           startY: 36,
           theme: "grid",
           headStyles: { fillColor: [26, 26, 46] },
@@ -395,11 +422,13 @@ function ViewReports() {
           <p>Monthly attendance and salary summary</p>
         </div>
       </div>
+
       {error && (
         <div className="reports-error">
           <span>⚠</span> {error}
         </div>
       )}
+
       <div className="reports-filters">
         <select
           value={selectedMonth}
@@ -442,6 +471,7 @@ function ViewReports() {
           </button>
         </div>
       </div>
+
       <div className="reports-tabs">
         <button
           className={`tab-btn ${activeTab === "summary" ? "active" : ""}`}
@@ -456,6 +486,7 @@ function ViewReports() {
           📋 Detailed View
         </button>
       </div>
+
       <div className="reports-content-area">
         {activeTab === "summary" &&
           (loading ? (
@@ -534,6 +565,7 @@ function ViewReports() {
               </table>
             </div>
           ))}
+
         {activeTab === "detailed" && (
           <div className="detailed-tab-content">
             <div className="detailed-filter">
@@ -583,6 +615,7 @@ function ViewReports() {
                 )}
               </div>
             </div>
+
             {!selectedEmployee ? (
               <div className="reports-empty">
                 <span>👤</span>
@@ -670,6 +703,7 @@ function ViewReports() {
                     </p>
                   </div>
                 </div>
+
                 <table className="reports-table">
                   <thead>
                     <tr>
@@ -689,6 +723,7 @@ function ViewReports() {
                             ? new Date(record.date).toLocaleDateString(
                                 "en-PK",
                                 {
+                                  timeZone: "Asia/Karachi",
                                   weekday: "short",
                                   day: "numeric",
                                   month: "short",
@@ -700,7 +735,11 @@ function ViewReports() {
                           {record.checkInTime
                             ? new Date(record.checkInTime).toLocaleTimeString(
                                 "en-PK",
-                                { hour: "2-digit", minute: "2-digit" },
+                                {
+                                  timeZone: "Asia/Karachi",
+                                  hour: "2-digit",
+                                  minute: "2-digit",
+                                },
                               )
                             : "N/A"}
                         </td>
