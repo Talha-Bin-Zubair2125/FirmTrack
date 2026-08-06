@@ -1,7 +1,11 @@
 .reports-page-container {
   min-height: 100vh;
   background-color: #f8fafc;
-  font-family: "Inter", system-ui, -apple-system, sans-serif;
+  font-family:
+    "Inter",
+    system-ui,
+    -apple-system,
+    sans-serif;
   color: #1e293b;
 }
 
@@ -45,6 +49,9 @@
   color: #ffffff;
   width: 32px;
   height: 32px;
+  min-width: 32px;
+  min-height: 32px;
+  flex-shrink: 0;
   border-radius: 8px;
   display: flex;
   align-items: center;
@@ -58,6 +65,8 @@
   font-weight: 700;
   color: #0f172a;
   letter-spacing: 0.2px;
+  white-space: nowrap;
+  margin: 0;
 }
 
 .reports-wrapper {
