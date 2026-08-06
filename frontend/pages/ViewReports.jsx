@@ -115,7 +115,13 @@ function ViewReports() {
       setDetailedLoading(true);
       setDetailedApiMismatch(false);
       try {
-        const res = await API.get("/admin/report/bymonth", {
+        // NOTE: this is a different endpoint from the Summary tab on
+        // purpose. /admin/report/bymonth is wired to getMonthlySummaryReport,
+        // which always returns the all-employees aggregate and ignores
+        // employeeID entirely. /admin/attendance/getbymonth is wired to
+        // getAttendanceByMonth, which correctly filters by employeeID and
+        // returns real per-day records (including synthesized absent days).
+        const res = await API.get("/admin/attendance/getbymonth", {
           params: {
             month: selectedMonth,
             year: selectedYear,
@@ -125,18 +131,14 @@ function ViewReports() {
         });
 
         if (Array.isArray(res.data.attendance)) {
-          // Correct shape: real per-day records.
           setDetailedAttendance(res.data.attendance);
         } else if (Array.isArray(res.data.summary)) {
-          // Backend ignored the employeeID filter and sent the monthly
-          // aggregate instead of daily records. There is no per-day data
-          // (date / checkInTime / status) in this payload to render, so
-          // we surface that distinctly rather than showing a misleading
-          // generic "no attendance" message.
+          // Defensive fallback in case the endpoint config ever regresses
+          // back to the aggregate-only route.
           console.warn(
-            "bymonth?employeeID= returned the aggregate `summary` array " +
-              "instead of per-day `attendance` records. Backend route " +
-              "needs to branch on the employeeID param.",
+            "attendance/getbymonth returned the aggregate `summary` array " +
+              "instead of per-day `attendance` records. Check the route " +
+              "wiring for /admin/attendance/getbymonth.",
           );
           setDetailedAttendance([]);
           setDetailedApiMismatch(true);
