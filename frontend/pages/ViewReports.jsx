@@ -282,7 +282,6 @@ function ViewReports() {
 
   return (
     <div className="reports-page-container">
-      {/* Full-width Top Navbar */}
       <div className="top-navbar">
         <button className="reports-back" onClick={() => navigate("/profile")}>
           ← Back to Dashboard
