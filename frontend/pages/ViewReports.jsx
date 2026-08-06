@@ -63,7 +63,7 @@ function ViewReports() {
       });
       console.log("Summary report response:", res.data);
       const records = res.data.summary || res.data.attendance || [];
-
+console.log("Summary report response:", res.data.summary);
       const sorted = records.sort((a, b) =>
         (a.employeeID || "").localeCompare(b.employeeID || "", undefined, {
           numeric: true,
