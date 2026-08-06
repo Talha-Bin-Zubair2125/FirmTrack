@@ -61,6 +61,7 @@ function ViewReports() {
         params: { month: selectedMonth, year: selectedYear },
         withCredentials: true,
       });
+      console.log("Summary report response:", res.data);
       const records = res.data.summary || res.data.attendance || [];
 
       const sorted = records.sort((a, b) =>
