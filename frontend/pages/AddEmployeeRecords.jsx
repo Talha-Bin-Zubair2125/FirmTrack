@@ -65,20 +65,21 @@ function AddEmployeeRecords() {
 
   return (
     <div className="addemployee-wrapper">
-      <div className="addemployee-container">
-        <div className="addemployee-topbar">
-          <button
-            className="addemployee-back"
-            onClick={() => navigate("/profile")}
-          >
-            &larr; Back to Dashboard
-          </button>
-          <div className="topbar-brand">
-            <span className="brand-logo">N</span>
-            <h2>NutroAttend</h2>
-          </div>
+      {/* Full-width Top Navbar */}
+      <div className="addemployee-topbar">
+        <button
+          className="addemployee-back"
+          onClick={() => navigate("/profile")}
+        >
+          &larr; Back to Dashboard
+        </button>
+        <div className="topbar-brand">
+          <span className="brand-logo">N</span>
+          <h2>NutroAttend</h2>
         </div>
+      </div>
 
+      <div className="addemployee-container">
         <div className="addemployee-card">
           <div className="addemployee-header">
             <div className="addemployee-icon">👤</div>

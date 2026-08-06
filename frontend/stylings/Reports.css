@@ -1,24 +1,25 @@
-.reports-page-container {
+.attendance-wrapper {
   min-height: 100vh;
   background-color: #f3f4f6;
   font-family: "Inter", sans-serif;
   color: #333;
+  padding-bottom: 40px;
 }
 
-/* Full-width Top Navbar */
-.top-navbar {
+/* Full-Width Topbar Styles */
+.attendance-topbar {
   display: flex;
   justify-content: space-between;
   align-items: center;
   background-color: #ffffff;
   padding: 14px 24px;
-  border-bottom: 1px solid #e5e7eb;
   width: 100%;
   box-sizing: border-box;
+  border-bottom: 1px solid #e5e7eb;
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
 }
 
-.reports-back {
+.attendance-back {
   background: none;
   border: 1px solid #d1d5db;
   padding: 6px 14px;
@@ -33,21 +34,25 @@
   transition: all 0.2s;
 }
 
-.reports-back:hover {
+.attendance-back:hover {
   background-color: #f3f4f6;
   border-color: #9ca3af;
 }
 
-.brand-logo {
+.topbar-brand {
   display: flex;
   align-items: center;
-  gap: 8px;
-  font-weight: 700;
-  font-size: 16px;
-  color: #111827;
+  gap: 10px;
 }
 
-.brand-icon {
+.topbar-brand h2 {
+  font-size: 16px;
+  font-weight: 700;
+  color: #111827;
+  margin: 0;
+}
+
+.brand-logo {
   background-color: #4f46e5;
   color: white;
   width: 28px;
@@ -60,30 +65,39 @@
   font-weight: 700;
 }
 
-/* Main Content Wrapper */
-.reports-wrapper {
-  padding: 24px;
-  max-width: 1400px;
-  margin: 0 auto;
+.attendance-container {
+  max-width: 1200px;
+  margin: 24px auto 0 auto;
+  padding: 0 24px;
 }
 
-.reports-header {
+.attendance-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
   margin-bottom: 24px;
 }
 
-.reports-header h1 {
-  font-size: 26px;
+.attendance-header h1 {
+  font-size: 22px;
   font-weight: 700;
   color: #111827;
-  margin-bottom: 4px;
+  margin: 0 0 4px 0;
 }
 
-.reports-header p {
+.attendance-header p {
   color: #6b7280;
   font-size: 14px;
+  margin: 0;
 }
 
-.reports-error {
+.attendance-header p span {
+  font-weight: 600;
+  color: #4f46e5;
+}
+
+/* Error Notification */
+.attendance-error {
   background-color: #fef2f2;
   border: 1px solid #f87171;
   color: #991b1b;
@@ -94,17 +108,53 @@
   align-items: center;
   gap: 8px;
   font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
 }
 
-.reports-filters {
+/* Filters Section */
+.attendance-filters {
   display: flex;
   flex-wrap: wrap;
   gap: 12px;
-  margin-bottom: 20px;
+  background: #ffffff;
+  padding: 16px;
+  border-radius: 12px;
+  border: 1px solid #e5e7eb;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  margin-bottom: 24px;
   align-items: center;
 }
 
-.reports-select {
+.filter-search {
+  display: flex;
+  align-items: center;
+  background: #f9fafb;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  padding: 0 12px;
+  flex: 1;
+  min-width: 220px;
+}
+
+.filter-search span {
+  margin-right: 8px;
+  font-size: 14px;
+}
+
+.filter-search input {
+  border: none;
+  background: transparent;
+  padding: 10px 0;
+  font-size: 14px;
+  color: #374151;
+  outline: none;
+  width: 100%;
+}
+
+.filter-input,
+.filter-select,
+.filter-input-year {
   padding: 10px 14px;
   border: 1px solid #d1d5db;
   border-radius: 8px;
@@ -112,114 +162,46 @@
   font-size: 14px;
   color: #374151;
   outline: none;
-  transition: border-color 0.2s;
 }
 
-.reports-select:focus {
-  border-color: #4f46e5;
-  box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+.filter-input-year {
+  width: 80px;
 }
 
-.action-buttons {
-  display: flex;
-  gap: 10px;
-  margin-left: auto;
-}
-
-.btn-generate {
-  background-color: #4f46e5;
-  color: white;
-  border: none;
-  padding: 10px 18px;
+.filter-clear {
+  background: #f3f4f6;
+  border: 1px solid #d1d5db;
+  color: #374151;
+  padding: 10px 16px;
   border-radius: 8px;
   font-weight: 600;
   font-size: 14px;
   cursor: pointer;
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  transition: background-color 0.2s;
+  transition: background 0.2s;
 }
 
-.btn-generate:hover {
-  background-color: #4338ca;
+.filter-clear:hover {
+  background: #e5e7eb;
 }
 
-.btn-generate:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
-}
-
-.btn-pdf {
-  background-color: #059669;
-}
-
-.btn-pdf:hover {
-  background-color: #047857;
-}
-
-.btn-spinner {
-  width: 16px;
-  height: 16px;
-  border: 2px solid #ffffff;
-  border-top-color: transparent;
-  border-radius: 50%;
-  animation: spin 0.8s linear infinite;
-  display: inline-block;
-}
-
-.reports-tabs {
-  display: flex;
-  gap: 8px;
-  border-bottom: 1px solid #e5e7eb;
-  margin-bottom: 24px;
-}
-
-.tab-btn {
-  background: none;
-  border: none;
-  padding: 10px 16px;
-  font-size: 14px;
-  font-weight: 600;
-  color: #6b7280;
-  cursor: pointer;
-  border-bottom: 2px solid transparent;
-  transition: all 0.2s;
-}
-
-.tab-btn.active {
-  color: #4f46e5;
-  border-bottom-color: #4f46e5;
-}
-
-.reports-content-area {
-  background: #ffffff;
-  border-radius: 12px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-  padding: 20px;
-  min-height: 350px;
-}
-
-.reports-loading,
-.reports-empty {
+/* Loading & Empty States */
+.attendance-loading,
+.attendance-empty {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
+  background: #ffffff;
+  border-radius: 12px;
   padding: 60px 20px;
+  border: 1px solid #e5e7eb;
   text-align: center;
   color: #6b7280;
 }
 
-.reports-loading span,
-.reports-empty span {
-  font-size: 40px;
-  margin-bottom: 12px;
-}
-
 .loading-spinner {
-  width: 36px;
-  height: 36px;
+  width: 32px;
+  height: 32px;
   border: 3px solid #e5e7eb;
   border-top-color: #4f46e5;
   border-radius: 50%;
@@ -233,18 +215,40 @@
   }
 }
 
-.reports-table-wrapper {
+.attendance-empty span {
+  font-size: 36px;
+  margin-bottom: 12px;
+}
+
+.attendance-empty h3 {
+  font-size: 18px;
+  font-weight: 700;
+  color: #111827;
+  margin: 0 0 6px 0;
+}
+
+.attendance-empty p {
+  font-size: 14px;
+  margin: 0;
+}
+
+/* Table Styles */
+.attendance-table-wrapper {
+  background: #ffffff;
+  border-radius: 12px;
+  border: 1px solid #e5e7eb;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
   overflow-x: auto;
 }
 
-.reports-table {
+.attendance-table {
   width: 100%;
   border-collapse: collapse;
   text-align: left;
   font-size: 14px;
 }
 
-.reports-table th {
+.attendance-table th {
   background-color: #f9fafb;
   color: #374151;
   font-weight: 600;
@@ -252,25 +256,45 @@
   border-bottom: 1px solid #e5e7eb;
 }
 
-.reports-table td {
-  padding: 12px 16px;
+.attendance-table td {
+  padding: 14px 16px;
   border-bottom: 1px solid #f3f4f6;
-  color: #1f2937;
-  white-space: nowrap;
+  color: #374151;
+}
+
+.attendance-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.attendance-table tbody tr:hover {
+  background-color: #f9fafb;
+}
+
+.td-index {
+  color: #9ca3af;
+  font-weight: 500;
+}
+
+.td-id {
+  font-family: monospace;
+  color: #4f46e5;
+  font-weight: 600;
 }
 
 .td-name {
   display: flex;
   align-items: center;
   gap: 10px;
+  font-weight: 500;
+  color: #111827;
 }
 
 .emp-avatar {
   width: 32px;
   height: 32px;
-  border-radius: 50%;
   background-color: #e0e7ff;
   color: #4f46e5;
+  border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -278,12 +302,21 @@
   font-size: 13px;
 }
 
-.status-badge {
-  padding: 4px 10px;
-  border-radius: 9999px;
+.role-badge {
+  background-color: #f3f4f6;
+  color: #374151;
+  padding: 4px 8px;
+  border-radius: 6px;
   font-size: 12px;
   font-weight: 500;
-  display: inline-block;
+}
+
+/* Status Badges */
+.status-badge {
+  padding: 4px 10px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 600;
   text-transform: capitalize;
 }
 
@@ -291,146 +324,43 @@
   background-color: #def7ec;
   color: #03543f;
 }
+
 .status-late {
-  background-color: #fdf6b2;
-  color: #723b13;
+  background-color: #fef08a;
+  color: #854d0e;
 }
-.status-halfday {
-  background-color: #edebfe;
-  color: #5521b5;
-}
-.status-leave {
-  background-color: #e1effe;
-  color: #1e429f;
-}
+
 .status-absent {
-  background-color: #fde8e8;
-  color: #9b1c1c;
+  background-color: #fef2f2;
+  color: #991b1b;
+}
+
+.status-halfday {
+  background-color: #f3e8ff;
+  color: #6b21a8;
+}
+
+.status-leave {
+  background-color: #e0f2fe;
+  color: #0369a1;
+}
+
+.td-deduction {
+  font-weight: 600;
+  color: #6b7280;
 }
 
 .td-deduction.has-deduction {
   color: #dc2626;
-  font-weight: 600;
 }
 
-.td-salary {
-  font-weight: 600;
-}
-.td-final-salary {
-  font-weight: 700;
-  color: #059669;
-}
+@media (max-width: 768px) {
+  .attendance-filters {
+    flex-direction: column;
+    align-items: stretch;
+  }
 
-.detailed-tab-content {
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-}
-
-.detailed-filter {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-  max-width: 350px;
-}
-
-.detailed-filter label {
-  font-weight: 600;
-  font-size: 13px;
-  color: #374151;
-}
-
-.dropdown-container {
-  position: relative;
-  width: 100%;
-}
-
-.search-input {
-  width: 100%;
-  box-sizing: border-box;
-}
-
-.dropdown-list {
-  position: absolute;
-  top: 100%;
-  left: 0;
-  right: 0;
-  background: white;
-  border: 1px solid #d1d5db;
-  border-radius: 8px;
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-  list-style: none;
-  padding: 4px 0;
-  margin-top: 4px;
-  max-height: 220px;
-  overflow-y: auto;
-  z-index: 50;
-}
-
-.dropdown-item {
-  padding: 10px 14px;
-  display: flex;
-  gap: 10px;
-  cursor: pointer;
-  font-size: 14px;
-}
-
-.dropdown-item:hover {
-  background-color: #f3f4f6;
-}
-
-.dropdown-emp-id {
-  color: #6b7280;
-  font-weight: 500;
-}
-.dropdown-emp-name {
-  color: #111827;
-  font-weight: 600;
-}
-
-.dropdown-empty {
-  padding: 10px 14px;
-  color: #6b7280;
-  text-align: center;
-  font-size: 14px;
-}
-
-.detailed-summary-card {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
-  gap: 12px;
-  background-color: #f9fafb;
-  border: 1px solid #e5e7eb;
-  border-radius: 8px;
-  padding: 16px;
-  margin-bottom: 20px;
-}
-
-.summary-item h4 {
-  font-size: 12px;
-  color: #6b7280;
-  margin-bottom: 4px;
-  font-weight: 500;
-}
-
-.summary-item p {
-  font-size: 16px;
-  font-weight: 700;
-  color: #111827;
-}
-
-.text-green {
-  color: #059669 !important;
-}
-.text-orange {
-  color: #d97706 !important;
-}
-.text-purple {
-  color: #7c3aed !important;
-}
-.text-blue {
-  color: #2563eb !important;
-}
-.text-red {
-  color: #dc2626 !important;
+  .filter-search {
+    width: 100%;
+  }
 }
