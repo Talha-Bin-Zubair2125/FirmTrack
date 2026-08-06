@@ -4,6 +4,7 @@ import "../stylings/EditEmployee.css";
 import API from "../src/api/axios";
 
 function EditEmployee() {
+  
   const { id } = useParams();
   const navigate = useNavigate();
 
@@ -71,124 +72,162 @@ function EditEmployee() {
 
   return (
     <div className="editemployee-wrapper">
-      <button
-        className="editemployee-back"
-        onClick={() => navigate("/viewemployees")}
-      >
-        ← Back to Employees
-      </button>
-
-      <div className="editemployee-card">
-        <div className="editemployee-header">
-          <div className="editemployee-icon">✏️</div>
-          <div>
-            <h2>Edit Employee</h2>
-            <p>Update the employee record details</p>
-          </div>
+      <div className="editemployee-topbar">
+        <button
+          className="editemployee-back"
+          onClick={() => navigate("/viewemployees")}
+        >
+          &larr; Back to Employees
+        </button>
+        <div className="editemployee-brand">
+          <span className="brand-logo">N</span>
+          <h2>NutroAttend</h2>
         </div>
+      </div>
 
-        {error && (
-          <div className="editemployee-notification error">
-            <span>⚠</span> {error}
-          </div>
-        )}
-        {success && (
-          <div className="editemployee-notification success">
-            <span>✓</span> {success}
-          </div>
-        )}
-
-        <form className="editemployee-form" onSubmit={updateEmployee}>
-          <div className="editemployee-grid">
-            <div className="editemployee-field">
-              <label>Employee ID</label>
-              <input
-                type="text"
-                placeholder="e.g. EMP-001"
-                value={updatedEmployeeID}
-                onChange={(e) => setUpdatedEmployeeID(e.target.value)}
-                required
-              />
-            </div>
-
-            <div className="editemployee-field">
-              <label>Full Name</label>
-              <input
-                type="text"
-                placeholder="Employee full name"
-                value={updatedEmployeeName}
-                onChange={(e) => setUpdatedEmployeeName(e.target.value)}
-                required
-              />
-            </div>
-
-            <div className="editemployee-field">
-              <label>Email Address</label>
-              <input
-                type="email"
-                placeholder="employee@company.com"
-                value={updatedEmployeeEmail}
-                onChange={(e) => setUpdatedEmployeeEmail(e.target.value)}
-                required
-              />
-            </div>
-
-            <div className="editemployee-field">
-              <label>Phone Number</label>
-              <input
-                type="text"
-                placeholder="03xx-xxxxxxx"
-                value={updatedEmployeePhone}
-                onChange={(e) => setUpdatedEmployeePhone(e.target.value)}
-                required
-              />
-            </div>
-
-            <div className="editemployee-field">
-              <label>Base Salary (PKR)</label>
-              <input
-                type="number"
-                placeholder="e.g. 50000"
-                value={updatedEmployeeSalary}
-                onChange={(e) => setUpdatedEmployeeSalary(e.target.value)}
-                required
-              />
-            </div>
-
-            <div className="editemployee-field full-width">
-              <label>Role / Position</label>
-              <select
-                value={updatedEmployeeRole}
-                onChange={(e) => setUpdatedEmployeeRole(e.target.value)}
-                required
-              >
-                <option value="">Select Role</option>
-                <option value="Manager">Manager</option>
-                <option value="Office Boy">Office Boy</option>
-                <option value="Designer">Designer</option>
-                <option value="Editor">Editor</option>
-                <option value="Accounts Officer">Accounts Officer</option>
-              </select>
+      <div className="editemployee-container">
+        <div className="editemployee-card">
+          <div className="editemployee-header">
+            <div className="editemployee-icon">✏️</div>
+            <div>
+              <h2>Edit Employee Profile</h2>
+              <p>
+                Update employment record details, credentials, and role
+                assignments
+              </p>
             </div>
           </div>
 
-          <div className="editemployee-btn-row">
-            <button
-              type="button"
-              className="btn-cancel"
-              onClick={() => navigate("/viewemployees")}
+          {error && (
+            <div
+              className="editemployee-notification error"
+              onClick={() => setError("")}
             >
-              Cancel
-            </button>
-            <button type="submit" className="btn-save" disabled={loading}>
-              {loading ? (
-                <span className="edit-spinner"></span>
-              ) : (
-                "Save Changes →"
-              )}
-            </button>
-          </div>
-        </form>
+              <span>⚠</span>
+              <div>
+                <strong>Error</strong>
+                <p>{error}</p>
+              </div>
+              <button className="notif-close">✕</button>
+            </div>
+          )}
+
+          {success && (
+            <div
+              className="editemployee-notification success"
+              onClick={() => setSuccess("")}
+            >
+              <span>✓</span>
+              <div>
+                <strong>Success</strong>
+                <p>{success}</p>
+              </div>
+              <button className="notif-close">✕</button>
+            </div>
+          )}
+
+          <form className="editemployee-form" onSubmit={updateEmployee}>
+            <div className="editemployee-grid">
+              <div className="editemployee-field">
+                <label>Employee ID</label>
+                <p className="field-hint">Unique identification code</p>
+                <input
+                  type="text"
+                  placeholder="e.g. EMP-001"
+                  value={updatedEmployeeID}
+                  onChange={(e) => setUpdatedEmployeeID(e.target.value)}
+                  required
+                />
+              </div>
+
+              <div className="editemployee-field">
+                <label>Full Name</label>
+                <p className="field-hint">Employee's legal full name</p>
+                <input
+                  type="text"
+                  placeholder="e.g. John Doe"
+                  value={updatedEmployeeName}
+                  onChange={(e) => setUpdatedEmployeeName(e.target.value)}
+                  required
+                />
+              </div>
+
+              <div className="editemployee-field">
+                <label>Email Address</label>
+                <p className="field-hint">Corporate or active email address</p>
+                <input
+                  type="email"
+                  placeholder="employee@company.com"
+                  value={updatedEmployeeEmail}
+                  onChange={(e) => setUpdatedEmployeeEmail(e.target.value)}
+                  required
+                />
+              </div>
+
+              <div className="editemployee-field">
+                <label>Phone Number</label>
+                <p className="field-hint">Active contact phone number</p>
+                <input
+                  type="text"
+                  placeholder="03xx-xxxxxxx"
+                  value={updatedEmployeePhone}
+                  onChange={(e) => setUpdatedEmployeePhone(e.target.value)}
+                  required
+                />
+              </div>
+
+              <div className="editemployee-field">
+                <label>Base Salary (PKR)</label>
+                <p className="field-hint">Monthly base compensation amount</p>
+                <div className="input-prefix">
+                  <span>PKR</span>
+                  <input
+                    type="number"
+                    min="0"
+                    placeholder="e.g. 50000"
+                    value={updatedEmployeeSalary}
+                    onChange={(e) => setUpdatedEmployeeSalary(e.target.value)}
+                    required
+                  />
+                </div>
+              </div>
+
+              <div className="editemployee-field">
+                <label>Role / Position</label>
+                <p className="field-hint">Assigned organizational role</p>
+                <select
+                  value={updatedEmployeeRole}
+                  onChange={(e) => setUpdatedEmployeeRole(e.target.value)}
+                  required
+                >
+                  <option value="">Select Role</option>
+                  <option value="Manager">Manager</option>
+                  <option value="Office Boy">Office Boy</option>
+                  <option value="Designer">Designer</option>
+                  <option value="Editor">Editor</option>
+                  <option value="Accounts Officer">Accounts Officer</option>
+                </select>
+              </div>
+            </div>
+
+            <div className="editemployee-btn-row">
+              <button
+                type="button"
+                className="btn-cancel"
+                onClick={() => navigate("/viewemployees")}
+              >
+                Cancel
+              </button>
+              <button type="submit" className="btn-save" disabled={loading}>
+                {loading ? (
+                  <span className="edit-spinner"></span>
+                ) : (
+                  "Save Changes →"
+                )}
+              </button>
+            </div>
+          </form>
+        </div>
       </div>
     </div>
   );

@@ -38,12 +38,10 @@ function UpdateProfile() {
     if (isChangingPassword) {
       if (!oldPassword || !newPassword || !confirmPassword) {
         setError("To change password, please fill all password fields.");
-        setTimeout(() => setError(""), 3000);
         return;
       }
       if (newPassword !== confirmPassword) {
         setError("New password and confirm password do not match.");
-        setTimeout(() => setError(""), 3000);
         return;
       }
     }
@@ -59,7 +57,6 @@ function UpdateProfile() {
       });
       setAdminInfo(response.data.user);
       setSuccess("Profile updated successfully!");
-      setTimeout(() => setSuccess(""), 3000);
       setOldPassword("");
       setNewPassword("");
       setConfirmPassword("");
@@ -73,7 +70,6 @@ function UpdateProfile() {
           ? serverMessage
           : "Route endpoint mismatch (404)",
       );
-      setTimeout(() => setError(""), 3000);
     } finally {
       setLoading(false);
     }
@@ -81,33 +77,62 @@ function UpdateProfile() {
 
   return (
     <div className="update-wrapper">
-      <div className="update-container">
+      <div className="update-topbar">
         <button className="update-back" onClick={() => navigate("/profile")}>
           &larr; Back to Dashboard
         </button>
+        <div className="update-brand">
+          <span className="brand-logo">N</span>
+          <h2>NutroAttend</h2>
+        </div>
+      </div>
+
+      <div className="update-container">
+        {error && (
+          <div
+            className="update-notification error"
+            onClick={() => setError("")}
+          >
+            <span>⚠</span>
+            <div>
+              <strong>Error</strong>
+              <p>{error}</p>
+            </div>
+            <button className="notif-close">✕</button>
+          </div>
+        )}
+
+        {success && (
+          <div
+            className="update-notification success"
+            onClick={() => setSuccess("")}
+          >
+            <span>✓</span>
+            <div>
+              <strong>Success</strong>
+              <p>{success}</p>
+            </div>
+            <button className="notif-close">✕</button>
+          </div>
+        )}
+
         <div className="update-card">
           <div className="update-card-header">
             <div className="update-avatar">
-              {adminInfo?.adminID?.charAt(0) || "A"}
+              {adminInfo?.adminID?.charAt(0).toUpperCase() || "A"}
             </div>
             <div>
-              <h2>Update Profile</h2>
-              <p>Change your Admin ID or password</p>
+              <h2>Update Admin Profile</h2>
+              <p>Manage your unique administrator ID and account credentials</p>
             </div>
           </div>
-          {error && (
-            <div className="update-notification error">
-              <span>&#9888;</span> {error}
-            </div>
-          )}
-          {success && (
-            <div className="update-notification success">
-              <span>&#10003;</span> {success}
-            </div>
-          )}
+
           <form className="update-form" onSubmit={UpdateAdminProfile}>
             <div className="update-field">
               <label>Admin ID</label>
+              <p className="field-hint">
+                Unique identifier used for system authentication
+              </p>
               <input
                 type="text"
                 placeholder="Update Admin ID"
@@ -117,8 +142,16 @@ function UpdateProfile() {
                 required
               />
             </div>
+
+            <div className="update-divider">
+              <span>Security & Password (Optional)</span>
+            </div>
+
             <div className="update-field">
               <label>Current Password</label>
+              <p className="field-hint">
+                Required only if updating your password
+              </p>
               <input
                 type="password"
                 placeholder="Enter current password"
@@ -127,29 +160,36 @@ function UpdateProfile() {
                 onChange={(e) => setOldPassword(e.target.value)}
               />
             </div>
-            <div className="update-field">
-              <label>New Password</label>
-              <input
-                type="password"
-                placeholder="Enter new password"
-                value={newPassword}
-                autoComplete="new-password"
-                onChange={(e) => setNewPassword(e.target.value)}
-              />
+
+            <div className="update-grid">
+              <div className="update-field">
+                <label>New Password</label>
+                <input
+                  type="password"
+                  placeholder="Enter new password"
+                  value={newPassword}
+                  autoComplete="new-password"
+                  onChange={(e) => setNewPassword(e.target.value)}
+                />
+              </div>
+
+              <div className="update-field">
+                <label>Confirm New Password</label>
+                <input
+                  type="password"
+                  placeholder="Confirm new password"
+                  value={confirmPassword}
+                  autoComplete="new-password"
+                  onChange={(e) => setConfirmPassword(e.target.value)}
+                />
+              </div>
             </div>
-            <div className="update-field">
-              <label>Confirm New Password</label>
-              <input
-                type="password"
-                placeholder="Confirm new password"
-                value={confirmPassword}
-                autoComplete="new-password"
-                onChange={(e) => setConfirmPassword(e.target.value)}
-              />
-              <span className="update-hint">
-                Leave password fields blank to keep current password
-              </span>
-            </div>
+
+            <span className="update-hint">
+              💡 Leave password fields blank if you only want to update your
+              Admin ID.
+            </span>
+
             <div className="update-btn-row">
               <button
                 type="button"
@@ -162,7 +202,7 @@ function UpdateProfile() {
                 {loading ? (
                   <span className="update-spinner"></span>
                 ) : (
-                  "Save Changes"
+                  "Save Changes →"
                 )}
               </button>
             </div>

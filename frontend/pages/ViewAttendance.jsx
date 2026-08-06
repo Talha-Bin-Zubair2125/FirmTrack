@@ -4,7 +4,6 @@ import "../stylings/ViewAttendance.css";
 import API from "../src/api/axios";
 
 function ViewAttendance() {
-  
   const navigate = useNavigate();
   const [attendance, setAttendance] = useState([]);
   const [filtered, setFiltered] = useState([]);
@@ -13,26 +12,52 @@ function ViewAttendance() {
 
   const [searchName, setSearchName] = useState("");
   const [filterMonth, setFilterMonth] = useState("");
+  const [filterYear, setFilterYear] = useState(
+    new Date().getFullYear().toString(),
+  );
+  const [filterEmployeeID, setFilterEmployeeID] = useState("");
   const [filterStatus, setFilterStatus] = useState("");
 
+  // Fetch attendance based on whether a month is selected (matches getAttendanceByMonth vs getAllAttendance)
   const fetchAttendance = useCallback(async () => {
     setLoading(true);
+    setError("");
     try {
-      const response = await API.get("/admin/attendance/getall", {
-        withCredentials: true,
-      });
+      let response;
+      if (filterMonth) {
+        // Uses getAttendanceByMonth controller if a month is specified
+        const params = new URLSearchParams({
+          month: filterMonth,
+          year: filterYear,
+        });
+        if (filterEmployeeID.trim()) {
+          params.append("employeeID", filterEmployeeID.trim());
+        }
+        response = await API.get(
+          `/admin/attendance/getbymonth?${params.toString()}`,
+          {
+            withCredentials: true,
+          },
+        );
+      } else {
+        // Uses getAllAttendance controller by default
+        response = await API.get("/admin/attendance/getall", {
+          withCredentials: true,
+        });
+      }
+
       const validRecords = (response.data.attendance || []).filter(
         (record) =>
           record.employeeId !== null && record.employeeId !== undefined,
       );
       setAttendance(validRecords);
     } catch (error) {
-      setError("Failed to fetch attendance records");
+      setError("Failed to fetch attendance records. Please try again.");
       console.error("Error fetching attendance:", error);
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [filterMonth, filterYear, filterEmployeeID]);
 
   useEffect(() => {
     fetchAttendance();
@@ -64,6 +89,7 @@ function ViewAttendance() {
       .toLowerCase();
   };
 
+  // Client-side text search and status filtering on top of fetched records
   const applyFilters = useCallback(() => {
     let result = [...attendance];
 
@@ -76,21 +102,12 @@ function ViewAttendance() {
       );
     }
 
-    if (filterMonth) {
-      result = result.filter((a) => {
-        if (a.month !== undefined) return a.month === parseInt(filterMonth);
-        if (a.date)
-          return new Date(a.date).getMonth() + 1 === parseInt(filterMonth);
-        return false;
-      });
-    }
-
     if (filterStatus) {
       result = result.filter((a) => a.status === filterStatus);
     }
 
     setFiltered(result);
-  }, [attendance, searchName, filterMonth, filterStatus]);
+  }, [attendance, searchName, filterStatus]);
 
   useEffect(() => {
     applyFilters();
@@ -99,6 +116,8 @@ function ViewAttendance() {
   const clearFilters = () => {
     setSearchName("");
     setFilterMonth("");
+    setFilterYear(new Date().getFullYear().toString());
+    setFilterEmployeeID("");
     setFilterStatus("");
   };
 
@@ -112,6 +131,8 @@ function ViewAttendance() {
         return "status-absent";
       case "half-day":
         return "status-halfday";
+      case "leave":
+        return "status-leave";
       default:
         return "";
     }
@@ -148,7 +169,7 @@ function ViewAttendance() {
       </div>
 
       {error && (
-        <div className="attendance-error">
+        <div className="attendance-error" onClick={() => setError("")}>
           <span>⚠</span> {error}
         </div>
       )}
@@ -158,24 +179,43 @@ function ViewAttendance() {
           <span>🔍</span>
           <input
             type="text"
-            placeholder="Search by name or employee ID..."
+            placeholder="Filter by name or employee ID..."
             value={searchName}
             onChange={(e) => setSearchName(e.target.value)}
           />
         </div>
+
+        <input
+          type="text"
+          className="filter-input"
+          placeholder="Specific Emp ID (Optional)"
+          value={filterEmployeeID}
+          onChange={(e) => setFilterEmployeeID(e.target.value)}
+          title="Provide specific Employee ID when filtering by month"
+        />
 
         <select
           value={filterMonth}
           onChange={(e) => setFilterMonth(e.target.value)}
           className="filter-select"
         >
-          <option value="">All Months</option>
+          <option value="">All Months (General View)</option>
           {months.map((month, index) => (
             <option key={month} value={index + 1}>
               {month}
             </option>
           ))}
         </select>
+
+        {filterMonth && (
+          <input
+            type="number"
+            value={filterYear}
+            onChange={(e) => setFilterYear(e.target.value)}
+            className="filter-input-year"
+            placeholder="Year"
+          />
+        )}
 
         <select
           value={filterStatus}
@@ -187,9 +227,10 @@ function ViewAttendance() {
           <option value="late">Late</option>
           <option value="absent">Absent</option>
           <option value="half-day">Half Day</option>
+          <option value="leave">Leave</option>
         </select>
 
-        {(searchName || filterMonth || filterStatus) && (
+        {(searchName || filterMonth || filterEmployeeID || filterStatus) && (
           <button className="filter-clear" onClick={clearFilters}>
             ✕ Clear
           </button>
@@ -205,7 +246,7 @@ function ViewAttendance() {
         <div className="attendance-empty">
           <span>📋</span>
           <h3>No records found</h3>
-          <p>Try adjusting your filters</p>
+          <p>Try adjusting your search filters or select a month/year</p>
         </div>
       ) : (
         <div className="attendance-table-wrapper">
@@ -244,7 +285,9 @@ function ViewAttendance() {
                   </td>
                   <td>{formatDatePKT(record.date)}</td>
                   <td>
-                    {record.status === "absent"
+                    {record.status === "absent" ||
+                    record.status === "leave" ||
+                    !record.checkInTime
                       ? "—"
                       : formatTimePKT(record.checkInTime)}
                   </td>
@@ -271,5 +314,7 @@ function ViewAttendance() {
     </div>
   );
 }
+
+ViewAttendance.propTypes = {};
 
 export default ViewAttendance;

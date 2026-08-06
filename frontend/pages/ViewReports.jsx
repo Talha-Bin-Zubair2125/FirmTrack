@@ -8,9 +8,8 @@ import API from "../src/api/axios";
 function ViewReports() {
   const navigate = useNavigate();
 
-  const [attendance, setAttendance] = useState([]);
+  const [summaryData, setSummaryData] = useState([]);
   const [employees, setEmployees] = useState([]);
-  const [deductionSettings, setDeductionSettings] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
@@ -40,52 +39,7 @@ function ViewReports() {
     "December",
   ];
 
-  const getPKTDateParts = (dateInput = new Date()) => {
-    const dateObj = new Date(dateInput);
-    if (isNaN(dateObj.getTime())) return null;
-
-    const dateStringPKT = dateObj.toLocaleDateString("en-CA", {
-      timeZone: "Asia/Karachi",
-    });
-
-    const [year, month, day] = dateStringPKT.split("-").map(Number);
-    return { year, month, day };
-  };
-
-  const getWorkingDaysFromJoining = (joiningDate, month, year) => {
-    if (!joiningDate) return 0;
-
-    const today = getPKTDateParts();
-    const joinParts = getPKTDateParts(joiningDate);
-    if (!joinParts) return 0;
-
-    if (
-      joinParts.year > year ||
-      (joinParts.year === year && joinParts.month > month)
-    ) {
-      return 0;
-    }
-
-    const daysInMonth = new Date(year, month, 0).getDate();
-    let startDay = 1;
-
-    if (joinParts.year === year && joinParts.month === month) {
-      startDay = joinParts.day;
-    }
-
-    let endDay = daysInMonth;
-    if (year === today.year && month === today.month) {
-      endDay = Math.max(0, today.day - 1);
-    }
-
-    let workingDays = 0;
-    for (let d = startDay; d <= endDay; d++) {
-      const date = new Date(Date.UTC(year, month - 1, d, 12, 0, 0));
-      if (date.getUTCDay() !== 0) workingDays++;
-    }
-    return workingDays;
-  };
-
+  // Fetch employee list for filters and dropdowns
   useEffect(() => {
     const fetchEmployees = async () => {
       try {
@@ -100,64 +54,40 @@ function ViewReports() {
     fetchEmployees();
   }, []);
 
-  useEffect(() => {
-    const fetchSettings = async () => {
-      try {
-        const res = await API.get("/admin/settings/deduction", {
-          withCredentials: true,
-        });
-        setDeductionSettings(res.data);
-      } catch (err) {
-        console.error("Error fetching deduction settings:", err);
-      }
-    };
-    fetchSettings();
-  }, []);
-
-  const fetchReport = useCallback(async () => {
+  // Fetch Monthly Summary Report from Controller
+  const fetchSummaryReport = useCallback(async () => {
     setLoading(true);
     setError("");
     try {
-      const res = await API.get("/admin/attendance/getall", {
+      const res = await API.get("/admin/report/monthly-summary", {
+        params: { month: selectedMonth, year: selectedYear },
         withCredentials: true,
       });
+      const records = res.data.summary || res.data.attendance || [];
 
-      const allRecords = res.data.attendance || [];
-      const today = getPKTDateParts();
-
-      const filteredData = allRecords.filter((record) => {
-        if (!record.date) return false;
-
-        const {
-          year: recYear,
-          month: recMonth,
-          day: recDay,
-        } = getPKTDateParts(record.date);
-
-        if (
-          recYear === today.year &&
-          recMonth === today.month &&
-          recDay >= today.day
-        ) {
-          return false;
-        }
-
-        return recMonth === selectedMonth && recYear === selectedYear;
-      });
-
-      setAttendance(filteredData);
+      // Sort by Employee ID numerically/alphabetically
+      const sorted = records.sort((a, b) =>
+        (a.employeeID || "").localeCompare(b.employeeID || "", undefined, {
+          numeric: true,
+          sensitivity: "base",
+        }),
+      );
+      setSummaryData(sorted);
     } catch (err) {
-      setError("Failed to fetch report data.");
-      console.error("Error fetching report:", err);
+      setError("Failed to fetch summary report data.");
+      console.error("Error fetching summary report:", err);
     } finally {
       setLoading(false);
     }
   }, [selectedMonth, selectedYear]);
 
   useEffect(() => {
-    fetchReport();
-  }, [fetchReport]);
+    if (activeTab === "summary") {
+      fetchSummaryReport();
+    }
+  }, [activeTab, fetchSummaryReport]);
 
+  // Fetch Detailed Report for a specific employee
   const fetchDetailedReport = useCallback(
     async (employeeId) => {
       if (!employeeId) {
@@ -181,30 +111,7 @@ function ViewReports() {
           withCredentials: true,
         });
 
-        const rawDetailed = res.data.attendance || [];
-        const today = getPKTDateParts();
-
-        const syncedDetailedData = rawDetailed.filter((record) => {
-          if (!record.date) return false;
-
-          const {
-            year: recYear,
-            month: recMonth,
-            day: recDay,
-          } = getPKTDateParts(record.date);
-
-          if (
-            recYear === today.year &&
-            recMonth === today.month &&
-            recDay >= today.day
-          ) {
-            return false;
-          }
-
-          return true;
-        });
-
-        setDetailedAttendance(syncedDetailedData);
+        setDetailedAttendance(res.data.attendance || []);
       } catch (err) {
         console.error("Error fetching detailed report:", err);
         setDetailedAttendance([]);
@@ -220,68 +127,6 @@ function ViewReports() {
       fetchDetailedReport(selectedEmployee);
     }
   }, [activeTab, selectedEmployee, fetchDetailedReport]);
-
-  const getSummaryData = () => {
-    const summary = {};
-    const deductionPerAbsence = deductionSettings?.deductionPerAbsence || 0;
-
-    employees.forEach((emp) => {
-      summary[emp._id] = {
-        employeeID: emp.employeeID || "Unknown",
-        name: emp.EmployeeName || "Unknown",
-        salary: Number(emp.EmployeeSalary || 0),
-        joiningDate: emp.createdAt || null,
-        present: 0,
-        late: 0,
-        absent: 0,
-        halfDay: 0,
-        totalDeduction: 0,
-      };
-    });
-
-    attendance.forEach((record) => {
-      const empId = record.employeeId?._id;
-      if (!empId || !summary[empId]) return;
-
-      if (summary[empId].joiningDate === null && record.employeeId?.createdAt) {
-        summary[empId].joiningDate = record.employeeId.createdAt;
-      }
-
-      const status = record.status?.toLowerCase().trim() || "";
-      if (status === "present") summary[empId].present++;
-      else if (status === "late") summary[empId].late++;
-      else if (status === "absent") summary[empId].absent++;
-      else if (status.includes("half")) summary[empId].halfDay++;
-
-      summary[empId].totalDeduction += record.deduction || 0;
-    });
-
-    Object.values(summary).forEach((emp) => {
-      const workingDays = getWorkingDaysFromJoining(
-        emp.joiningDate,
-        selectedMonth,
-        selectedYear,
-      );
-
-      const daysAccountedFor =
-        emp.present + emp.late + emp.halfDay + emp.absent;
-      const missingDays = Math.max(0, workingDays - daysAccountedFor);
-
-      emp.absent += missingDays;
-      emp.totalDeduction += missingDays * deductionPerAbsence;
-    });
-
-    return Object.values(summary);
-  };
-
-  const summaryData = getSummaryData().sort((a, b) =>
-    (a.employeeID || "").localeCompare(b.employeeID || "", undefined, {
-      numeric: true,
-      sensitivity: "base",
-    }),
-  );
-
-  const detailedData = selectedEmployee ? detailedAttendance : [];
 
   const filteredDropdownEmployees = employees.filter(
     (emp) =>
@@ -313,12 +158,13 @@ function ViewReports() {
   const currentDetailedEmp =
     employees.find((e) => e._id === selectedEmployee) || {};
   const baseSalaryDetailed = Number(currentDetailedEmp.EmployeeSalary || 0);
-  const totalDeductionDetailed = detailedData.reduce(
+  const totalDeductionDetailed = detailedAttendance.reduce(
     (sum, r) => sum + (r.deduction || 0),
     0,
   );
   const finalSalaryDetailed = baseSalaryDetailed - totalDeductionDetailed;
 
+  // PDF Export Handler
   const handleDownloadPDF = () => {
     try {
       const doc = new jsPDF();
@@ -357,9 +203,9 @@ function ViewReports() {
             emp.late,
             emp.halfDay,
             emp.absent,
-            `-${emp.totalDeduction.toLocaleString()}`,
-            emp.salary.toLocaleString(),
-            (emp.salary - emp.totalDeduction).toLocaleString(),
+            `-${(emp.totalDeduction || 0).toLocaleString()}`,
+            (emp.salary || 0).toLocaleString(),
+            ((emp.salary || 0) - (emp.totalDeduction || 0)).toLocaleString(),
           ]),
           startY: 28,
           theme: "grid",
@@ -371,7 +217,7 @@ function ViewReports() {
           alert("Select an employee first!");
           return;
         }
-        if (detailedData.length === 0) {
+        if (detailedAttendance.length === 0) {
           alert("No records found!");
           return;
         }
@@ -396,7 +242,7 @@ function ViewReports() {
 
         autoTable(doc, {
           head: [["#", "Date", "Check In Time", "Status", "Deduction (PKR)"]],
-          body: detailedData.map((r, i) => {
+          body: detailedAttendance.map((r, i) => {
             const formattedDate = r.date
               ? new Date(r.date).toLocaleDateString("en-PK", {
                   timeZone: "Asia/Karachi",
@@ -477,7 +323,7 @@ function ViewReports() {
         <div className="action-buttons">
           <button
             className="btn-generate"
-            onClick={fetchReport}
+            onClick={fetchSummaryReport}
             disabled={loading}
           >
             {loading ? (
@@ -575,13 +421,15 @@ function ViewReports() {
                         </span>
                       </td>
                       <td className="td-deduction has-deduction">
-                        -{emp.totalDeduction.toLocaleString()}
+                        -{(emp.totalDeduction || 0).toLocaleString()}
                       </td>
                       <td className="td-salary">
-                        {emp.salary.toLocaleString()}
+                        {(emp.salary || 0).toLocaleString()}
                       </td>
                       <td className="td-final-salary">
-                        {(emp.salary - emp.totalDeduction).toLocaleString()}
+                        {(
+                          (emp.salary || 0) - (emp.totalDeduction || 0)
+                        ).toLocaleString()}
                       </td>
                     </tr>
                   ))}
@@ -654,7 +502,7 @@ function ViewReports() {
                 <div className="loading-spinner"></div>
                 <p>Generating report...</p>
               </div>
-            ) : detailedData.length === 0 ? (
+            ) : detailedAttendance.length === 0 ? (
               <div className="reports-empty">
                 <span>📋</span>
                 <h3>No records found</h3>
@@ -668,13 +516,13 @@ function ViewReports() {
                 <div className="detailed-summary-card">
                   <div className="summary-item">
                     <h4>Total Days</h4>
-                    <p>{detailedData.length}</p>
+                    <p>{detailedAttendance.length}</p>
                   </div>
                   <div className="summary-item">
                     <h4>Present</h4>
                     <p className="text-green">
                       {
-                        detailedData.filter(
+                        detailedAttendance.filter(
                           (r) => r.status?.toLowerCase() === "present",
                         ).length
                       }
@@ -684,7 +532,7 @@ function ViewReports() {
                     <h4>Late</h4>
                     <p className="text-orange">
                       {
-                        detailedData.filter(
+                        detailedAttendance.filter(
                           (r) => r.status?.toLowerCase() === "late",
                         ).length
                       }
@@ -694,7 +542,7 @@ function ViewReports() {
                     <h4>Half Day</h4>
                     <p className="text-purple">
                       {
-                        detailedData.filter((r) =>
+                        detailedAttendance.filter((r) =>
                           r.status?.toLowerCase().includes("half"),
                         ).length
                       }
@@ -704,7 +552,7 @@ function ViewReports() {
                     <h4>Absent</h4>
                     <p className="text-red">
                       {
-                        detailedData.filter(
+                        detailedAttendance.filter(
                           (r) => r.status?.toLowerCase() === "absent",
                         ).length
                       }
@@ -739,7 +587,7 @@ function ViewReports() {
                     </tr>
                   </thead>
                   <tbody>
-                    {detailedData.map((record, index) => (
+                    {detailedAttendance.map((record, index) => (
                       <tr key={record._id || `virtual-${record.date}-${index}`}>
                         <td className="td-index">{index + 1}</td>
                         <td>
@@ -769,13 +617,17 @@ function ViewReports() {
                         </td>
                         <td>
                           <span
-                            className={`status-badge ${getStatusClass(record.status)}`}
+                            className={`status-badge ${getStatusClass(
+                              record.status,
+                            )}`}
                           >
                             {record.status}
                           </span>
                         </td>
                         <td
-                          className={`td-deduction ${record.deduction > 0 ? "has-deduction" : ""}`}
+                          className={`td-deduction ${
+                            record.deduction > 0 ? "has-deduction" : ""
+                          }`}
                         >
                           {record.deduction > 0
                             ? `-${record.deduction.toLocaleString()}`

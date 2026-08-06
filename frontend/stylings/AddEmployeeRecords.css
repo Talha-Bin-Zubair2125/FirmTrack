@@ -1,316 +1,278 @@
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
 .addemployee-wrapper {
   min-height: 100vh;
   background-color: #f8fafc;
+  padding: 2rem;
   display: flex;
-  flex-direction: column;
-  align-items: center;
   justify-content: center;
-  padding: 40px 20px;
   font-family:
-    -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-  box-sizing: border-box;
+    "Inter",
+    system-ui,
+    -apple-system,
+    sans-serif;
 }
-
+.addemployee-container {
+  width: 100%;
+  max-width: 850px;
+}
 .addemployee-back {
   background: transparent;
   border: none;
-  color: #3b82f6;
-  font-size: 15px;
+  color: #64748b;
+  font-size: 0.95rem;
   font-weight: 600;
   cursor: pointer;
-  margin-bottom: 20px;
-  align-self: flex-start;
-  max-width: 640px;
-  width: 100%;
-  margin-left: auto;
-  margin-right: auto;
-  text-align: left;
-  transition: color 0.2s ease;
+  margin-bottom: 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  transition: color 0.2s;
 }
-
 .addemployee-back:hover {
-  color: #1d4ed8;
+  color: #0f172a;
 }
-
 .addemployee-card {
-  background: #ffffff;
-  width: 100%;
-  max-width: 640px;
+  background: white;
   border-radius: 20px;
-  padding: 36px;
+  padding: 2.5rem;
   box-shadow:
-    0 10px 25px -5px rgba(0, 0, 0, 0.05),
-    0 8px 10px -6px rgba(0, 0, 0, 0.01);
-  box-sizing: border-box;
+    0 10px 30px rgba(0, 0, 0, 0.04),
+    0 1px 3px rgba(0, 0, 0, 0.05);
 }
-
 .addemployee-header {
   display: flex;
   align-items: center;
-  gap: 16px;
-  margin-bottom: 28px;
+  gap: 1.25rem;
+  margin-bottom: 2rem;
+  padding-bottom: 1.5rem;
+  border-bottom: 1px solid #f1f5f9;
 }
-
 .addemployee-icon {
-  width: 48px;
-  height: 48px;
-  background-color: #eff6ff;
+  background: #eff6ff;
   color: #3b82f6;
-  border-radius: 12px;
+  width: 56px;
+  height: 56px;
+  border-radius: 16px;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 24px;
-  flex-shrink: 0;
+  font-size: 1.75rem;
 }
-
 .addemployee-header h2 {
-  margin: 0 0 4px 0;
-  font-size: 22px;
-  color: #1e293b;
+  color: #0f172a;
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin-bottom: 0.25rem;
 }
-
 .addemployee-header p {
-  margin: 0;
-  font-size: 14px;
   color: #64748b;
+  font-size: 0.95rem;
 }
-
-/* Notifications */
 .addemployee-notification {
+  padding: 1rem 1.25rem;
+  border-radius: 10px;
   display: flex;
   align-items: center;
-  gap: 10px;
-  padding: 12px 16px;
-  border-radius: 10px;
-  font-size: 14px;
+  gap: 0.75rem;
+  margin-bottom: 2rem;
+  font-size: 0.95rem;
   font-weight: 500;
-  margin-bottom: 24px;
 }
-
 .addemployee-notification.error {
-  background-color: #fef2f2;
-  color: #dc2626;
+  background: #fef2f2;
+  color: #ef4444;
   border: 1px solid #fecaca;
 }
-
 .addemployee-notification.success {
-  background-color: #f0fdf4;
-  color: #16a34a;
+  background: #f0fdf4;
+  color: #22c55e;
   border: 1px solid #bbf7d0;
 }
-
-/* Form Layout */
-.addemployee-form {
-  display: flex;
-  flex-direction: column;
-}
-
 .addemployee-grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  gap: 20px;
+  gap: 1.5rem;
 }
-
 .addemployee-field {
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 0.5rem;
 }
-
 .addemployee-field.full-width {
-  grid-column: span 2;
+  grid-column: 1/-1;
 }
-
 .addemployee-field label {
-  font-size: 13px;
+  font-size: 0.8rem;
   font-weight: 600;
-  color: #334155;
+  color: #475569;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
 }
-
 .addemployee-field input,
 .addemployee-field select {
   width: 100%;
-  padding: 10px 14px;
-  font-size: 14px;
-  border: 1px solid #cbd5e1;
-  border-radius: 8px;
-  outline: none;
-  background-color: #ffffff;
+  padding: 0.875rem 1rem;
+  border: 1.5px solid #e2e8f0;
+  border-radius: 10px;
+  font-size: 1rem;
   color: #0f172a;
-  box-sizing: border-box;
-  transition:
-    border-color 0.2s ease,
-    box-shadow 0.2s ease;
+  background: #f8fafc;
+  transition: all 0.2s ease;
+  outline: none;
+  font-family: inherit;
 }
-
 .addemployee-field input:focus,
 .addemployee-field select:focus {
   border-color: #3b82f6;
-  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
+  background: white;
+  box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1);
 }
-
 .addemployee-field input.input-error {
   border-color: #ef4444;
 }
-
-/* Password Section Custom Controls */
+.addemployee-field input.input-error:focus {
+  box-shadow: 0 0 0 4px rgba(239, 68, 68, 0.1);
+}
 .password-section-header {
-  border-top: 1px solid #f1f5f9;
-  padding-top: 16px;
-  margin-top: 8px;
   display: flex;
-  flex-direction: column;
-  gap: 2px;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px dashed #e2e8f0;
 }
-
 .password-hint {
-  font-size: 12px;
-  color: #64748b;
+  font-size: 0.8rem;
+  color: #94a3b8;
   font-weight: normal;
+  text-transform: none;
 }
-
 .password-input-wrapper {
   position: relative;
   display: flex;
   align-items: center;
 }
-
 .toggle-password {
   position: absolute;
-  right: 10px;
+  right: 1rem;
   background: none;
   border: none;
   cursor: pointer;
-  font-size: 16px;
-  padding: 4px;
+  font-size: 1.1rem;
   color: #64748b;
+  padding: 0.2rem;
 }
-
 .password-match-indicator {
   position: absolute;
-  right: 12px;
+  right: 2.5rem;
   font-weight: bold;
-  font-size: 14px;
+  font-size: 1.1rem;
 }
-
 .password-match-indicator.valid {
-  color: #16a34a;
+  color: #22c55e;
 }
-
 .password-match-indicator.invalid {
   color: #ef4444;
 }
-
 .field-error {
-  margin: 4px 0 0 0;
-  font-size: 12px;
   color: #ef4444;
+  font-size: 0.85rem;
+  margin-top: 0.25rem;
 }
-
 .default-password-info {
+  background: #eff6ff;
+  border: 1px solid #bfdbfe;
+  border-radius: 10px;
+  padding: 1rem;
   display: flex;
   align-items: center;
-  gap: 10px;
-  background-color: #eff6ff;
-  border: 1px solid #bfdbfe;
-  padding: 10px 14px;
-  border-radius: 8px;
-  font-size: 13px;
+  gap: 0.75rem;
   color: #1e40af;
+  font-size: 0.9rem;
 }
-
-.default-password-info p {
-  margin: 0;
-}
-
-/* Action Buttons */
 .addemployee-btn-row {
   display: flex;
   justify-content: flex-end;
-  gap: 12px;
-  margin-top: 32px;
-  padding-top: 20px;
+  gap: 1rem;
+  margin-top: 2.5rem;
+  padding-top: 1.5rem;
   border-top: 1px solid #f1f5f9;
 }
-
 .btn-cancel {
-  padding: 10px 20px;
-  background-color: #f1f5f9;
+  background: white;
+  border: 1.5px solid #e2e8f0;
   color: #475569;
-  border: none;
-  border-radius: 8px;
-  font-size: 14px;
+  padding: 0.875rem 1.5rem;
+  border-radius: 10px;
+  font-size: 1rem;
   font-weight: 600;
   cursor: pointer;
-  transition: background-color 0.2s ease;
+  transition: all 0.2s;
 }
-
 .btn-cancel:hover {
-  background-color: #e2e8f0;
+  background: #f8fafc;
+  color: #0f172a;
+  border-color: #cbd5e1;
 }
-
 .btn-submit {
-  padding: 10px 24px;
-  background-color: #3b82f6;
-  color: #ffffff;
+  background: #3b82f6;
+  color: white;
   border: none;
-  border-radius: 8px;
-  font-size: 14px;
+  padding: 0.875rem 2rem;
+  border-radius: 10px;
+  font-size: 1rem;
   font-weight: 600;
   cursor: pointer;
+  transition: all 0.2s;
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: background-color 0.2s ease;
+  min-width: 160px;
 }
-
 .btn-submit:hover:not(:disabled) {
-  background-color: #2563eb;
+  background: #2563eb;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.25);
 }
-
 .btn-submit:disabled {
-  background-color: #94a3b8;
+  background: #94a3b8;
   cursor: not-allowed;
 }
-
-/* Inline Spinner */
 .addemployee-spinner {
-  width: 16px;
-  height: 16px;
-  border: 2px solid #ffffff;
-  border-top-color: transparent;
+  width: 20px;
+  height: 20px;
+  border: 3px solid rgba(255, 255, 255, 0.3);
   border-radius: 50%;
+  border-top-color: white;
   animation: spin 0.8s linear infinite;
 }
-
 @keyframes spin {
-  from {
-    transform: rotate(0deg);
-  }
   to {
     transform: rotate(360deg);
   }
 }
-
-/* Mobile Responsive */
-@media (max-width: 600px) {
-  .addemployee-card {
-    padding: 24px;
+@media (max-width: 768px) {
+  .addemployee-wrapper {
+    padding: 1rem;
   }
-
+  .addemployee-card {
+    padding: 1.5rem;
+  }
   .addemployee-grid {
     grid-template-columns: 1fr;
   }
-
-  .addemployee-field.full-width {
-    grid-column: span 1;
+  .password-section-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.25rem;
   }
-
   .addemployee-btn-row {
     flex-direction: column-reverse;
   }
-
   .btn-cancel,
   .btn-submit {
     width: 100%;
