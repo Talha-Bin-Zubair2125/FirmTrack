@@ -153,14 +153,6 @@ function ViewReports() {
     }
   };
 
-  const renderCountBadge = (count, type) => {
-    const num = Number(count) || 0;
-    if (num === 0) {
-      return <span className="td-zero">0</span>;
-    }
-    return <span className={`status-badge status-${type}`}>{num}</span>;
-  };
-
   const currentDetailedEmp =
     employees.find((e) => e._id === selectedEmployee) || {};
   const baseSalaryDetailed = Number(currentDetailedEmp.EmployeeSalary || 0);
@@ -290,6 +282,7 @@ function ViewReports() {
 
   return (
     <div className="reports-page-container">
+      {/* Full-width Top Navbar */}
       <div className="top-navbar">
         <button className="reports-back" onClick={() => navigate("/profile")}>
           ← Back to Dashboard
@@ -301,370 +294,377 @@ function ViewReports() {
       </div>
 
       <div className="reports-wrapper">
-        <div className="reports-card">
-          <div className="reports-header">
-            <div className="header-icon">📊</div>
-            <div className="header-text">
-              <h1>Reports</h1>
-              <p>Generate monthly attendance and salary reports</p>
-            </div>
+        <div className="reports-header">
+          <div>
+            <h1>Reports</h1>
+            <p>Monthly attendance and salary summary</p>
           </div>
+        </div>
 
-          {error && (
-            <div className="reports-error">
-              <span>⚠</span> {error}
-            </div>
-          )}
-
-          <div className="reports-filters">
-            <div className="filter-group">
-              <select
-                value={selectedMonth}
-                onChange={(e) => setSelectedMonth(parseInt(e.target.value))}
-                className="reports-select"
-              >
-                {months.map((month, index) => (
-                  <option key={index} value={index + 1}>
-                    {month}
-                  </option>
-                ))}
-              </select>
-              <select
-                value={selectedYear}
-                onChange={(e) => setSelectedYear(parseInt(e.target.value))}
-                className="reports-select"
-              >
-                <option value={2024}>2024</option>
-                <option value={2025}>2025</option>
-                <option value={2026}>2026</option>
-              </select>
-            </div>
-            <div className="action-buttons">
-              <button
-                className="btn-generate"
-                onClick={fetchSummaryReport}
-                disabled={loading}
-              >
-                {loading ? <span className="btn-spinner"></span> : "↻ Generate"}
-              </button>
-              <button
-                className="btn-generate btn-pdf"
-                onClick={handleDownloadPDF}
-                disabled={loading || detailedLoading}
-              >
-                📥 PDF
-              </button>
-            </div>
+        {error && (
+          <div className="reports-error">
+            <span>⚠</span> {error}
           </div>
+        )}
 
-          <div className="reports-tabs">
+        <div className="reports-filters">
+          <select
+            value={selectedMonth}
+            onChange={(e) => setSelectedMonth(parseInt(e.target.value))}
+            className="reports-select"
+          >
+            {months.map((month, index) => (
+              <option key={index} value={index + 1}>
+                {month}
+              </option>
+            ))}
+          </select>
+          <select
+            value={selectedYear}
+            onChange={(e) => setSelectedYear(parseInt(e.target.value))}
+            className="reports-select"
+          >
+            <option value={2024}>2024</option>
+            <option value={2025}>2025</option>
+            <option value={2026}>2026</option>
+          </select>
+          <div className="action-buttons">
             <button
-              className={`tab-btn ${activeTab === "summary" ? "active" : ""}`}
-              onClick={() => setActiveTab("summary")}
+              className="btn-generate"
+              onClick={fetchSummaryReport}
+              disabled={loading}
             >
-              📊 Monthly Summary
+              {loading ? (
+                <span className="btn-spinner"></span>
+              ) : (
+                "↻ Generate Report"
+              )}
             </button>
             <button
-              className={`tab-btn ${activeTab === "detailed" ? "active" : ""}`}
-              onClick={() => setActiveTab("detailed")}
+              className="btn-generate btn-pdf"
+              onClick={handleDownloadPDF}
+              disabled={loading || detailedLoading}
             >
-              📋 Detailed View
+              📥 Download PDF
             </button>
           </div>
+        </div>
 
-          <div className="reports-content-area">
-            {activeTab === "summary" &&
-              (loading ? (
+        <div className="reports-tabs">
+          <button
+            className={`tab-btn ${activeTab === "summary" ? "active" : ""}`}
+            onClick={() => setActiveTab("summary")}
+          >
+            📊 Monthly Summary
+          </button>
+          <button
+            className={`tab-btn ${activeTab === "detailed" ? "active" : ""}`}
+            onClick={() => setActiveTab("detailed")}
+          >
+            📋 Detailed View
+          </button>
+        </div>
+
+        <div className="reports-content-area">
+          {activeTab === "summary" &&
+            (loading ? (
+              <div className="reports-loading">
+                <div className="loading-spinner"></div>
+                <p>Generating report...</p>
+              </div>
+            ) : summaryData.length === 0 ? (
+              <div className="reports-empty">
+                <span>📊</span>
+                <h3>
+                  No data for {months[selectedMonth - 1]} {selectedYear}
+                </h3>
+                <p>No attendance records found</p>
+              </div>
+            ) : (
+              <div className="reports-table-wrapper">
+                <table className="reports-table" style={{ minWidth: "850px" }}>
+                  <thead>
+                    <tr>
+                      <th>#</th>
+                      <th>Employee ID</th>
+                      <th>Name</th>
+                      <th>Present</th>
+                      <th>Late</th>
+                      <th>Half Day</th>
+                      <th>Leave</th>
+                      <th>Absent</th>
+                      <th>Total Deduction</th>
+                      <th>Base Salary</th>
+                      <th>Final Salary</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {summaryData.map((emp, index) => (
+                      <tr key={index}>
+                        <td className="td-index">{index + 1}</td>
+                        <td className="td-id">{emp.employeeID}</td>
+                        <td className="td-name">
+                          <div className="emp-avatar">
+                            {emp.name?.charAt(0).toUpperCase() || "?"}
+                          </div>
+                          {emp.name}
+                        </td>
+                        <td>
+                          <span className="status-badge status-present">
+                            {emp.present}
+                          </span>
+                        </td>
+                        <td>
+                          <span className="status-badge status-late">
+                            {emp.late}
+                          </span>
+                        </td>
+                        <td>
+                          <span className="status-badge status-halfday">
+                            {emp.halfDay}
+                          </span>
+                        </td>
+                        <td>
+                          <span className="status-badge status-leave">
+                            {emp.leave || 0}
+                          </span>
+                        </td>
+                        <td>
+                          <span className="status-badge status-absent">
+                            {emp.absent}
+                          </span>
+                        </td>
+                        <td className="td-deduction has-deduction">
+                          -{(emp.totalDeduction || 0).toLocaleString()}
+                        </td>
+                        <td className="td-salary">
+                          {(emp.salary || 0).toLocaleString()}
+                        </td>
+                        <td className="td-final-salary">
+                          {(
+                            (emp.salary || 0) - (emp.totalDeduction || 0)
+                          ).toLocaleString()}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            ))}
+
+          {activeTab === "detailed" && (
+            <div className="detailed-tab-content">
+              <div className="detailed-filter">
+                <label>Select Employee:</label>
+                <div className="dropdown-container">
+                  <input
+                    type="text"
+                    className="reports-select search-input"
+                    placeholder="🔍 Search Employee Name or ID..."
+                    value={employeeSearchTerm}
+                    onChange={(e) => {
+                      setEmployeeSearchTerm(e.target.value);
+                      setIsDropdownOpen(true);
+                      if (e.target.value === "") setSelectedEmployee("");
+                    }}
+                    onFocus={() => setIsDropdownOpen(true)}
+                    onBlur={() =>
+                      setTimeout(() => setIsDropdownOpen(false), 200)
+                    }
+                  />
+                  {isDropdownOpen && (
+                    <ul className="dropdown-list">
+                      {filteredDropdownEmployees.length > 0 ? (
+                        filteredDropdownEmployees.map((emp) => (
+                          <li
+                            key={emp._id}
+                            className="dropdown-item"
+                            onMouseDown={(e) => {
+                              e.preventDefault();
+                              setSelectedEmployee(emp._id);
+                              setEmployeeSearchTerm(
+                                `${emp.employeeID} - ${emp.EmployeeName}`,
+                              );
+                              setIsDropdownOpen(false);
+                            }}
+                          >
+                            <span className="dropdown-emp-id">
+                              {emp.employeeID}
+                            </span>
+                            <span className="dropdown-emp-name">
+                              {emp.EmployeeName}
+                            </span>
+                          </li>
+                        ))
+                      ) : (
+                        <li className="dropdown-empty">No employee found</li>
+                      )}
+                    </ul>
+                  )}
+                </div>
+              </div>
+
+              {!selectedEmployee ? (
+                <div className="reports-empty">
+                  <span>👤</span>
+                  <h3>Select an employee</h3>
+                  <p>
+                    Search and select an employee to view their detailed
+                    attendance
+                  </p>
+                </div>
+              ) : detailedLoading ? (
                 <div className="reports-loading">
                   <div className="loading-spinner"></div>
                   <p>Generating report...</p>
                 </div>
-              ) : summaryData.length === 0 ? (
+              ) : detailedAttendance.length === 0 ? (
                 <div className="reports-empty">
-                  <span>📊</span>
-                  <h3>
-                    No data for {months[selectedMonth - 1]} {selectedYear}
-                  </h3>
-                  <p>No attendance records found</p>
+                  <span>📋</span>
+                  <h3>No records found</h3>
+                  <p>
+                    No attendance for this employee in{" "}
+                    {months[selectedMonth - 1]} {selectedYear}
+                  </p>
                 </div>
               ) : (
-                <div className="table-card">
-                  <div className="reports-table-wrapper">
-                    <table className="reports-table">
-                      <thead>
-                        <tr>
-                          <th>#</th>
-                          <th>Employee ID</th>
-                          <th>Name</th>
-                          <th>Present</th>
-                          <th>Late</th>
-                          <th>Half Day</th>
-                          <th>Leave</th>
-                          <th>Absent</th>
-                          <th>Total Deduction</th>
-                          <th>Base Salary</th>
-                          <th>Final Salary</th>
+                <div className="reports-table-wrapper">
+                  <div className="detailed-summary-card">
+                    <div className="summary-item">
+                      <h4>Total Days</h4>
+                      <p>{detailedAttendance.length}</p>
+                    </div>
+                    <div className="summary-item">
+                      <h4>Present</h4>
+                      <p className="text-green">
+                        {
+                          detailedAttendance.filter(
+                            (r) => r.status?.toLowerCase() === "present",
+                          ).length
+                        }
+                      </p>
+                    </div>
+                    <div className="summary-item">
+                      <h4>Late</h4>
+                      <p className="text-orange">
+                        {
+                          detailedAttendance.filter(
+                            (r) => r.status?.toLowerCase() === "late",
+                          ).length
+                        }
+                      </p>
+                    </div>
+                    <div className="summary-item">
+                      <h4>Half Day</h4>
+                      <p className="text-purple">
+                        {
+                          detailedAttendance.filter((r) =>
+                            r.status?.toLowerCase().includes("half"),
+                          ).length
+                        }
+                      </p>
+                    </div>
+                    <div className="summary-item">
+                      <h4>Leave</h4>
+                      <p className="text-blue">
+                        {
+                          detailedAttendance.filter(
+                            (r) => r.status?.toLowerCase() === "leave",
+                          ).length
+                        }
+                      </p>
+                    </div>
+                    <div className="summary-item">
+                      <h4>Absent</h4>
+                      <p className="text-red">
+                        {
+                          detailedAttendance.filter(
+                            (r) => r.status?.toLowerCase() === "absent",
+                          ).length
+                        }
+                      </p>
+                    </div>
+                    <div className="summary-item">
+                      <h4>Total Deduction</h4>
+                      <p className="text-red">
+                        -{totalDeductionDetailed.toLocaleString()}
+                      </p>
+                    </div>
+                    <div className="summary-item">
+                      <h4>Base Salary</h4>
+                      <p>Rs. {baseSalaryDetailed.toLocaleString()}</p>
+                    </div>
+                    <div className="summary-item">
+                      <h4>Final Salary</h4>
+                      <p className="text-green">
+                        Rs. {finalSalaryDetailed.toLocaleString()}
+                      </p>
+                    </div>
+                  </div>
+
+                  <table className="reports-table">
+                    <thead>
+                      <tr>
+                        <th>#</th>
+                        <th>Date</th>
+                        <th>Check In Time</th>
+                        <th>Status</th>
+                        <th>Deduction (PKR)</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {detailedAttendance.map((record, index) => (
+                        <tr
+                          key={record._id || `virtual-${record.date}-${index}`}
+                        >
+                          <td className="td-index">{index + 1}</td>
+                          <td>
+                            {record.date
+                              ? new Date(record.date).toLocaleDateString(
+                                  "en-PK",
+                                  {
+                                    timeZone: "Asia/Karachi",
+                                    weekday: "short",
+                                    day: "numeric",
+                                    month: "short",
+                                  },
+                                )
+                              : "N/A"}
+                          </td>
+                          <td>
+                            {record.checkInTime
+                              ? new Date(record.checkInTime).toLocaleTimeString(
+                                  "en-PK",
+                                  {
+                                    timeZone: "Asia/Karachi",
+                                    hour: "2-digit",
+                                    minute: "2-digit",
+                                  },
+                                )
+                              : "N/A"}
+                          </td>
+                          <td>
+                            <span
+                              className={`status-badge ${getStatusClass(record.status)}`}
+                            >
+                              {record.status}
+                            </span>
+                          </td>
+                          <td
+                            className={`td-deduction ${record.deduction > 0 ? "has-deduction" : ""}`}
+                          >
+                            {record.deduction > 0
+                              ? `-${record.deduction.toLocaleString()}`
+                              : "0"}
+                          </td>
                         </tr>
-                      </thead>
-                      <tbody>
-                        {summaryData.map((emp, index) => (
-                          <tr key={index}>
-                            <td className="td-index">{index + 1}</td>
-                            <td className="td-id">{emp.employeeID}</td>
-                            <td className="td-name">
-                              <div className="emp-avatar">
-                                {emp.name?.charAt(0).toUpperCase() || "?"}
-                              </div>
-                              {emp.name}
-                            </td>
-                            <td>{renderCountBadge(emp.present, "present")}</td>
-                            <td>{renderCountBadge(emp.late, "late")}</td>
-                            <td>{renderCountBadge(emp.halfDay, "halfday")}</td>
-                            <td>{renderCountBadge(emp.leave || 0, "leave")}</td>
-                            <td>{renderCountBadge(emp.absent, "absent")}</td>
-                            <td
-                              className={`td-deduction ${emp.totalDeduction > 0 ? "has-deduction" : ""}`}
-                            >
-                              {emp.totalDeduction > 0
-                                ? `-${(emp.totalDeduction || 0).toLocaleString()}`
-                                : "0"}
-                            </td>
-                            <td className="td-salary">
-                              {(emp.salary || 0).toLocaleString()}
-                            </td>
-                            <td className="td-final-salary">
-                              {(
-                                (emp.salary || 0) - (emp.totalDeduction || 0)
-                              ).toLocaleString()}
-                            </td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
-                  </div>
+                      ))}
+                    </tbody>
+                  </table>
                 </div>
-              ))}
-
-            {activeTab === "detailed" && (
-              <div className="detailed-tab-content">
-                <div className="detailed-filter">
-                  <label>Select Employee:</label>
-                  <div className="dropdown-container">
-                    <input
-                      type="text"
-                      className="reports-select search-input"
-                      placeholder="🔍 Search Employee Name or ID..."
-                      value={employeeSearchTerm}
-                      onChange={(e) => {
-                        setEmployeeSearchTerm(e.target.value);
-                        setIsDropdownOpen(true);
-                        if (e.target.value === "") setSelectedEmployee("");
-                      }}
-                      onFocus={() => setIsDropdownOpen(true)}
-                      onBlur={() =>
-                        setTimeout(() => setIsDropdownOpen(false), 200)
-                      }
-                    />
-                    {isDropdownOpen && (
-                      <ul className="dropdown-list">
-                        {filteredDropdownEmployees.length > 0 ? (
-                          filteredDropdownEmployees.map((emp) => (
-                            <li
-                              key={emp._id}
-                              className="dropdown-item"
-                              onMouseDown={(e) => {
-                                e.preventDefault();
-                                setSelectedEmployee(emp._id);
-                                setEmployeeSearchTerm(
-                                  `${emp.employeeID} - ${emp.EmployeeName}`,
-                                );
-                                setIsDropdownOpen(false);
-                              }}
-                            >
-                              <span className="dropdown-emp-id">
-                                {emp.employeeID}
-                              </span>
-                              <span className="dropdown-emp-name">
-                                {emp.EmployeeName}
-                              </span>
-                            </li>
-                          ))
-                        ) : (
-                          <li className="dropdown-empty">No employee found</li>
-                        )}
-                      </ul>
-                    )}
-                  </div>
-                </div>
-
-                {!selectedEmployee ? (
-                  <div className="reports-empty">
-                    <span>👤</span>
-                    <h3>Select an employee</h3>
-                    <p>
-                      Search and select an employee to view their detailed
-                      attendance
-                    </p>
-                  </div>
-                ) : detailedLoading ? (
-                  <div className="reports-loading">
-                    <div className="loading-spinner"></div>
-                    <p>Generating report...</p>
-                  </div>
-                ) : detailedAttendance.length === 0 ? (
-                  <div className="reports-empty">
-                    <span>📋</span>
-                    <h3>No records found</h3>
-                    <p>
-                      No attendance for this employee in{" "}
-                      {months[selectedMonth - 1]} {selectedYear}
-                    </p>
-                  </div>
-                ) : (
-                  <>
-                    <div className="detailed-summary-card">
-                      <div className="summary-item">
-                        <h4>Total Days</h4>
-                        <p>{detailedAttendance.length}</p>
-                      </div>
-                      <div className="summary-item">
-                        <h4>Present</h4>
-                        <p className="text-green">
-                          {
-                            detailedAttendance.filter(
-                              (r) => r.status?.toLowerCase() === "present",
-                            ).length
-                          }
-                        </p>
-                      </div>
-                      <div className="summary-item">
-                        <h4>Late</h4>
-                        <p className="text-orange">
-                          {
-                            detailedAttendance.filter(
-                              (r) => r.status?.toLowerCase() === "late",
-                            ).length
-                          }
-                        </p>
-                      </div>
-                      <div className="summary-item">
-                        <h4>Half Day</h4>
-                        <p className="text-purple">
-                          {
-                            detailedAttendance.filter((r) =>
-                              r.status?.toLowerCase().includes("half"),
-                            ).length
-                          }
-                        </p>
-                      </div>
-                      <div className="summary-item">
-                        <h4>Leave</h4>
-                        <p className="text-blue">
-                          {
-                            detailedAttendance.filter(
-                              (r) => r.status?.toLowerCase() === "leave",
-                            ).length
-                          }
-                        </p>
-                      </div>
-                      <div className="summary-item">
-                        <h4>Absent</h4>
-                        <p className="text-red">
-                          {
-                            detailedAttendance.filter(
-                              (r) => r.status?.toLowerCase() === "absent",
-                            ).length
-                          }
-                        </p>
-                      </div>
-                      <div className="summary-item">
-                        <h4>Total Deduction</h4>
-                        <p className="text-red">
-                          -{totalDeductionDetailed.toLocaleString()}
-                        </p>
-                      </div>
-                      <div className="summary-item">
-                        <h4>Base Salary</h4>
-                        <p>Rs. {baseSalaryDetailed.toLocaleString()}</p>
-                      </div>
-                      <div className="summary-item">
-                        <h4>Final Salary</h4>
-                        <p className="text-green">
-                          Rs. {finalSalaryDetailed.toLocaleString()}
-                        </p>
-                      </div>
-                    </div>
-
-                    <div className="table-card">
-                      <div className="reports-table-wrapper">
-                        <table className="reports-table">
-                          <thead>
-                            <tr>
-                              <th>#</th>
-                              <th>Date</th>
-                              <th>Check In Time</th>
-                              <th>Status</th>
-                              <th>Deduction (PKR)</th>
-                            </tr>
-                          </thead>
-                          <tbody>
-                            {detailedAttendance.map((record, index) => (
-                              <tr
-                                key={
-                                  record._id ||
-                                  `virtual-${record.date}-${index}`
-                                }
-                              >
-                                <td className="td-index">{index + 1}</td>
-                                <td>
-                                  {record.date
-                                    ? new Date(record.date).toLocaleDateString(
-                                        "en-PK",
-                                        {
-                                          timeZone: "Asia/Karachi",
-                                          weekday: "short",
-                                          day: "numeric",
-                                          month: "short",
-                                        },
-                                      )
-                                    : "N/A"}
-                                </td>
-                                <td>
-                                  {record.checkInTime
-                                    ? new Date(
-                                        record.checkInTime,
-                                      ).toLocaleTimeString("en-PK", {
-                                        timeZone: "Asia/Karachi",
-                                        hour: "2-digit",
-                                        minute: "2-digit",
-                                      })
-                                    : "N/A"}
-                                </td>
-                                <td>
-                                  <span
-                                    className={`status-badge ${getStatusClass(record.status)}`}
-                                  >
-                                    {record.status}
-                                  </span>
-                                </td>
-                                <td
-                                  className={`td-deduction ${record.deduction > 0 ? "has-deduction" : ""}`}
-                                >
-                                  {record.deduction > 0
-                                    ? `-${record.deduction.toLocaleString()}`
-                                    : "0"}
-                                </td>
-                              </tr>
-                            ))}
-                          </tbody>
-                        </table>
-                      </div>
-                    </div>
-                  </>
-                )}
-              </div>
-            )}
-          </div>
+              )}
+            </div>
+          )}
         </div>
       </div>
     </div>
