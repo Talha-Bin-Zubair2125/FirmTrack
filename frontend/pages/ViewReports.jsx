@@ -406,9 +406,9 @@ function ViewReports() {
                         <td className="rpt-td-id">{emp.employeeID}</td>
                         <td className="rpt-td-name">
                           <div className="rpt-emp-avatar">
-                            {emp.EmployeeName?.charAt(0).toUpperCase() || "?"}
+                            {emp.name?.charAt(0).toUpperCase() || "?"}
                           </div>
-                          {emp.EmployeeName}
+                          {emp.name}
                         </td>
                         <td>
                           <span className="rpt-status-badge rpt-status-present">
