@@ -99,7 +99,7 @@ console.log("Summary report response:", res.data.summary);
 
       setDetailedLoading(true);
       try {
-        const res = await API.get("/admin/report/getbymonth", {
+        const res = await API.get("/admin/report/bymonth", {
           params: {
             month: selectedMonth,
             year: selectedYear,
