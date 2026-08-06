@@ -38,7 +38,6 @@ function ViewAttendance() {
         response = await API.get("/admin/attendance/getall", {
           withCredentials: true,
         });
-        console.log("Fetched all attendance records:", response.data);
       }
 
       const records = response.data.attendance || response.data.records || [];
