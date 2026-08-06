@@ -153,6 +153,14 @@ function ViewReports() {
     }
   };
 
+  const renderCountBadge = (count, type) => {
+    const num = Number(count) || 0;
+    if (num === 0) {
+      return <span className="td-zero">0</span>;
+    }
+    return <span className={`status-badge status-${type}`}>{num}</span>;
+  };
+
   const currentDetailedEmp =
     employees.find((e) => e._id === selectedEmployee) || {};
   const baseSalaryDetailed = Number(currentDetailedEmp.EmployeeSalary || 0);
@@ -409,33 +417,17 @@ function ViewReports() {
                               </div>
                               {emp.name}
                             </td>
-                            <td>
-                              <span className="status-badge status-present">
-                                {emp.present}
-                              </span>
-                            </td>
-                            <td>
-                              <span className="status-badge status-late">
-                                {emp.late}
-                              </span>
-                            </td>
-                            <td>
-                              <span className="status-badge status-halfday">
-                                {emp.halfDay}
-                              </span>
-                            </td>
-                            <td>
-                              <span className="status-badge status-leave">
-                                {emp.leave || 0}
-                              </span>
-                            </td>
-                            <td>
-                              <span className="status-badge status-absent">
-                                {emp.absent}
-                              </span>
-                            </td>
-                            <td className="td-deduction has-deduction">
-                              -{(emp.totalDeduction || 0).toLocaleString()}
+                            <td>{renderCountBadge(emp.present, "present")}</td>
+                            <td>{renderCountBadge(emp.late, "late")}</td>
+                            <td>{renderCountBadge(emp.halfDay, "halfday")}</td>
+                            <td>{renderCountBadge(emp.leave || 0, "leave")}</td>
+                            <td>{renderCountBadge(emp.absent, "absent")}</td>
+                            <td
+                              className={`td-deduction ${emp.totalDeduction > 0 ? "has-deduction" : ""}`}
+                            >
+                              {emp.totalDeduction > 0
+                                ? `-${(emp.totalDeduction || 0).toLocaleString()}`
+                                : "0"}
                             </td>
                             <td className="td-salary">
                               {(emp.salary || 0).toLocaleString()}

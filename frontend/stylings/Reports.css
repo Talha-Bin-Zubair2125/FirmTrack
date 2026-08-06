@@ -342,6 +342,12 @@
   display: inline-block;
 }
 
+.td-zero {
+  color: #9ca3af;
+  font-weight: 400;
+  padding-left: 0.5rem;
+}
+
 .status-present {
   background-color: #def7ec;
   color: #03543f;
