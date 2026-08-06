@@ -138,16 +138,16 @@ function ViewReports() {
     const s = status?.toLowerCase().trim() || "";
     switch (s) {
       case "present":
-        return "status-present";
+        return "rpt-status-present";
       case "late":
-        return "status-late";
+        return "rpt-status-late";
       case "absent":
-        return "status-absent";
+        return "rpt-status-absent";
       case "half-day":
       case "halfday":
-        return "status-halfday";
+        return "rpt-status-halfday";
       case "leave":
-        return "status-leave";
+        return "rpt-status-leave";
       default:
         return "";
     }
@@ -281,20 +281,20 @@ function ViewReports() {
   };
 
   return (
-    <div className="reports-page-container">
+    <div className="rpt-page-container">
       {/* Full-width Top Navbar */}
-      <div className="top-navbar">
-        <button className="reports-back" onClick={() => navigate("/profile")}>
+      <div className="rpt-top-navbar">
+        <button className="rpt-back-btn" onClick={() => navigate("/profile")}>
           ← Back to Dashboard
         </button>
-        <div className="brand-logo">
-          <span className="brand-icon">N</span>
-          <span className="brand-name">NutroAttend</span>
+        <div className="rpt-brand-logo">
+          <span className="rpt-brand-icon">N</span>
+          <span className="rpt-brand-name">NutroAttend</span>
         </div>
       </div>
 
-      <div className="reports-wrapper">
-        <div className="reports-header">
+      <div className="rpt-wrapper">
+        <div className="rpt-header">
           <div>
             <h1>Reports</h1>
             <p>Monthly attendance and salary summary</p>
@@ -302,16 +302,16 @@ function ViewReports() {
         </div>
 
         {error && (
-          <div className="reports-error">
+          <div className="rpt-error-banner">
             <span>⚠</span> {error}
           </div>
         )}
 
-        <div className="reports-filters">
+        <div className="rpt-filters">
           <select
             value={selectedMonth}
             onChange={(e) => setSelectedMonth(parseInt(e.target.value))}
-            className="reports-select"
+            className="rpt-select"
           >
             {months.map((month, index) => (
               <option key={index} value={index + 1}>
@@ -322,26 +322,26 @@ function ViewReports() {
           <select
             value={selectedYear}
             onChange={(e) => setSelectedYear(parseInt(e.target.value))}
-            className="reports-select"
+            className="rpt-select"
           >
             <option value={2024}>2024</option>
             <option value={2025}>2025</option>
             <option value={2026}>2026</option>
           </select>
-          <div className="action-buttons">
+          <div className="rpt-action-buttons">
             <button
-              className="btn-generate"
+              className="rpt-btn-generate"
               onClick={fetchSummaryReport}
               disabled={loading}
             >
               {loading ? (
-                <span className="btn-spinner"></span>
+                <span className="rpt-btn-spinner"></span>
               ) : (
                 "↻ Generate Report"
               )}
             </button>
             <button
-              className="btn-generate btn-pdf"
+              className="rpt-btn-generate rpt-btn-pdf"
               onClick={handleDownloadPDF}
               disabled={loading || detailedLoading}
             >
@@ -350,30 +350,30 @@ function ViewReports() {
           </div>
         </div>
 
-        <div className="reports-tabs">
+        <div className="rpt-tabs">
           <button
-            className={`tab-btn ${activeTab === "summary" ? "active" : ""}`}
+            className={`rpt-tab-btn ${activeTab === "summary" ? "rpt-tab-active" : ""}`}
             onClick={() => setActiveTab("summary")}
           >
             📊 Monthly Summary
           </button>
           <button
-            className={`tab-btn ${activeTab === "detailed" ? "active" : ""}`}
+            className={`rpt-tab-btn ${activeTab === "detailed" ? "rpt-tab-active" : ""}`}
             onClick={() => setActiveTab("detailed")}
           >
             📋 Detailed View
           </button>
         </div>
 
-        <div className="reports-content-area">
+        <div className="rpt-content-area">
           {activeTab === "summary" &&
             (loading ? (
-              <div className="reports-loading">
-                <div className="loading-spinner"></div>
+              <div className="rpt-loading-state">
+                <div className="rpt-loading-spinner"></div>
                 <p>Generating report...</p>
               </div>
             ) : summaryData.length === 0 ? (
-              <div className="reports-empty">
+              <div className="rpt-empty-state">
                 <span>📊</span>
                 <h3>
                   No data for {months[selectedMonth - 1]} {selectedYear}
@@ -381,8 +381,8 @@ function ViewReports() {
                 <p>No attendance records found</p>
               </div>
             ) : (
-              <div className="reports-table-wrapper">
-                <table className="reports-table" style={{ minWidth: "850px" }}>
+              <div className="rpt-table-wrapper">
+                <table className="rpt-table" style={{ minWidth: "850px" }}>
                   <thead>
                     <tr>
                       <th>#</th>
@@ -401,46 +401,46 @@ function ViewReports() {
                   <tbody>
                     {summaryData.map((emp, index) => (
                       <tr key={index}>
-                        <td className="td-index">{index + 1}</td>
-                        <td className="td-id">{emp.employeeID}</td>
-                        <td className="td-name">
-                          <div className="emp-avatar">
+                        <td className="rpt-td-index">{index + 1}</td>
+                        <td className="rpt-td-id">{emp.employeeID}</td>
+                        <td className="rpt-td-name">
+                          <div className="rpt-emp-avatar">
                             {emp.name?.charAt(0).toUpperCase() || "?"}
                           </div>
                           {emp.name}
                         </td>
                         <td>
-                          <span className="status-badge status-present">
+                          <span className="rpt-status-badge rpt-status-present">
                             {emp.present}
                           </span>
                         </td>
                         <td>
-                          <span className="status-badge status-late">
+                          <span className="rpt-status-badge rpt-status-late">
                             {emp.late}
                           </span>
                         </td>
                         <td>
-                          <span className="status-badge status-halfday">
+                          <span className="rpt-status-badge rpt-status-halfday">
                             {emp.halfDay}
                           </span>
                         </td>
                         <td>
-                          <span className="status-badge status-leave">
+                          <span className="rpt-status-badge rpt-status-leave">
                             {emp.leave || 0}
                           </span>
                         </td>
                         <td>
-                          <span className="status-badge status-absent">
+                          <span className="rpt-status-badge rpt-status-absent">
                             {emp.absent}
                           </span>
                         </td>
-                        <td className="td-deduction has-deduction">
+                        <td className="rpt-td-deduction rpt-has-deduction">
                           -{(emp.totalDeduction || 0).toLocaleString()}
                         </td>
-                        <td className="td-salary">
+                        <td className="rpt-td-salary">
                           {(emp.salary || 0).toLocaleString()}
                         </td>
-                        <td className="td-final-salary">
+                        <td className="rpt-td-final-salary">
                           {(
                             (emp.salary || 0) - (emp.totalDeduction || 0)
                           ).toLocaleString()}
@@ -453,13 +453,13 @@ function ViewReports() {
             ))}
 
           {activeTab === "detailed" && (
-            <div className="detailed-tab-content">
-              <div className="detailed-filter">
+            <div className="rpt-detailed-tab-content">
+              <div className="rpt-detailed-filter">
                 <label>Select Employee:</label>
-                <div className="dropdown-container">
+                <div className="rpt-dropdown-container">
                   <input
                     type="text"
-                    className="reports-select search-input"
+                    className="rpt-select rpt-search-input"
                     placeholder="🔍 Search Employee Name or ID..."
                     value={employeeSearchTerm}
                     onChange={(e) => {
@@ -473,12 +473,12 @@ function ViewReports() {
                     }
                   />
                   {isDropdownOpen && (
-                    <ul className="dropdown-list">
+                    <ul className="rpt-dropdown-list">
                       {filteredDropdownEmployees.length > 0 ? (
                         filteredDropdownEmployees.map((emp) => (
                           <li
                             key={emp._id}
-                            className="dropdown-item"
+                            className="rpt-dropdown-item"
                             onMouseDown={(e) => {
                               e.preventDefault();
                               setSelectedEmployee(emp._id);
@@ -488,16 +488,18 @@ function ViewReports() {
                               setIsDropdownOpen(false);
                             }}
                           >
-                            <span className="dropdown-emp-id">
+                            <span className="rpt-dropdown-emp-id">
                               {emp.employeeID}
                             </span>
-                            <span className="dropdown-emp-name">
+                            <span className="rpt-dropdown-emp-name">
                               {emp.EmployeeName}
                             </span>
                           </li>
                         ))
                       ) : (
-                        <li className="dropdown-empty">No employee found</li>
+                        <li className="rpt-dropdown-empty">
+                          No employee found
+                        </li>
                       )}
                     </ul>
                   )}
@@ -505,7 +507,7 @@ function ViewReports() {
               </div>
 
               {!selectedEmployee ? (
-                <div className="reports-empty">
+                <div className="rpt-empty-state">
                   <span>👤</span>
                   <h3>Select an employee</h3>
                   <p>
@@ -514,12 +516,12 @@ function ViewReports() {
                   </p>
                 </div>
               ) : detailedLoading ? (
-                <div className="reports-loading">
-                  <div className="loading-spinner"></div>
+                <div className="rpt-loading-state">
+                  <div className="rpt-loading-spinner"></div>
                   <p>Generating report...</p>
                 </div>
               ) : detailedAttendance.length === 0 ? (
-                <div className="reports-empty">
+                <div className="rpt-empty-state">
                   <span>📋</span>
                   <h3>No records found</h3>
                   <p>
@@ -528,15 +530,15 @@ function ViewReports() {
                   </p>
                 </div>
               ) : (
-                <div className="reports-table-wrapper">
-                  <div className="detailed-summary-card">
-                    <div className="summary-item">
+                <div className="rpt-table-wrapper">
+                  <div className="rpt-detailed-summary-card">
+                    <div className="rpt-summary-item">
                       <h4>Total Days</h4>
                       <p>{detailedAttendance.length}</p>
                     </div>
-                    <div className="summary-item">
+                    <div className="rpt-summary-item">
                       <h4>Present</h4>
-                      <p className="text-green">
+                      <p className="rpt-text-green">
                         {
                           detailedAttendance.filter(
                             (r) => r.status?.toLowerCase() === "present",
@@ -544,9 +546,9 @@ function ViewReports() {
                         }
                       </p>
                     </div>
-                    <div className="summary-item">
+                    <div className="rpt-summary-item">
                       <h4>Late</h4>
-                      <p className="text-orange">
+                      <p className="rpt-text-orange">
                         {
                           detailedAttendance.filter(
                             (r) => r.status?.toLowerCase() === "late",
@@ -554,9 +556,9 @@ function ViewReports() {
                         }
                       </p>
                     </div>
-                    <div className="summary-item">
+                    <div className="rpt-summary-item">
                       <h4>Half Day</h4>
-                      <p className="text-purple">
+                      <p className="rpt-text-purple">
                         {
                           detailedAttendance.filter((r) =>
                             r.status?.toLowerCase().includes("half"),
@@ -564,9 +566,9 @@ function ViewReports() {
                         }
                       </p>
                     </div>
-                    <div className="summary-item">
+                    <div className="rpt-summary-item">
                       <h4>Leave</h4>
-                      <p className="text-blue">
+                      <p className="rpt-text-blue">
                         {
                           detailedAttendance.filter(
                             (r) => r.status?.toLowerCase() === "leave",
@@ -574,9 +576,9 @@ function ViewReports() {
                         }
                       </p>
                     </div>
-                    <div className="summary-item">
+                    <div className="rpt-summary-item">
                       <h4>Absent</h4>
-                      <p className="text-red">
+                      <p className="rpt-text-red">
                         {
                           detailedAttendance.filter(
                             (r) => r.status?.toLowerCase() === "absent",
@@ -584,25 +586,25 @@ function ViewReports() {
                         }
                       </p>
                     </div>
-                    <div className="summary-item">
+                    <div className="rpt-summary-item">
                       <h4>Total Deduction</h4>
-                      <p className="text-red">
+                      <p className="rpt-text-red">
                         -{totalDeductionDetailed.toLocaleString()}
                       </p>
                     </div>
-                    <div className="summary-item">
+                    <div className="rpt-summary-item">
                       <h4>Base Salary</h4>
                       <p>Rs. {baseSalaryDetailed.toLocaleString()}</p>
                     </div>
-                    <div className="summary-item">
+                    <div className="rpt-summary-item">
                       <h4>Final Salary</h4>
-                      <p className="text-green">
+                      <p className="rpt-text-green">
                         Rs. {finalSalaryDetailed.toLocaleString()}
                       </p>
                     </div>
                   </div>
 
-                  <table className="reports-table">
+                  <table className="rpt-table">
                     <thead>
                       <tr>
                         <th>#</th>
@@ -617,7 +619,7 @@ function ViewReports() {
                         <tr
                           key={record._id || `virtual-${record.date}-${index}`}
                         >
-                          <td className="td-index">{index + 1}</td>
+                          <td className="rpt-td-index">{index + 1}</td>
                           <td>
                             {record.date
                               ? new Date(record.date).toLocaleDateString(
@@ -645,13 +647,13 @@ function ViewReports() {
                           </td>
                           <td>
                             <span
-                              className={`status-badge ${getStatusClass(record.status)}`}
+                              className={`rpt-status-badge ${getStatusClass(record.status)}`}
                             >
                               {record.status}
                             </span>
                           </td>
                           <td
-                            className={`td-deduction ${record.deduction > 0 ? "has-deduction" : ""}`}
+                            className={`rpt-td-deduction ${record.deduction > 0 ? "rpt-has-deduction" : ""}`}
                           >
                             {record.deduction > 0
                               ? `-${record.deduction.toLocaleString()}`
