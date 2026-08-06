@@ -155,9 +155,18 @@ function ViewAttendance() {
 
   return (
     <div className="attendance-wrapper">
-      <button className="attendance-back" onClick={() => navigate("/profile")}>
-        ← Back to Dashboard
-      </button>
+      <div className="attendance-topbar">
+        <button
+          className="attendance-back"
+          onClick={() => navigate("/profile")}
+        >
+          &larr; Back to Dashboard
+        </button>
+        <div className="topbar-brand">
+          <span className="brand-logo">N</span>
+          <h2>NutroAttend</h2>
+        </div>
+      </div>
 
       <div className="attendance-header">
         <div>

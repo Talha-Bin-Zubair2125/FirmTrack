@@ -2,8 +2,8 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "../stylings/AddEmployeeRecords.css";
 import API from "../src/api/axios";
+
 function AddEmployeeRecords() {
-  
   const navigate = useNavigate();
   const [employeeID, setEmployeeID] = useState("");
   const [EmployeeName, setEmployeeName] = useState("");
@@ -17,6 +17,7 @@ function AddEmployeeRecords() {
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
   const [loading, setLoading] = useState(false);
+
   const EmployeeInfo = async (e) => {
     e.preventDefault();
     setError("");
@@ -59,16 +60,24 @@ function AddEmployeeRecords() {
       setLoading(false);
     }
   };
+
   const passwordMatch = EmployeePassword === ConfirmPassword;
+
   return (
     <div className="addemployee-wrapper">
       <div className="addemployee-container">
-        <button
-          className="addemployee-back"
-          onClick={() => navigate("/profile")}
-        >
-          &larr; Back to Dashboard
-        </button>
+        <div className="addemployee-topbar">
+          <button
+            className="addemployee-back"
+            onClick={() => navigate("/profile")}
+          >
+            &larr; Back to Dashboard
+          </button>
+          <div className="topbar-brand">
+            <span className="brand-logo">N</span>
+            <h2>NutroAttend</h2>
+          </div>
+        </div>
         <div className="addemployee-card">
           <div className="addemployee-header">
             <div className="addemployee-icon">👤</div>
@@ -242,4 +251,5 @@ function AddEmployeeRecords() {
     </div>
   );
 }
+
 export default AddEmployeeRecords;
