@@ -1,37 +1,40 @@
+/* ================================================================= *
+ * Reports Page Styling                                              *
+ * ================================================================= */
+
 .reports-page-container {
   min-height: 100vh;
   background-color: #f8fafc;
-  font-family:
-    "Inter",
-    system-ui,
-    -apple-system,
-    sans-serif;
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
   color: #1e293b;
 }
 
 /* Top Navbar */
 .top-navbar {
-  background-color: #1a1a2e;
-  color: #ffffff;
+  background-color: #ffffff;
+  color: #0f172a;
   padding: 16px 32px;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  border-bottom: 1px solid #e2e8f0;
 }
 
 .reports-back {
   background: transparent;
-  border: none;
-  color: #94a3b8;
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  padding: 8px 16px;
+  color: #1e293b;
   font-size: 14px;
   font-weight: 500;
   cursor: pointer;
-  transition: color 0.2s ease;
+  transition: all 0.2s ease;
 }
 
 .reports-back:hover {
-  color: #ffffff;
+  background-color: #f8fafc;
+  border-color: #94a3b8;
 }
 
 .brand-logo {
@@ -55,7 +58,8 @@
 
 .brand-name {
   font-size: 18px;
-  font-weight: 600;
+  font-weight: 700;
+  color: #0f172a;
   letter-spacing: 0.5px;
 }
 
@@ -143,9 +147,7 @@
   font-size: 14px;
   font-weight: 600;
   cursor: pointer;
-  transition:
-    background-color 0.2s ease,
-    transform 0.1s ease;
+  transition: background-color 0.2s ease, transform 0.1s ease;
   display: flex;
   align-items: center;
   gap: 8px;
@@ -259,9 +261,7 @@
 }
 
 @keyframes spin {
-  to {
-    transform: rotate(360deg);
-  }
+  to { transform: rotate(360deg); }
 }
 
 /* Detailed View Filter & Search Dropdown */
@@ -492,21 +492,11 @@
 }
 
 /* Summary Card Text Color Helpers */
-.text-green {
-  color: #059669 !important;
-}
-.text-orange {
-  color: #d97706 !important;
-}
-.text-purple {
-  color: #7c3aed !important;
-}
-.text-blue {
-  color: #0284c7 !important;
-}
-.text-red {
-  color: #dc2626 !important;
-}
+.text-green { color: #059669 !important; }
+.text-orange { color: #d97706 !important; }
+.text-purple { color: #7c3aed !important; }
+.text-blue { color: #0284c7 !important; }
+.text-red { color: #dc2626 !important; }
 
 /* Responsive adjustments */
 @media (max-width: 768px) {
@@ -514,17 +504,17 @@
     flex-direction: column;
     align-items: stretch;
   }
-
+  
   .action-buttons {
     margin-left: 0;
     flex-direction: column;
   }
-
+  
   .detailed-filter {
     flex-direction: column;
     align-items: stretch;
   }
-
+  
   .dropdown-container {
     max-width: 100%;
   }
