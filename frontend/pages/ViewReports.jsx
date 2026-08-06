@@ -61,9 +61,9 @@ function ViewReports() {
         params: { month: selectedMonth, year: selectedYear },
         withCredentials: true,
       });
-      console.log("Summary report response:", res.data);
+      
       const records = res.data.summary || res.data.attendance || [];
-console.log("Summary report response:", res.data.summary);
+
       const sorted = records.sort((a, b) =>
         (a.employeeID || "").localeCompare(b.employeeID || "", undefined, {
           numeric: true,
@@ -107,7 +107,7 @@ console.log("Summary report response:", res.data.summary);
           },
           withCredentials: true,
         });
-        console.log("Detailed report response:", res.data);
+
         setDetailedAttendance(res.data.attendance || []);
       } catch (err) {
         console.error("Error fetching detailed report:", err);
@@ -406,9 +406,9 @@ console.log("Summary report response:", res.data.summary);
                         <td className="rpt-td-id">{emp.employeeID}</td>
                         <td className="rpt-td-name">
                           <div className="rpt-emp-avatar">
-                            {emp.name?.charAt(0).toUpperCase() || "?"}
+                            {emp.EmployeeName?.charAt(0).toUpperCase() || "?"}
                           </div>
-                          {emp.name}
+                          {emp.EmployeeName}
                         </td>
                         <td>
                           <span className="rpt-status-badge rpt-status-present">
@@ -484,7 +484,7 @@ console.log("Summary report response:", res.data.summary);
                               e.preventDefault();
                               setSelectedEmployee(emp._id);
                               setEmployeeSearchTerm(
-                                `${emp.employeeID} - ${emp.name}`,
+                                `${emp.employeeID} - ${emp.EmployeeName}`,
                               );
                               setIsDropdownOpen(false);
                             }}
@@ -493,7 +493,7 @@ console.log("Summary report response:", res.data.summary);
                               {emp.employeeID}
                             </span>
                             <span className="rpt-dropdown-emp-name">
-                              {emp.name}
+                              {emp.EmployeeName}
                             </span>
                           </li>
                         ))
@@ -542,7 +542,7 @@ console.log("Summary report response:", res.data.summary);
                       <p className="rpt-text-green">
                         {
                           detailedAttendance.filter(
-                            (r) => r.present?.toLowerCase() === "present",
+                            (r) => r.status?.toLowerCase() === "present",
                           ).length
                         }
                       </p>
