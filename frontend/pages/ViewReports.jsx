@@ -99,7 +99,7 @@ console.log("Summary report response:", res.data.summary);
 
       setDetailedLoading(true);
       try {
-        const res = await API.get("/admin/report/bymonth", {
+        const res = await API.get("/admin/report/getbymonth", {
           params: {
             month: selectedMonth,
             year: selectedYear,
@@ -107,7 +107,7 @@ console.log("Summary report response:", res.data.summary);
           },
           withCredentials: true,
         });
-
+        console.log("Detailed report response:", res.data);
         setDetailedAttendance(res.data.attendance || []);
       } catch (err) {
         console.error("Error fetching detailed report:", err);
@@ -484,7 +484,7 @@ console.log("Summary report response:", res.data.summary);
                               e.preventDefault();
                               setSelectedEmployee(emp._id);
                               setEmployeeSearchTerm(
-                                `${emp.employeeID} - ${emp.EmployeeName}`,
+                                `${emp.employeeID} - ${emp.name}`,
                               );
                               setIsDropdownOpen(false);
                             }}
@@ -493,7 +493,7 @@ console.log("Summary report response:", res.data.summary);
                               {emp.employeeID}
                             </span>
                             <span className="rpt-dropdown-emp-name">
-                              {emp.EmployeeName}
+                              {emp.name}
                             </span>
                           </li>
                         ))
@@ -542,7 +542,7 @@ console.log("Summary report response:", res.data.summary);
                       <p className="rpt-text-green">
                         {
                           detailedAttendance.filter(
-                            (r) => r.status?.toLowerCase() === "present",
+                            (r) => r.present?.toLowerCase() === "present",
                           ).length
                         }
                       </p>
