@@ -1,15 +1,10 @@
 .reports-page-container {
   min-height: 100vh;
   background-color: #f8fafc;
-  font-family:
-    "Inter",
-    system-ui,
-    -apple-system,
-    sans-serif;
+  font-family: "Inter", system-ui, -apple-system, sans-serif;
   color: #1e293b;
 }
 
-/* Top Navbar (Clean White Style) */
 .top-navbar {
   background-color: #ffffff;
   color: #0f172a;
@@ -65,14 +60,12 @@
   letter-spacing: 0.2px;
 }
 
-/* Main Wrapper */
 .reports-wrapper {
   max-width: 1320px;
   margin: 32px auto;
   padding: 0 24px;
 }
 
-/* Header */
 .reports-header {
   margin-bottom: 24px;
 }
@@ -89,7 +82,6 @@
   color: #64748b;
 }
 
-/* Error Banner */
 .reports-error {
   background-color: #fef2f2;
   border: 1px solid #fecaca;
@@ -103,7 +95,6 @@
   gap: 8px;
 }
 
-/* Filters Bar */
 .reports-filters {
   background: #ffffff;
   padding: 20px;
@@ -140,7 +131,6 @@
   margin-left: auto;
 }
 
-/* Primary Action Button (Matching Image 2 Blue) */
 .btn-generate {
   background-color: #3b82f6;
   color: #ffffff;
@@ -192,7 +182,6 @@
   animation: spin 0.6s linear infinite;
 }
 
-/* Modern & Attractive Tabs Styling */
 .reports-tabs {
   display: flex;
   gap: 8px;
@@ -224,7 +213,6 @@
   box-shadow: 0 2px 6px rgba(59, 130, 246, 0.3);
 }
 
-/* Content Area & Cards */
 .reports-content-area {
   background: #ffffff;
   border-radius: 12px;
@@ -233,7 +221,6 @@
   overflow: hidden;
 }
 
-/* Loading & Empty States */
 .reports-loading,
 .reports-empty {
   padding: 64px 24px;
@@ -275,7 +262,6 @@
   }
 }
 
-/* Detailed View Filter & Search Dropdown */
 .detailed-tab-content {
   padding: 24px;
 }
@@ -351,7 +337,6 @@
   font-size: 14px;
 }
 
-/* Detailed Summary Cards Grid */
 .detailed-summary-card {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
@@ -387,7 +372,6 @@
   margin: 0;
 }
 
-/* Tables Wrapper & Styling */
 .reports-table-wrapper {
   overflow-x: auto;
 }
@@ -420,7 +404,6 @@
   background-color: #f8fafc;
 }
 
-/* Table Cell Specifics */
 .td-index {
   color: #94a3b8;
   font-weight: 500;
@@ -465,7 +448,6 @@
   color: #059669;
 }
 
-/* Status Badges */
 .status-badge {
   display: inline-flex;
   align-items: center;
@@ -502,7 +484,6 @@
   color: #991b1b;
 }
 
-/* Summary Card Text Color Helpers */
 .text-green {
   color: #059669 !important;
 }
@@ -519,7 +500,6 @@
   color: #dc2626 !important;
 }
 
-/* Responsive adjustments */
 @media (max-width: 768px) {
   .reports-filters {
     flex-direction: column;
