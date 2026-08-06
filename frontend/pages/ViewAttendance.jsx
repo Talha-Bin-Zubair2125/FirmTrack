@@ -15,7 +15,6 @@ function ViewAttendance() {
   const [filterYear, setFilterYear] = useState(
     new Date().getFullYear().toString(),
   );
-  const [filterEmployeeID, setFilterEmployeeID] = useState("");
   const [filterStatus, setFilterStatus] = useState("");
 
   // Fetch attendance based on whether a month is selected
@@ -29,9 +28,6 @@ function ViewAttendance() {
           month: filterMonth,
           year: filterYear,
         });
-        if (filterEmployeeID.trim()) {
-          params.append("employeeID", filterEmployeeID.trim());
-        }
         response = await API.get(
           `/admin/attendance/getbymonth?${params.toString()}`,
           {
@@ -42,6 +38,7 @@ function ViewAttendance() {
         response = await API.get("/admin/attendance/getall", {
           withCredentials: true,
         });
+        console.log("Fetched all attendance records:", response.data);
       }
 
       const records = response.data.attendance || response.data.records || [];
@@ -56,7 +53,7 @@ function ViewAttendance() {
     } finally {
       setLoading(false);
     }
-  }, [filterMonth, filterYear, filterEmployeeID]);
+  }, [filterMonth, filterYear]);
 
   useEffect(() => {
     fetchAttendance();
@@ -115,7 +112,6 @@ function ViewAttendance() {
     setSearchName("");
     setFilterMonth("");
     setFilterYear(new Date().getFullYear().toString());
-    setFilterEmployeeID("");
     setFilterStatus("");
   };
 
@@ -196,15 +192,6 @@ function ViewAttendance() {
             />
           </div>
 
-          <input
-            type="text"
-            className="filter-input"
-            placeholder="Specific Emp ID (Optional)"
-            value={filterEmployeeID}
-            onChange={(e) => setFilterEmployeeID(e.target.value)}
-            title="Provide specific Employee ID when filtering by month"
-          />
-
           <select
             value={filterMonth}
             onChange={(e) => setFilterMonth(e.target.value)}
@@ -241,7 +228,7 @@ function ViewAttendance() {
             <option value="leave">Leave</option>
           </select>
 
-          {(searchName || filterMonth || filterEmployeeID || filterStatus) && (
+          {(searchName || filterMonth || filterStatus) && (
             <button className="filter-clear" onClick={clearFilters}>
               ✕ Clear
             </button>
