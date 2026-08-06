@@ -381,7 +381,7 @@ function ViewReports() {
               </div>
             ) : (
               <div className="reports-table-wrapper">
-                <table className="reports-table" style={{ minWidth: "850px" }}>
+                <table className="reports-table">
                   <thead>
                     <tr>
                       <th>#</th>
@@ -527,7 +527,7 @@ function ViewReports() {
                   </p>
                 </div>
               ) : (
-                <div className="reports-table-wrapper">
+                <>
                   <div className="detailed-summary-card">
                     <div className="summary-item">
                       <h4>Total Days</h4>
@@ -601,66 +601,69 @@ function ViewReports() {
                     </div>
                   </div>
 
-                  <table className="reports-table">
-                    <thead>
-                      <tr>
-                        <th>#</th>
-                        <th>Date</th>
-                        <th>Check In Time</th>
-                        <th>Status</th>
-                        <th>Deduction (PKR)</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {detailedAttendance.map((record, index) => (
-                        <tr
-                          key={record._id || `virtual-${record.date}-${index}`}
-                        >
-                          <td className="td-index">{index + 1}</td>
-                          <td>
-                            {record.date
-                              ? new Date(record.date).toLocaleDateString(
-                                  "en-PK",
-                                  {
-                                    timeZone: "Asia/Karachi",
-                                    weekday: "short",
-                                    day: "numeric",
-                                    month: "short",
-                                  },
-                                )
-                              : "N/A"}
-                          </td>
-                          <td>
-                            {record.checkInTime
-                              ? new Date(record.checkInTime).toLocaleTimeString(
-                                  "en-PK",
-                                  {
+                  <div className="reports-table-wrapper">
+                    <table className="reports-table">
+                      <thead>
+                        <tr>
+                          <th>#</th>
+                          <th>Date</th>
+                          <th>Check In Time</th>
+                          <th>Status</th>
+                          <th>Deduction (PKR)</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {detailedAttendance.map((record, index) => (
+                          <tr
+                            key={
+                              record._id || `virtual-${record.date}-${index}`
+                            }
+                          >
+                            <td className="td-index">{index + 1}</td>
+                            <td>
+                              {record.date
+                                ? new Date(record.date).toLocaleDateString(
+                                    "en-PK",
+                                    {
+                                      timeZone: "Asia/Karachi",
+                                      weekday: "short",
+                                      day: "numeric",
+                                      month: "short",
+                                    },
+                                  )
+                                : "N/A"}
+                            </td>
+                            <td>
+                              {record.checkInTime
+                                ? new Date(
+                                    record.checkInTime,
+                                  ).toLocaleTimeString("en-PK", {
                                     timeZone: "Asia/Karachi",
                                     hour: "2-digit",
                                     minute: "2-digit",
-                                  },
-                                )
-                              : "N/A"}
-                          </td>
-                          <td>
-                            <span
-                              className={`status-badge ${getStatusClass(record.status)}`}
+                                  })
+                                : "N/A"}
+                            </td>
+                            <td>
+                              <span
+                                className={`status-badge ${getStatusClass(record.status)}`}
+                              >
+                                {record.status}
+                              </span>
+                            </td>
+                            <td
+                              className={`td-deduction ${record.deduction > 0 ? "has-deduction" : ""}`}
                             >
-                              {record.status}
-                            </span>
-                          </td>
-                          <td
-                            className={`td-deduction ${record.deduction > 0 ? "has-deduction" : ""}`}
-                          >
-                            {record.deduction > 0
-                              ? `-${record.deduction.toLocaleString()}`
-                              : "0"}
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
+                              {record.deduction > 0
+                                ? `-${record.deduction.toLocaleString()}`
+                                : "0"}
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                </>
               )}
             </div>
           )}
