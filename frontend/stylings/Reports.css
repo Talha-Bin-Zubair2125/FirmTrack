@@ -1,24 +1,70 @@
-.reports-wrapper {
-  padding: 24px;
-  max-width: 1400px;
-  margin: 0 auto;
+.reports-page-container {
+  min-height: 100vh;
+  background-color: #f3f4f6;
   font-family: "Inter", sans-serif;
   color: #333;
 }
 
+/* Full-width Top Navbar */
+.top-navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #ffffff;
+  padding: 14px 24px;
+  border-bottom: 1px solid #e5e7eb;
+  width: 100%;
+  box-sizing: border-box;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
 .reports-back {
   background: none;
-  border: none;
-  color: #4f46e5;
-  font-weight: 600;
+  border: 1px solid #d1d5db;
+  padding: 6px 14px;
+  border-radius: 8px;
+  color: #374151;
+  font-weight: 500;
   cursor: pointer;
-  margin-bottom: 16px;
   font-size: 14px;
-  padding: 0;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  transition: all 0.2s;
 }
 
 .reports-back:hover {
-  text-decoration: underline;
+  background-color: #f3f4f6;
+  border-color: #9ca3af;
+}
+
+.brand-logo {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 700;
+  font-size: 16px;
+  color: #111827;
+}
+
+.brand-icon {
+  background-color: #4f46e5;
+  color: white;
+  width: 28px;
+  height: 28px;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  font-weight: 700;
+}
+
+/* Main Content Wrapper */
+.reports-wrapper {
+  padding: 24px;
+  max-width: 1400px;
+  margin: 0 auto;
 }
 
 .reports-header {
@@ -245,22 +291,18 @@
   background-color: #def7ec;
   color: #03543f;
 }
-
 .status-late {
   background-color: #fdf6b2;
   color: #723b13;
 }
-
 .status-halfday {
   background-color: #edebfe;
   color: #5521b5;
 }
-
 .status-leave {
   background-color: #e1effe;
   color: #1e429f;
 }
-
 .status-absent {
   background-color: #fde8e8;
   color: #9b1c1c;
@@ -274,7 +316,6 @@
 .td-salary {
   font-weight: 600;
 }
-
 .td-final-salary {
   font-weight: 700;
   color: #059669;
@@ -342,7 +383,6 @@
   color: #6b7280;
   font-weight: 500;
 }
-
 .dropdown-emp-name {
   color: #111827;
   font-weight: 600;
