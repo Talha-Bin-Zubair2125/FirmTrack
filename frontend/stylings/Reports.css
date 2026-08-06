@@ -1,15 +1,15 @@
-/* ================================================================= *
- * Reports Page Styling                                              *
- * ================================================================= */
-
 .reports-page-container {
   min-height: 100vh;
   background-color: #f8fafc;
-  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  font-family:
+    "Inter",
+    system-ui,
+    -apple-system,
+    sans-serif;
   color: #1e293b;
 }
 
-/* Top Navbar */
+/* Top Navbar (Clean White Style) */
 .top-navbar {
   background-color: #ffffff;
   color: #0f172a;
@@ -18,14 +18,15 @@
   justify-content: space-between;
   align-items: center;
   border-bottom: 1px solid #e2e8f0;
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.02);
 }
 
 .reports-back {
-  background: transparent;
+  background-color: #ffffff;
   border: 1px solid #cbd5e1;
   border-radius: 8px;
   padding: 8px 16px;
-  color: #1e293b;
+  color: #334155;
   font-size: 14px;
   font-weight: 500;
   cursor: pointer;
@@ -35,6 +36,7 @@
 .reports-back:hover {
   background-color: #f8fafc;
   border-color: #94a3b8;
+  color: #0f172a;
 }
 
 .brand-logo {
@@ -44,7 +46,7 @@
 }
 
 .brand-icon {
-  background-color: #6366f1;
+  background-color: #3b82f6;
   color: #ffffff;
   width: 32px;
   height: 32px;
@@ -60,7 +62,7 @@
   font-size: 18px;
   font-weight: 700;
   color: #0f172a;
-  letter-spacing: 0.5px;
+  letter-spacing: 0.2px;
 }
 
 /* Main Wrapper */
@@ -128,8 +130,8 @@
 }
 
 .reports-select:focus {
-  border-color: #6366f1;
-  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.15);
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
 }
 
 .action-buttons {
@@ -138,8 +140,9 @@
   margin-left: auto;
 }
 
+/* Primary Action Button (Matching Image 2 Blue) */
 .btn-generate {
-  background-color: #6366f1;
+  background-color: #3b82f6;
   color: #ffffff;
   border: none;
   padding: 10px 20px;
@@ -147,14 +150,19 @@
   font-size: 14px;
   font-weight: 600;
   cursor: pointer;
-  transition: background-color 0.2s ease, transform 0.1s ease;
+  transition:
+    background-color 0.2s ease,
+    transform 0.1s ease,
+    box-shadow 0.2s ease;
   display: flex;
   align-items: center;
   gap: 8px;
+  box-shadow: 0 1px 2px rgba(59, 130, 246, 0.2);
 }
 
 .btn-generate:hover:not(:disabled) {
-  background-color: #4f46e5;
+  background-color: #2563eb;
+  box-shadow: 0 4px 6px -1px rgba(59, 130, 246, 0.3);
 }
 
 .btn-generate:active:not(:disabled) {
@@ -168,6 +176,7 @@
 
 .btn-pdf {
   background-color: #1e293b;
+  color: #ffffff;
 }
 
 .btn-pdf:hover:not(:disabled) {
@@ -183,19 +192,19 @@
   animation: spin 0.6s linear infinite;
 }
 
-/* Tabs */
+/* Modern & Attractive Tabs Styling */
 .reports-tabs {
   display: flex;
-  gap: 12px;
+  gap: 8px;
   margin-bottom: 24px;
   border-bottom: 1px solid #e2e8f0;
   padding-bottom: 12px;
 }
 
 .tab-btn {
-  background: transparent;
-  border: none;
-  padding: 10px 20px;
+  background: #f1f5f9;
+  border: 1px solid transparent;
+  padding: 9px 20px;
   font-size: 14px;
   font-weight: 600;
   color: #64748b;
@@ -205,14 +214,14 @@
 }
 
 .tab-btn:hover {
-  background-color: #f1f5f9;
-  color: #1e293b;
+  background-color: #e2e8f0;
+  color: #0f172a;
 }
 
 .tab-btn.active {
-  background-color: #1e293b;
+  background-color: #3b82f6;
   color: #ffffff;
-  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
+  box-shadow: 0 2px 6px rgba(59, 130, 246, 0.3);
 }
 
 /* Content Area & Cards */
@@ -236,7 +245,7 @@
   width: 40px;
   height: 40px;
   border: 3px solid #e2e8f0;
-  border-top-color: #6366f1;
+  border-top-color: #3b82f6;
   border-radius: 50%;
   animation: spin 0.8s linear infinite;
   margin: 0 auto 16px auto;
@@ -261,7 +270,9 @@
 }
 
 @keyframes spin {
-  to { transform: rotate(360deg); }
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 /* Detailed View Filter & Search Dropdown */
@@ -326,7 +337,7 @@
 
 .dropdown-emp-id {
   font-weight: 600;
-  color: #6366f1;
+  color: #3b82f6;
 }
 
 .dropdown-emp-name {
@@ -431,8 +442,8 @@
   width: 28px;
   height: 28px;
   border-radius: 50%;
-  background-color: #e0e7ff;
-  color: #4f46e5;
+  background-color: #eff6ff;
+  color: #3b82f6;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -492,11 +503,21 @@
 }
 
 /* Summary Card Text Color Helpers */
-.text-green { color: #059669 !important; }
-.text-orange { color: #d97706 !important; }
-.text-purple { color: #7c3aed !important; }
-.text-blue { color: #0284c7 !important; }
-.text-red { color: #dc2626 !important; }
+.text-green {
+  color: #059669 !important;
+}
+.text-orange {
+  color: #d97706 !important;
+}
+.text-purple {
+  color: #7c3aed !important;
+}
+.text-blue {
+  color: #0284c7 !important;
+}
+.text-red {
+  color: #dc2626 !important;
+}
 
 /* Responsive adjustments */
 @media (max-width: 768px) {
@@ -504,17 +525,17 @@
     flex-direction: column;
     align-items: stretch;
   }
-  
+
   .action-buttons {
     margin-left: 0;
     flex-direction: column;
   }
-  
+
   .detailed-filter {
     flex-direction: column;
     align-items: stretch;
   }
-  
+
   .dropdown-container {
     max-width: 100%;
   }
