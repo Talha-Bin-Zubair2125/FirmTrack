@@ -282,6 +282,14 @@
   color: #991b1b;
 }
 
+.status-leave {
+  background-color: #ebf8ff;
+  color: #3182ce;
+}
+
+.text-blue {
+  color: #3182ce !important;
+}
 .detailed-tab-content {
   display: flex;
   flex-direction: column;

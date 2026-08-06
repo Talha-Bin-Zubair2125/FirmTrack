@@ -39,7 +39,6 @@ function ViewReports() {
     "December",
   ];
 
-  // Fetch employee list for filters and dropdowns
   useEffect(() => {
     const fetchEmployees = async () => {
       try {
@@ -54,7 +53,6 @@ function ViewReports() {
     fetchEmployees();
   }, []);
 
-  // Fetch Monthly Summary Report from Controller
   const fetchSummaryReport = useCallback(async () => {
     setLoading(true);
     setError("");
@@ -65,7 +63,6 @@ function ViewReports() {
       });
       const records = res.data.summary || res.data.attendance || [];
 
-      // Sort by Employee ID numerically/alphabetically
       const sorted = records.sort((a, b) =>
         (a.employeeID || "").localeCompare(b.employeeID || "", undefined, {
           numeric: true,
@@ -87,7 +84,6 @@ function ViewReports() {
     }
   }, [activeTab, fetchSummaryReport]);
 
-  // Fetch Detailed Report for a specific employee
   const fetchDetailedReport = useCallback(
     async (employeeId) => {
       if (!employeeId) {
@@ -150,6 +146,8 @@ function ViewReports() {
       case "half-day":
       case "halfday":
         return "status-halfday";
+      case "leave":
+        return "status-leave";
       default:
         return "";
     }
@@ -164,7 +162,6 @@ function ViewReports() {
   );
   const finalSalaryDetailed = baseSalaryDetailed - totalDeductionDetailed;
 
-  // PDF Export Handler
   const handleDownloadPDF = () => {
     try {
       const doc = new jsPDF();
@@ -189,6 +186,7 @@ function ViewReports() {
               "Present",
               "Late",
               "Half Day",
+              "Leave",
               "Absent",
               "Deduction",
               "Base Salary",
@@ -202,6 +200,7 @@ function ViewReports() {
             emp.present,
             emp.late,
             emp.halfDay,
+            emp.leave || 0,
             emp.absent,
             `-${(emp.totalDeduction || 0).toLocaleString()}`,
             (emp.salary || 0).toLocaleString(),
@@ -374,7 +373,7 @@ function ViewReports() {
             </div>
           ) : (
             <div className="reports-table-wrapper">
-              <table className="reports-table" style={{ minWidth: "750px" }}>
+              <table className="reports-table" style={{ minWidth: "850px" }}>
                 <thead>
                   <tr>
                     <th>#</th>
@@ -383,6 +382,7 @@ function ViewReports() {
                     <th>Present</th>
                     <th>Late</th>
                     <th>Half Day</th>
+                    <th>Leave</th>
                     <th>Absent</th>
                     <th>Total Deduction</th>
                     <th>Base Salary</th>
@@ -413,6 +413,11 @@ function ViewReports() {
                       <td>
                         <span className="status-badge status-halfday">
                           {emp.halfDay}
+                        </span>
+                      </td>
+                      <td>
+                        <span className="status-badge status-leave">
+                          {emp.leave || 0}
                         </span>
                       </td>
                       <td>
@@ -549,6 +554,16 @@ function ViewReports() {
                     </p>
                   </div>
                   <div className="summary-item">
+                    <h4>Leave</h4>
+                    <p className="text-blue">
+                      {
+                        detailedAttendance.filter(
+                          (r) => r.status?.toLowerCase() === "leave",
+                        ).length
+                      }
+                    </p>
+                  </div>
+                  <div className="summary-item">
                     <h4>Absent</h4>
                     <p className="text-red">
                       {
@@ -617,9 +632,7 @@ function ViewReports() {
                         </td>
                         <td>
                           <span
-                            className={`status-badge ${getStatusClass(
-                              record.status,
-                            )}`}
+                            className={`status-badge ${getStatusClass(record.status)}`}
                           >
                             {record.status}
                           </span>

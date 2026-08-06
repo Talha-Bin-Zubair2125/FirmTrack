@@ -18,14 +18,13 @@ function ViewAttendance() {
   const [filterEmployeeID, setFilterEmployeeID] = useState("");
   const [filterStatus, setFilterStatus] = useState("");
 
-  // Fetch attendance based on whether a month is selected (matches getAttendanceByMonth vs getAllAttendance)
+  // Fetch attendance based on whether a month is selected
   const fetchAttendance = useCallback(async () => {
     setLoading(true);
     setError("");
     try {
       let response;
       if (filterMonth) {
-        // Uses getAttendanceByMonth controller if a month is specified
         const params = new URLSearchParams({
           month: filterMonth,
           year: filterYear,
@@ -40,20 +39,20 @@ function ViewAttendance() {
           },
         );
       } else {
-        // Uses getAllAttendance controller by default
         response = await API.get("/admin/attendance/getall", {
           withCredentials: true,
         });
       }
 
-      const validRecords = (response.data.attendance || []).filter(
+      const records = response.data.attendance || response.data.records || [];
+      const validRecords = records.filter(
         (record) =>
           record.employeeId !== null && record.employeeId !== undefined,
       );
       setAttendance(validRecords);
-    } catch (error) {
+    } catch (err) {
       setError("Failed to fetch attendance records. Please try again.");
-      console.error("Error fetching attendance:", error);
+      console.error("Error fetching attendance:", err);
     } finally {
       setLoading(false);
     }
@@ -122,7 +121,8 @@ function ViewAttendance() {
   };
 
   const getStatusClass = (status) => {
-    switch (status) {
+    const s = status?.toLowerCase().trim() || "";
+    switch (s) {
       case "present":
         return "status-present";
       case "late":
@@ -130,6 +130,7 @@ function ViewAttendance() {
       case "absent":
         return "status-absent";
       case "half-day":
+      case "halfday":
         return "status-halfday";
       case "leave":
         return "status-leave";
@@ -314,7 +315,5 @@ function ViewAttendance() {
     </div>
   );
 }
-
-ViewAttendance.propTypes = {};
 
 export default ViewAttendance;
