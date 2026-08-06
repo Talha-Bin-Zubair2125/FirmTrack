@@ -59,7 +59,7 @@ function ViewReports() {
     setLoading(true);
     setError("");
     try {
-      const res = await API.get("/admin/report/monthly-summary", {
+      const res = await API.get("/admin/report/bymonth", {
         params: { month: selectedMonth, year: selectedYear },
         withCredentials: true,
       });
