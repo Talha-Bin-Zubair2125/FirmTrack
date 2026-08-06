@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
-import "../stylings/Attendance.css";
+import "../stylings/ViewAttendance.css";
 import API from "../src/api/axios";
 
 function ViewAttendance() {
