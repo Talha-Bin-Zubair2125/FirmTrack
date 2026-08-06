@@ -20,6 +20,12 @@ function ViewReports() {
 
   const [detailedAttendance, setDetailedAttendance] = useState([]);
   const [detailedLoading, setDetailedLoading] = useState(false);
+  // NEW: tracks when the backend responded with the aggregate `summary`
+  // shape instead of real per-day records for the employeeID filter.
+  // This is a distinct condition from "genuinely no attendance this month"
+  // and needs a backend fix to /admin/report/bymonth (it currently ignores
+  // the employeeID query param and always returns the monthly aggregate).
+  const [detailedApiMismatch, setDetailedApiMismatch] = useState(false);
 
   const [employeeSearchTerm, setEmployeeSearchTerm] = useState("");
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
@@ -38,6 +44,14 @@ function ViewReports() {
     "November",
     "December",
   ];
+
+  // Small helper: your API is inconsistent about employee-name and
+  // salary field casing across endpoints (EmployeeName/name,
+  // EmployeeSalary/salary). Centralize the fallback so every place that
+  // reads a name/salary is protected the same way.
+  const getEmployeeName = (emp) => emp?.EmployeeName || emp?.name || "Unknown";
+  const getEmployeeSalary = (emp) =>
+    Number(emp?.EmployeeSalary ?? emp?.salary ?? 0);
 
   useEffect(() => {
     const fetchEmployees = async () => {
@@ -61,7 +75,6 @@ function ViewReports() {
         params: { month: selectedMonth, year: selectedYear },
         withCredentials: true,
       });
-      
       const records = res.data.summary || res.data.attendance || [];
 
       const sorted = records.sort((a, b) =>
@@ -89,15 +102,18 @@ function ViewReports() {
     async (employeeId) => {
       if (!employeeId) {
         setDetailedAttendance([]);
+        setDetailedApiMismatch(false);
         return;
       }
       const emp = employees.find((e) => e._id === employeeId);
       if (!emp?.employeeID) {
         setDetailedAttendance([]);
+        setDetailedApiMismatch(false);
         return;
       }
 
       setDetailedLoading(true);
+      setDetailedApiMismatch(false);
       try {
         const res = await API.get("/admin/report/bymonth", {
           params: {
@@ -108,7 +124,25 @@ function ViewReports() {
           withCredentials: true,
         });
 
-        setDetailedAttendance(res.data.attendance || []);
+        if (Array.isArray(res.data.attendance)) {
+          // Correct shape: real per-day records.
+          setDetailedAttendance(res.data.attendance);
+        } else if (Array.isArray(res.data.summary)) {
+          // Backend ignored the employeeID filter and sent the monthly
+          // aggregate instead of daily records. There is no per-day data
+          // (date / checkInTime / status) in this payload to render, so
+          // we surface that distinctly rather than showing a misleading
+          // generic "no attendance" message.
+          console.warn(
+            "bymonth?employeeID= returned the aggregate `summary` array " +
+              "instead of per-day `attendance` records. Backend route " +
+              "needs to branch on the employeeID param.",
+          );
+          setDetailedAttendance([]);
+          setDetailedApiMismatch(true);
+        } else {
+          setDetailedAttendance([]);
+        }
       } catch (err) {
         console.error("Error fetching detailed report:", err);
         setDetailedAttendance([]);
@@ -127,9 +161,9 @@ function ViewReports() {
 
   const filteredDropdownEmployees = employees.filter(
     (emp) =>
-      (emp.EmployeeName?.toLowerCase() || "").includes(
-        employeeSearchTerm.toLowerCase(),
-      ) ||
+      getEmployeeName(emp)
+        .toLowerCase()
+        .includes(employeeSearchTerm.toLowerCase()) ||
       (emp.employeeID?.toLowerCase() || "").includes(
         employeeSearchTerm.toLowerCase(),
       ),
@@ -156,7 +190,7 @@ function ViewReports() {
 
   const currentDetailedEmp =
     employees.find((e) => e._id === selectedEmployee) || {};
-  const baseSalaryDetailed = Number(currentDetailedEmp.EmployeeSalary || 0);
+  const baseSalaryDetailed = getEmployeeSalary(currentDetailedEmp);
   const totalDeductionDetailed = detailedAttendance.reduce(
     (sum, r) => sum + (r.deduction || 0),
     0,
@@ -197,7 +231,7 @@ function ViewReports() {
           body: summaryData.map((emp, i) => [
             i + 1,
             emp.employeeID,
-            emp.name,
+            getEmployeeName(emp),
             emp.present,
             emp.late,
             emp.halfDay,
@@ -221,7 +255,7 @@ function ViewReports() {
           alert("No records found!");
           return;
         }
-        const empName = currentDetailedEmp.EmployeeName || "Employee";
+        const empName = getEmployeeName(currentDetailedEmp);
         const empIdText = currentDetailedEmp.employeeID || "";
 
         doc.setFontSize(16);
@@ -406,9 +440,9 @@ function ViewReports() {
                         <td className="rpt-td-id">{emp.employeeID}</td>
                         <td className="rpt-td-name">
                           <div className="rpt-emp-avatar">
-                            {emp.name?.charAt(0).toUpperCase() || "?"}
+                            {getEmployeeName(emp).charAt(0).toUpperCase()}
                           </div>
-                          {emp.name}
+                          {getEmployeeName(emp)}
                         </td>
                         <td>
                           <span className="rpt-status-badge rpt-status-present">
@@ -484,7 +518,7 @@ function ViewReports() {
                               e.preventDefault();
                               setSelectedEmployee(emp._id);
                               setEmployeeSearchTerm(
-                                `${emp.employeeID} - ${emp.EmployeeName}`,
+                                `${emp.employeeID} - ${getEmployeeName(emp)}`,
                               );
                               setIsDropdownOpen(false);
                             }}
@@ -493,7 +527,7 @@ function ViewReports() {
                               {emp.employeeID}
                             </span>
                             <span className="rpt-dropdown-emp-name">
-                              {emp.EmployeeName}
+                              {getEmployeeName(emp)}
                             </span>
                           </li>
                         ))
@@ -520,6 +554,17 @@ function ViewReports() {
                 <div className="rpt-loading-state">
                   <div className="rpt-loading-spinner"></div>
                   <p>Generating report...</p>
+                </div>
+              ) : detailedApiMismatch ? (
+                <div className="rpt-empty-state">
+                  <span>⚠</span>
+                  <h3>Daily records unavailable</h3>
+                  <p>
+                    The server returned the monthly summary instead of
+                    day-by-day records for this employee. This needs a fix in
+                    the /admin/report/bymonth backend route so it returns
+                    per-day attendance when an employeeID filter is supplied.
+                  </p>
                 </div>
               ) : detailedAttendance.length === 0 ? (
                 <div className="rpt-empty-state">
