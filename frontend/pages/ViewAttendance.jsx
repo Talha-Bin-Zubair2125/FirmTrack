@@ -88,7 +88,6 @@ function ViewAttendance() {
       .toLowerCase();
   };
 
-  // Client-side text search and status filtering on top of fetched records
   const applyFilters = useCallback(() => {
     let result = [...attendance];
 

@@ -3,8 +3,8 @@ import { AuthContext } from "../context/authContext";
 import { useNavigate } from "react-router-dom";
 import "../stylings/ProfileScreen.css";
 import API from "../src/api/axios";
+
 function ProfileScreen() {
-  
   const { adminInfo, setAdminInfo } = useContext(AuthContext);
   const navigate = useNavigate();
   const [employeeRecords, setemployeeRecords] = useState([]);
@@ -21,11 +21,13 @@ function ProfileScreen() {
   const [prevLeave, setPrevLeave] = useState(0);
   const [toastMessage, setToastMessage] = useState("");
   const toastTimeoutRef = useRef(null);
+
   const showToast = (message) => {
     setToastMessage(message);
     if (toastTimeoutRef.current) clearTimeout(toastTimeoutRef.current);
     toastTimeoutRef.current = setTimeout(() => setToastMessage(""), 3000);
   };
+
   const fetchDashboardStats = useCallback(async () => {
     try {
       const empRes = await API.get("/admin/employees/getallemployees", {
@@ -34,20 +36,24 @@ function ProfileScreen() {
       const allEmployees = empRes.data.employees || [];
       setemployeeRecords(allEmployees);
       setTotalEmployees(allEmployees.length);
+
       const attRes = await API.get("/admin/attendance/getall", {
         withCredentials: true,
       });
       const allAttendance = attRes.data.attendance || [];
+
       const getPKTDateString = (dateObj) => {
         return dateObj.toLocaleDateString("en-CA", {
           timeZone: "Asia/Karachi",
         });
       };
+
       const now = new Date();
       const todayStr = getPKTDateString(now);
       const prevDate = new Date();
       prevDate.setDate(prevDate.getDate() - 1);
       const prevDateStr = getPKTDateString(prevDate);
+
       let present = 0,
         late = 0,
         halfDay = 0,
@@ -58,10 +64,12 @@ function ProfileScreen() {
         pHalf = 0,
         pAbs = 0,
         pLeave = 0;
+
       allAttendance.forEach((record) => {
         if (!record.date) return;
         const recDateStr = getPKTDateString(new Date(record.date));
         const status = record.status?.toLowerCase().trim() || "";
+
         if (recDateStr === todayStr) {
           if (status === "present") present++;
           else if (status === "late") late++;
@@ -76,6 +84,7 @@ function ProfileScreen() {
           else if (status === "leave") pLeave++;
         }
       });
+
       setPresentToday(present);
       setLateToday(late);
       setHalfDayToday(halfDay);
@@ -92,12 +101,14 @@ function ProfileScreen() {
       showToast("Error fetching data!");
     }
   }, []);
+
   useEffect(() => {
     fetchDashboardStats();
     return () => {
       if (toastTimeoutRef.current) clearTimeout(toastTimeoutRef.current);
     };
   }, [fetchDashboardStats]);
+
   const handleLogout = async () => {
     try {
       await API.post("/auth/admin/logout", {}, { withCredentials: true });
@@ -108,6 +119,7 @@ function ProfileScreen() {
       showToast("Error logging out.");
     }
   };
+
   return (
     <div className="profile-wrapper">
       {toastMessage && <div className="toast-notification">{toastMessage}</div>}
@@ -298,4 +310,5 @@ function ProfileScreen() {
     </div>
   );
 }
+
 export default ProfileScreen;

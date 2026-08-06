@@ -9,6 +9,7 @@ const {
   markAttendance,
   getAllAttendance,
   getAttendanceByMonth,
+  getMonthlySummaryReport,
   getTodayAttendanceStatus,
   backfillAbsentForDate,
 } = attendanceController;
@@ -18,7 +19,8 @@ router.post("/mark", markAttendance);
 
 // Web Admin
 router.get("/attendance/getall", protect, getAllAttendance);
-router.get("/report/bymonth", getAttendanceByMonth);
+router.get("/attendance/getbymonth", getAttendanceByMonth);
+router.get("/report/bymonth", getMonthlySummaryReport);
 // Mobile App: Get Today's Attendance Status
 router.get("/attendance/status/:employeeID", getTodayAttendanceStatus);
 router.post("/employees/change-password", employeeController.changePassword);
@@ -35,11 +37,11 @@ router.get("/absent/markabsent", cronAuth, async (req, res) => {
       // Default: yesterday, in Pakistan time
       const now = new Date();
       const pkDate = new Date(
-        now.toLocaleString("en-US", { timeZone: "Asia/Karachi" })
+        now.toLocaleString("en-US", { timeZone: "Asia/Karachi" }),
       );
-      
+
       pkDate.setDate(pkDate.getDate() - 1);
-      
+
       // en-CA gives YYYY-MM-DD format
       targetDate = pkDate.toLocaleDateString("en-CA");
     }
