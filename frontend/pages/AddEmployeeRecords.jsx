@@ -78,6 +78,7 @@ function AddEmployeeRecords() {
             <h2>NutroAttend</h2>
           </div>
         </div>
+
         <div className="addemployee-card">
           <div className="addemployee-header">
             <div className="addemployee-icon">👤</div>
@@ -86,16 +87,19 @@ function AddEmployeeRecords() {
               <p>Fill in the details to add a new employee record</p>
             </div>
           </div>
+
           {error && (
             <div className="addemployee-notification error">
               <span>⚠</span> {error}
             </div>
           )}
+
           {success && (
             <div className="addemployee-notification success">
               <span>✓</span> {success}
             </div>
           )}
+
           <form className="addemployee-form" onSubmit={EmployeeInfo}>
             <div className="addemployee-grid">
               <div className="addemployee-field">
@@ -108,6 +112,7 @@ function AddEmployeeRecords() {
                   required
                 />
               </div>
+
               <div className="addemployee-field">
                 <label>Full Name</label>
                 <input
@@ -118,6 +123,7 @@ function AddEmployeeRecords() {
                   required
                 />
               </div>
+
               <div className="addemployee-field">
                 <label>Email Address</label>
                 <input
@@ -128,6 +134,7 @@ function AddEmployeeRecords() {
                   required
                 />
               </div>
+
               <div className="addemployee-field">
                 <label>Phone Number</label>
                 <input
@@ -138,6 +145,7 @@ function AddEmployeeRecords() {
                   required
                 />
               </div>
+
               <div className="addemployee-field">
                 <label>Base Salary (PKR)</label>
                 <input
@@ -148,6 +156,7 @@ function AddEmployeeRecords() {
                   required
                 />
               </div>
+
               <div className="addemployee-field">
                 <label>Role / Position</label>
                 <select
@@ -163,6 +172,7 @@ function AddEmployeeRecords() {
                   <option value="Accounts Officer">Accounts Officer</option>
                 </select>
               </div>
+
               <div className="addemployee-field full-width">
                 <div className="password-section-header">
                   <label>🔑 Login Credentials</label>
@@ -171,6 +181,7 @@ function AddEmployeeRecords() {
                   </span>
                 </div>
               </div>
+
               <div className="addemployee-field">
                 <label>Default Password</label>
                 <div className="password-input-wrapper">
@@ -190,6 +201,7 @@ function AddEmployeeRecords() {
                   </button>
                 </div>
               </div>
+
               <div className="addemployee-field">
                 <label>Confirm Password</label>
                 <div className="password-input-wrapper">
@@ -215,6 +227,7 @@ function AddEmployeeRecords() {
                   <p className="field-error">Passwords do not match</p>
                 )}
               </div>
+
               <div className="addemployee-field full-width">
                 <div className="default-password-info">
                   <span>ℹ</span>
@@ -225,6 +238,7 @@ function AddEmployeeRecords() {
                 </div>
               </div>
             </div>
+
             <div className="addemployee-btn-row">
               <button
                 type="button"
