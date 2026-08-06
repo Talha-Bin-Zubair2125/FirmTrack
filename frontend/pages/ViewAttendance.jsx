@@ -283,9 +283,7 @@ function ViewAttendance() {
                     </td>
                     <td>{formatDatePKT(record.date)}</td>
                     <td>
-                      {record.status === "absent" ||
-                      record.status === "leave" ||
-                      !record.checkInTime
+                      {record.status === "leave" || !record.checkInTime
                         ? "—"
                         : formatTimePKT(record.checkInTime)}
                     </td>
