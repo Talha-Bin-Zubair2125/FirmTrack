@@ -20,11 +20,6 @@ function ViewReports() {
 
   const [detailedAttendance, setDetailedAttendance] = useState([]);
   const [detailedLoading, setDetailedLoading] = useState(false);
-  // NEW: tracks when the backend responded with the aggregate `summary`
-  // shape instead of real per-day records for the employeeID filter.
-  // This is a distinct condition from "genuinely no attendance this month"
-  // and needs a backend fix to /admin/report/bymonth (it currently ignores
-  // the employeeID query param and always returns the monthly aggregate).
   const [detailedApiMismatch, setDetailedApiMismatch] = useState(false);
 
   const [employeeSearchTerm, setEmployeeSearchTerm] = useState("");
@@ -45,10 +40,7 @@ function ViewReports() {
     "December",
   ];
 
-  // Small helper: your API is inconsistent about employee-name and
-  // salary field casing across endpoints (EmployeeName/name,
-  // EmployeeSalary/salary). Centralize the fallback so every place that
-  // reads a name/salary is protected the same way.
+
   const getEmployeeName = (emp) => emp?.EmployeeName || emp?.name || "Unknown";
   const getEmployeeSalary = (emp) =>
     Number(emp?.EmployeeSalary ?? emp?.salary ?? 0);
@@ -115,12 +107,7 @@ function ViewReports() {
       setDetailedLoading(true);
       setDetailedApiMismatch(false);
       try {
-        // NOTE: this is a different endpoint from the Summary tab on
-        // purpose. /admin/report/bymonth is wired to getMonthlySummaryReport,
-        // which always returns the all-employees aggregate and ignores
-        // employeeID entirely. /admin/attendance/getbymonth is wired to
-        // getAttendanceByMonth, which correctly filters by employeeID and
-        // returns real per-day records (including synthesized absent days).
+       
         const res = await API.get("/admin/attendance/getbymonth", {
           params: {
             month: selectedMonth,
@@ -133,8 +120,6 @@ function ViewReports() {
         if (Array.isArray(res.data.attendance)) {
           setDetailedAttendance(res.data.attendance);
         } else if (Array.isArray(res.data.summary)) {
-          // Defensive fallback in case the endpoint config ever regresses
-          // back to the aggregate-only route.
           console.warn(
             "attendance/getbymonth returned the aggregate `summary` array " +
               "instead of per-day `attendance` records. Check the route " +
