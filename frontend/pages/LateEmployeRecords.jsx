@@ -87,6 +87,11 @@ export default function LateEmployeRecords() {
   const applyFilters = useCallback(() => {
     let result = [...attendance];
 
+    
+    result = result.filter(
+      (a) => a.status?.toLowerCase().trim() === "late"
+    );
+
     if (searchName.trim()) {
       const q = searchName.toLowerCase();
       result = result.filter(

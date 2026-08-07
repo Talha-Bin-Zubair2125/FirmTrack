@@ -87,6 +87,10 @@ export default function HalfDayEmployeeRecords() {
   const applyFilters = useCallback(() => {
     let result = [...attendance];
 
+    result = result.filter(
+      (a) => a.status?.toLowerCase().trim() === "half-day" || a.status?.toLowerCase().trim() === "halfday"
+    );
+
     if (searchName.trim()) {
       const q = searchName.toLowerCase();
       result = result.filter(

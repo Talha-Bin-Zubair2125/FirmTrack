@@ -87,6 +87,11 @@ export default function OnleaveEmployeeRecords() {
   const applyFilters = useCallback(() => {
     let result = [...attendance];
 
+    
+    result = result.filter(
+      (a) => a.status?.toLowerCase().trim() === "leave"
+    );
+
     if (searchName.trim()) {
       const q = searchName.toLowerCase();
       result = result.filter(

@@ -87,6 +87,10 @@ export default function AbsentEmployeeRecords() {
   const applyFilters = useCallback(() => {
     let result = [...attendance];
 
+    result = result.filter(
+      (a) => a.status?.toLowerCase().trim() === "absent"
+    );
+
     if (searchName.trim()) {
       const q = searchName.toLowerCase();
       result = result.filter(
