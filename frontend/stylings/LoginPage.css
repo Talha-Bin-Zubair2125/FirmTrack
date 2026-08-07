@@ -164,7 +164,7 @@
 }
 
 .login-card-brand {
-  display: flex;
+  display: none;
   align-items: center;
   gap: 12px;
   margin-bottom: 24px;
@@ -315,6 +315,10 @@
     padding: 24px;
     align-items: center;
     justify-content: center;
+  }
+
+  .login-card-brand {
+    display: flex;
   }
 }
 
