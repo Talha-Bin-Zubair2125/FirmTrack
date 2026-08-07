@@ -25,7 +25,6 @@
   box-sizing: border-box;
 }
 
-/* ── LAYOUT ──────────────────────────────────────────── */
 .login-wrapper {
   min-height: 100vh;
   width: 100%;
@@ -35,7 +34,6 @@
   font-family: var(--font-sans);
 }
 
-/* ── LEFT PANEL ──────────────────────────────────────── */
 .login-left {
   position: relative;
   display: flex;
@@ -147,13 +145,13 @@
   background: var(--accent);
 }
 
-/* ── RIGHT PANEL ─────────────────────────────────────── */
 .login-right {
   display: flex;
   align-items: center;
   justify-content: center;
   padding: clamp(24px, 4vw, 40px);
   background: var(--bg-primary);
+  min-height: 100vh;
 }
 
 .login-card {
@@ -163,6 +161,13 @@
   border: 1px solid var(--border-color);
   border-radius: var(--radius-md);
   padding: clamp(24px, 4vw, 36px) clamp(20px, 3.5vw, 32px);
+}
+
+.login-card-brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 24px;
 }
 
 .login-card-header {
@@ -296,9 +301,6 @@
   }
 }
 
-/* ── RESPONSIVE ──────────────────────────────────────── */
-
-/* Tablet: hide left panel, center right */
 @media (max-width: 1024px) {
   .login-wrapper {
     grid-template-columns: 1fr;
@@ -311,23 +313,21 @@
   .login-right {
     min-height: 100vh;
     padding: 24px;
-    align-items: flex-start;
-    padding-top: clamp(48px, 10vh, 100px);
+    align-items: center;
+    justify-content: center;
   }
 }
 
-/* Mobile: full-width card */
 @media (max-width: 480px) {
   .login-right {
     padding: 16px;
-    padding-top: 40px;
-    align-items: flex-start;
+    align-items: center;
+    justify-content: center;
   }
 
   .login-card {
     padding: 28px 20px;
     border-radius: var(--radius-sm);
-    /* On very small screens, fill available width */
     max-width: 100%;
   }
 
@@ -336,11 +336,9 @@
   }
 }
 
-/* Very small (≤360px) */
 @media (max-width: 360px) {
   .login-right {
     padding: 12px;
-    padding-top: 32px;
   }
 
   .login-card {

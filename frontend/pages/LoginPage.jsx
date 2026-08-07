@@ -3,6 +3,7 @@ import { AuthContext } from "../context/authContext";
 import { useNavigate } from "react-router-dom";
 import "../stylings/LoginPage.css";
 import API from "../src/api/axios";
+
 function LoginPage() {
   const { setAdminInfo } = useContext(AuthContext);
   const navigate = useNavigate();
@@ -10,6 +11,7 @@ function LoginPage() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+
   const UserLogin = async (e) => {
     e.preventDefault();
     setError("");
@@ -35,6 +37,7 @@ function LoginPage() {
       setLoading(false);
     }
   };
+
   return (
     <div className="login-wrapper">
       <div className="login-left">
@@ -57,6 +60,10 @@ function LoginPage() {
       </div>
       <div className="login-right">
         <div className="login-card">
+          <div className="login-card-brand">
+            <div className="login-brand-icon">N</div>
+            <span className="login-brand-name">NutroAttend</span>
+          </div>
           <div className="login-card-header">
             <h2>Welcome Back</h2>
             <p>Please enter your credentials to access the admin portal</p>
@@ -105,4 +112,5 @@ function LoginPage() {
     </div>
   );
 }
+
 export default LoginPage;
