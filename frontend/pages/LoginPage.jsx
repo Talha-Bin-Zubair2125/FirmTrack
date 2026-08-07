@@ -59,11 +59,11 @@ function LoginPage() {
         </div>
       </div>
       <div className="login-right">
+        <div className="mobile-brand">
+          <div className="login-brand-icon">N</div>
+          <span className="login-brand-name">NutroAttend</span>
+        </div>
         <div className="login-card">
-          <div className="login-card-brand">
-            <div className="login-brand-icon">N</div>
-            <span className="login-brand-name">NutroAttend</span>
-          </div>
           <div className="login-card-header">
             <h2>Welcome Back</h2>
             <p>Please enter your credentials to access the admin portal</p>

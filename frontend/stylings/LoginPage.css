@@ -147,11 +147,19 @@
 
 .login-right {
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
   padding: clamp(24px, 4vw, 40px);
   background: var(--bg-primary);
   min-height: 100vh;
+}
+
+.mobile-brand {
+  display: none;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 32px;
 }
 
 .login-card {
@@ -161,13 +169,6 @@
   border: 1px solid var(--border-color);
   border-radius: var(--radius-md);
   padding: clamp(24px, 4vw, 36px) clamp(20px, 3.5vw, 32px);
-}
-
-.login-card-brand {
-  display: none;
-  align-items: center;
-  gap: 12px;
-  margin-bottom: 24px;
 }
 
 .login-card-header {
@@ -317,7 +318,7 @@
     justify-content: center;
   }
 
-  .login-card-brand {
+  .mobile-brand {
     display: flex;
   }
 }
