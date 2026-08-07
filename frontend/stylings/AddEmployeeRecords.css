@@ -27,6 +27,7 @@
   box-sizing: border-box;
 }
 
+/* ── WRAPPER ─────────────────────────────────────────── */
 .addemployee-wrapper {
   min-height: 100vh;
   width: 100%;
@@ -34,18 +35,19 @@
   font-family: var(--font-sans);
 }
 
+/* ── TOPBAR ──────────────────────────────────────────── */
 .addemployee-topbar {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 16px 32px;
+  padding: 14px clamp(16px, 3vw, 32px);
   background: var(--bg-secondary);
   border-bottom: 1px solid var(--border-color);
   position: sticky;
   top: 0;
   z-index: 10;
   flex-wrap: wrap;
-  gap: 12px;
+  gap: 10px;
 }
 
 .addemployee-back {
@@ -55,10 +57,12 @@
   font-family: var(--font-sans);
   font-size: 13.5px;
   font-weight: 500;
-  padding: 8px 14px;
+  padding: 9px 14px;
+  min-height: 38px;
   border-radius: var(--radius-sm);
   cursor: pointer;
   transition: all 0.15s ease;
+  white-space: nowrap;
 }
 
 .addemployee-back:hover {
@@ -83,28 +87,33 @@
   font-weight: 800;
   font-size: 15px;
   border-radius: var(--radius-sm);
+  flex-shrink: 0;
 }
 
 .topbar-brand h2 {
-  font-size: 16px;
+  font-size: clamp(14px, 1.5vw, 16px);
   font-weight: 700;
   color: var(--text-primary);
   margin: 0;
+  white-space: nowrap;
 }
 
+/* ── CONTAINER ───────────────────────────────────────── */
 .addemployee-container {
   max-width: 900px;
   margin: 0 auto;
-  padding: 40px 24px 60px;
+  padding: clamp(24px, 4vw, 40px) clamp(16px, 3vw, 24px) 60px;
 }
 
+/* ── CARD ────────────────────────────────────────────── */
 .addemployee-card {
   background: var(--bg-card);
   border: 1px solid var(--border-color);
   border-radius: var(--radius-md);
-  padding: 32px;
+  padding: clamp(20px, 3.5vw, 32px);
 }
 
+/* ── HEADER ──────────────────────────────────────────── */
 .addemployee-header {
   display: flex;
   align-items: flex-start;
@@ -128,7 +137,7 @@
 }
 
 .addemployee-header h2 {
-  font-size: 19px;
+  font-size: clamp(16px, 2vw, 19px);
   font-weight: 700;
   color: var(--text-primary);
   margin: 0 0 4px;
@@ -138,8 +147,10 @@
   font-size: 13px;
   color: var(--text-secondary);
   margin: 0;
+  line-height: 1.5;
 }
 
+/* ── NOTIFICATION ────────────────────────────────────── */
 .addemployee-notification {
   display: flex;
   align-items: center;
@@ -164,6 +175,7 @@
   color: #86efac;
 }
 
+/* ── FORM ────────────────────────────────────────────── */
 .addemployee-form {
   display: flex;
   flex-direction: column;
@@ -173,13 +185,14 @@
 .addemployee-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 20px;
+  gap: clamp(14px, 2vw, 20px);
 }
 
 .addemployee-field {
   display: flex;
   flex-direction: column;
   gap: 6px;
+  min-width: 0;
 }
 
 .addemployee-field.full-width {
@@ -194,6 +207,7 @@
 
 .addemployee-field input,
 .addemployee-field select {
+  width: 100%;
   background: var(--bg-elevated);
   border: 1px solid var(--border-color);
   border-radius: var(--radius-sm);
@@ -205,6 +219,7 @@
   transition:
     border-color 0.15s ease,
     box-shadow 0.15s ease;
+  min-height: 44px;
 }
 
 .addemployee-field input:focus,
@@ -221,6 +236,7 @@
   cursor: pointer;
 }
 
+/* ── PASSWORD SECTION ────────────────────────────────── */
 .password-section-header {
   display: flex;
   align-items: baseline;
@@ -250,7 +266,7 @@
 
 .password-input-wrapper input {
   width: 100%;
-  padding-right: 42px;
+  padding-right: 80px;
 }
 
 .toggle-password {
@@ -260,13 +276,18 @@
   border: none;
   font-size: 15px;
   cursor: pointer;
-  padding: 6px;
+  padding: 8px;
   line-height: 1;
+  min-height: 36px;
+  min-width: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .password-match-indicator {
   position: absolute;
-  right: 40px;
+  right: 42px;
   font-size: 14px;
   font-weight: 700;
 }
@@ -274,7 +295,6 @@
 .password-match-indicator.valid {
   color: var(--success);
 }
-
 .password-match-indicator.invalid {
   color: var(--danger);
 }
@@ -289,6 +309,7 @@
   margin: 2px 0 0;
 }
 
+/* ── DEFAULT PASSWORD INFO ───────────────────────────── */
 .default-password-info {
   display: flex;
   align-items: flex-start;
@@ -315,6 +336,7 @@
   color: var(--text-primary);
 }
 
+/* ── BUTTON ROW ──────────────────────────────────────── */
 .addemployee-btn-row {
   display: flex;
   justify-content: flex-end;
@@ -332,6 +354,7 @@
   font-size: 13.5px;
   font-weight: 600;
   padding: 11px 20px;
+  min-height: 44px;
   border-radius: var(--radius-sm);
   cursor: pointer;
   transition: all 0.15s ease;
@@ -356,7 +379,7 @@
   align-items: center;
   justify-content: center;
   min-width: 150px;
-  min-height: 42px;
+  min-height: 44px;
   transition: background 0.15s ease;
 }
 
@@ -384,7 +407,9 @@
   }
 }
 
-/* RESPONSIVE */
+/* ── RESPONSIVE ──────────────────────────────────────── */
+
+/* Tablet: 2-col → 1-col */
 @media (max-width: 720px) {
   .addemployee-grid {
     grid-template-columns: 1fr;
@@ -395,29 +420,41 @@
   }
 }
 
+/* Mobile */
 @media (max-width: 640px) {
   .addemployee-topbar {
-    padding: 14px 16px;
+    padding: 12px 16px;
   }
 
   .addemployee-container {
-    padding: 24px 16px 40px;
+    padding: 20px 16px 40px;
   }
 
   .addemployee-card {
-    padding: 22px 18px;
+    padding: 20px 16px;
   }
 
   .addemployee-header {
     flex-direction: column;
+    gap: 12px;
   }
 
   .addemployee-btn-row {
     flex-direction: column-reverse;
+    gap: 10px;
   }
 
   .btn-cancel,
   .btn-submit {
     width: 100%;
+    min-width: unset;
+    justify-content: center;
+  }
+}
+
+/* Very small */
+@media (max-width: 360px) {
+  .addemployee-card {
+    padding: 16px 12px;
   }
 }
