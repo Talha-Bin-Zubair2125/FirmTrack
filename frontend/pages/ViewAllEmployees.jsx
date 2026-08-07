@@ -31,6 +31,7 @@ function ViewAllEmployees() {
       const response = await API.get("/admin/employees/getallemployees", {
         withCredentials: true,
       });
+      console.log("Fetched Employees:", response.data.employees);
       const sortedData = sortEmployeesSequence(response.data.employees || []);
       setEmployees(sortedData);
       setAllEmployees(sortedData);
