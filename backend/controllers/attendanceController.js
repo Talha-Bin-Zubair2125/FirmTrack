@@ -36,33 +36,31 @@ const calculateDeduction = async (
 
   switch (status) {
     case "absent":
-      // Rule 1: Unauthorized absences get the full absence deduction (e.g., 1500)
       deduction = settings.deductionPerAbsence || 0;
       break;
 
-    case "leave":
-      // Rule 2: Authorized leaves only deduct if quota is exceeded
+    case "leave": {
       const allowedTotalLeave = settings.allowedTotalLeave || 0;
 
       const totalLeavesThisMonth = await Attendance.countDocuments({
         employeeId,
         month,
         year,
-        status: "leave", // STRICTLY counting only leaves now
+        status: "leave",
       });
 
       const totalLeavesAfterThis = totalLeavesThisMonth + 1;
 
       if (totalLeavesAfterThis > allowedTotalLeave) {
-        // If they exceed allowed leaves (e.g., 2), deduct the exceed amount (e.g., 250)
         deduction =
           settings.exceedsTotalLeaveDeduction ||
           settings.deductionPerAbsence ||
           0;
       } else {
-        deduction = 0; // Within limit, no deduction
+        deduction = 0;
       }
       break;
+    }
 
     case "half-day":
       deduction = settings.deductionPerHalfDay || 0;
@@ -132,7 +130,6 @@ const markAttendance = async (req, res) => {
     const month = pktTime.getUTCMonth() + 1;
     const year = pktTime.getUTCFullYear();
 
-    // Determine Status
     if (currentTimeStr > "16:00") {
       status = "absent";
     } else if (currentTimeStr > settings.allowedHalfDayTime) {
@@ -141,7 +138,6 @@ const markAttendance = async (req, res) => {
       status = "late";
     }
 
-    // Calculate Deduction based on the determined status
     const deduction = await calculateDeduction(
       employee._id,
       status,
@@ -284,7 +280,6 @@ const getAttendanceByMonth = async (req, res) => {
       allResults.push(...results);
     }
 
-    // Populate employee details for safety
     await Employee.populate(allResults, {
       path: "employeeId",
       select: "EmployeeName employeeID EmployeeRole EmployeeSalary createdAt",
@@ -442,7 +437,6 @@ const getTodayAttendanceStatus = async (req, res) => {
 const backfillAbsentForDate = async (dateStr) => {
   const [year, month, day] = dateStr.split("-").map(Number);
 
-  // Skip Sundays (0 = Sunday)
   const targetDateObj = new Date(Date.UTC(year, month - 1, day, 12, 0, 0));
   if (targetDateObj.getUTCDay() === 0) {
     return 0;
@@ -459,7 +453,6 @@ const backfillAbsentForDate = async (dateStr) => {
   let createdCount = 0;
 
   for (const employee of employees) {
-    // Check if target date is before employee joining date
     if (employee.createdAt) {
       const joining = new Date(employee.createdAt);
       const joinPkt = new Date(joining.getTime() + 5 * 60 * 60 * 1000);
@@ -472,18 +465,16 @@ const backfillAbsentForDate = async (dateStr) => {
         (year === joinYear && month < joinMonth) ||
         (year === joinYear && month === joinMonth && day < joinDate)
       ) {
-        continue; // Employee hadn't joined yet
+        continue;
       }
     }
 
-    // Check if attendance already exists for this date window
     const existing = await Attendance.findOne({
       employeeId: employee._id,
       date: { $gte: start, $lte: end },
     });
 
     if (!existing) {
-      // Calculate straight absence deduction for backfilled days
       const deduction = await calculateDeduction(
         employee._id,
         "absent",
@@ -509,6 +500,131 @@ const backfillAbsentForDate = async (dateStr) => {
   return createdCount;
 };
 
+// Employee self-marks today as Leave (FIXED: variables defined)
+const markLeave = async (req, res) => {
+  const { employeeID } = req.body;
+
+  try {
+    const employee = await Employee.findOne({ employeeID });
+    if (!employee) {
+      return res.status(404).json({ message: "Employee not found" });
+    }
+
+    const { start, end, pktTime, now } = getPakistanDayRange();
+
+    const alreadyMarked = await Attendance.findOne({
+      employeeId: employee._id,
+      date: { $gte: start, $lte: end },
+    });
+
+    if (alreadyMarked) {
+      return res
+        .status(400)
+        .json({ message: "Attendance already marked for today" });
+    }
+
+    const settings = await Deduction.findOne();
+    if (!settings) {
+      return res.status(500).json({
+        message:
+          "Deduction/attendance settings are not configured. Ask admin to set them up.",
+      });
+    }
+
+    const month = pktTime.getUTCMonth() + 1;
+    const year = pktTime.getUTCFullYear();
+    const allowedTotalLeave = settings.allowedTotalLeave || 0;
+
+    const usedLeavesBefore = await Attendance.countDocuments({
+      employeeId: employee._id,
+      month,
+      year,
+      status: "leave",
+    });
+
+    const deduction = await calculateDeduction(
+      employee._id,
+      "leave",
+      month,
+      year,
+      settings,
+    );
+
+    await Attendance.create({
+      employeeId: employee._id,
+      date: now,
+      checkInTime: null,
+      status: "leave",
+      month,
+      year,
+      deduction,
+    });
+
+    const usedLeaves = usedLeavesBefore + 1;
+    const remaining = Math.max(allowedTotalLeave - usedLeaves, 0);
+
+    console.log(
+      `Leave marked for ${employee.EmployeeName}. Used: ${usedLeaves}/${allowedTotalLeave}. Deduction: ${deduction}`,
+    );
+
+    res.status(201).json({
+      message: "Leave marked successfully",
+      deduction,
+      allowedTotalLeave,
+      usedLeaves,
+      remaining,
+    });
+  } catch (error) {
+    console.error("Error marking leave:", error);
+    res.status(500).json({ message: "Server error marking leave" });
+  }
+};
+
+// Get how many leaves used / remaining this month
+const getLeaveBalance = async (req, res) => {
+  const { employeeID } = req.params;
+
+  try {
+    const employee = await Employee.findOne({ employeeID });
+    if (!employee) {
+      return res.status(404).json({ message: "Employee not found" });
+    }
+
+    const settings = await Deduction.findOne();
+    const allowedTotalLeave = settings?.allowedTotalLeave || 0;
+
+    const { pktTime } = getPakistanDayRange();
+    const month = pktTime.getUTCMonth() + 1;
+    const year = pktTime.getUTCFullYear();
+
+    const usedLeaves = await Attendance.countDocuments({
+      employeeId: employee._id,
+      month,
+      year,
+      status: "leave",
+    });
+
+    const remaining = Math.max(allowedTotalLeave - usedLeaves, 0);
+
+    const { start, end } = getPakistanDayRange();
+    const todayRecord = await Attendance.findOne({
+      employeeId: employee._id,
+      date: { $gte: start, $lte: end },
+    });
+
+    res.status(200).json({
+      allowedTotalLeave,
+      usedLeaves,
+      remaining,
+      alreadyMarkedToday: !!todayRecord,
+      todayStatus: todayRecord ? todayRecord.status : null,
+    });
+  } catch (error) {
+    console.error("Error fetching leave balance:", error);
+    res.status(500).json({ message: "Server error fetching leave balance" });
+  }
+};
+
 module.exports = {
   markAttendance,
   getAllAttendance,
@@ -516,4 +632,6 @@ module.exports = {
   getMonthlySummaryReport,
   getTodayAttendanceStatus,
   backfillAbsentForDate,
+  markLeave,
+  getLeaveBalance,
 };

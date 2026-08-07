@@ -159,35 +159,35 @@ function ProfileScreen() {
                 <p>{totalEmployees}</p>
               </div>
             </div>
-            <div className="stat-card" onClick={() => navigate("/attendance")}>
+            <div className="stat-card" onClick={() => navigate("/presentemployees")}>
               <div className="stat-icon present">✅</div>
               <div className="stat-info">
                 <h3>Present Today</h3>
                 <p>{presentToday}</p>
               </div>
             </div>
-            <div className="stat-card" onClick={() => navigate("/attendance")}>
+            <div className="stat-card" onClick={() => navigate("/lateemployees")}>
               <div className="stat-icon late">⏰</div>
               <div className="stat-info">
                 <h3>Late Today</h3>
                 <p>{lateToday}</p>
               </div>
             </div>
-            <div className="stat-card" onClick={() => navigate("/attendance")}>
+            <div className="stat-card" onClick={() => navigate("/half-day-employees")}>
               <div className="stat-icon halfday">🌗</div>
               <div className="stat-info">
                 <h3>Half Day</h3>
                 <p>{halfDayToday}</p>
               </div>
             </div>
-            <div className="stat-card" onClick={() => navigate("/attendance")}>
+            <div className="stat-card" onClick={() => navigate("/absentemployees")}>
               <div className="stat-icon absent">❌</div>
               <div className="stat-info">
                 <h3>Absent</h3>
                 <p>{absentToday}</p>
               </div>
             </div>
-            <div className="stat-card" onClick={() => navigate("/attendance")}>
+            <div className="stat-card" onClick={() => navigate("/onleaveemployees")}>
               <div className="stat-icon leave">✈️</div>
               <div className="stat-info">
                 <h3>On Leave</h3>
