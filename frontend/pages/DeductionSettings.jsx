@@ -4,7 +4,6 @@ import "../stylings/DeductionSettings.css";
 import API from "../src/api/axios";
 
 function DeductionSettings() {
-  
   const navigate = useNavigate();
   const [lateArrivalTime, setLateArrivalTime] = useState("09:00");
   const [allowedTotalLeave, setAllowedTotalLeave] = useState(2);

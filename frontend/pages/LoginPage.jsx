@@ -4,7 +4,6 @@ import { useNavigate } from "react-router-dom";
 import "../stylings/LoginPage.css";
 import API from "../src/api/axios";
 function LoginPage() {
-  
   const { setAdminInfo } = useContext(AuthContext);
   const navigate = useNavigate();
   const [adminID, setAdminID] = useState("");

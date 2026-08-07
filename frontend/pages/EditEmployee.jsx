@@ -4,7 +4,6 @@ import "../stylings/EditEmployee.css";
 import API from "../src/api/axios";
 
 function EditEmployee() {
-  
   const { id } = useParams();
   const navigate = useNavigate();
 

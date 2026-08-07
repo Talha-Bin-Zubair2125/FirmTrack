@@ -40,7 +40,6 @@ function ViewReports() {
     "December",
   ];
 
-
   const getEmployeeName = (emp) => emp?.EmployeeName || emp?.name || "Unknown";
   const getEmployeeSalary = (emp) =>
     Number(emp?.EmployeeSalary ?? emp?.salary ?? 0);
@@ -107,7 +106,6 @@ function ViewReports() {
       setDetailedLoading(true);
       setDetailedApiMismatch(false);
       try {
-       
         const res = await API.get("/admin/attendance/getbymonth", {
           params: {
             month: selectedMonth,
