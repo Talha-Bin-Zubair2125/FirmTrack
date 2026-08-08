@@ -1,177 +1,108 @@
-# FirmTrack
+# NutroAttend
 
-A full-stack **Employee Attendance & Payroll Management System** built using the **MERN Stack**. FirmTrack enables organizations to efficiently manage employees, record attendance using QR codes, configure salary deduction rules, and generate attendance-based payroll reports.
+**A full-stack Employee Attendance & Payroll Deduction Management System**, built for **Nutro Jenix**.
+
+🔗 **Live:** [nutroattend.vercel.app](https://nutroattend.vercel.app/)
+
+NutroAttend replaces manual attendance tracking with a QR-based digital system. Admins manage the workforce and payroll rules from a web dashboard, while employees mark attendance and track their own status through a dedicated mobile app.
+
+This was a collaborative build:
+- 🖥️ **Web Application & Backend** — built by **[Talha Bin Zubair](https://github.com/Talha-Bin-Zubair2125)**
+- 📱 **Mobile Application** — built by **[Sheikh Muhammad Tahir](https://github.com/sheikhnuml)**
 
 ---
 
-## 📌 Overview
+## 🧩 System Overview
 
-FirmTrack is designed to simplify attendance tracking and payroll management by automating attendance recording and salary deduction calculations. Employees can mark their attendance by scanning a QR code, while administrators can manage employees, configure deduction policies, and generate detailed attendance reports.
+NutroAttend is split into two connected applications sharing one backend:
+
+| App | Users | Platform | Built By |
+|---|---|---|---|
+| **Admin Web Portal** | Admin / HR | Web (React) | Talha Bin Zubair |
+| **Employee App** | Employees | Mobile | Sheikh Muhammad Tahir |
 
 ---
 
 ## ✨ Features
 
-### 👨‍💼 Admin
+### 👨‍💼 Admin Web Portal
+- Onboard employees — auto-assigns Employee ID and a default password
+- Edit / delete employee records
+- **Deduction Rules Engine** — define deduction amounts for Absent, Half-Day, Late, and Leave; deducted automatically from base salary
+- **QR Code Generator** for daily attendance
+- Live dashboard — Present, Absent, Late, Half-Day, On Leave counts (today + previous day summary)
+- Employee directory with designation & joining date
+- Per-employee detailed history (attendance log, leave count, punctuality)
+- **Monthly Reports** exportable as PDF (jsPDF)
+- Admin profile management
 
-- Secure Admin Authentication
-- Add New Employees
-- Update Employee Information
-- View All Employees
-- Configure Attendance Deduction Rules
-- Generate Attendance Reports
-- Generate Payroll Reports
-- Automatic Salary Deduction Calculation
-- View Employee Attendance History
-- Manage QR Code Attendance
-
-### 👨‍💻 Employee
-
-- Login Securely
-- Scan QR Code for Attendance
-- View Personal Attendance History
-- View Salary Reports
-- Update Profile
+### 📱 Employee App
+- Secure login with assigned Employee ID & password
+- Mark attendance by scanning the admin-generated QR code
+- View daily attendance status
+- Apply for leave & track remaining leave balance
+- Monthly attendance via an interactive calendar view
 
 ---
 
-## 📊 Attendance & Payroll
+## 🛠️ Tech Stack
 
-FirmTrack automatically:
+**Frontend**
+- React (Vite)
+- CSS (custom theming)
 
-- Records employee attendance through QR code scanning.
-- Calculates salary deductions based on configured deduction rules.
-- Generates attendance reports.
-- Generates payroll reports with deduction details.
-- Maintains attendance history for every employee.
+**Backend**
+- Node.js + Express.js
+- MongoDB Atlas (cloud database)
+- MVC structure — Controllers, Models, Routes, Middlewares
+
+**Key Libraries / Tools**
+- `jsPDF` — monthly report generation
+- `qrcode` — attendance QR generation
+- `Joi` — request/schema validation
+- Cookie-based session authentication
+- Custom auth & cron middlewares for scheduled attendance tasks
+
+**Deployment**
+- Vercel (frontend and backend deployed as separate projects)
 
 ---
 
-## 🚀 Tech Stack
+## 🏗️ Architecture
 
-### Frontend
+```
+nutroattend/
+├── frontend/                # Admin Web Portal (React + Vite)
+│   ├── src/
+│   │   ├── pages/            # AddEmployee, DeductionSettings, ViewAttendance, Reports, etc.
+│   │   ├── stylings/          # Per-page CSS
+│   │   ├── context/           # authContext
+│   │   └── api/
+│   └── ...
+│
+└── backend/                 # REST API (Node + Express)
+    ├── controllers/          # Admin, Attendance, Deduction, Employee, QR
+    ├── models/                # Admin, Attendance, Deduction, Employee, QR
+    ├── routes/
+    ├── middlewares/           # auth, cron
+    └── server.js / db.js
+```
 
-- React.js
-- Vite
-- React Context API
-- Axios
-- HTML5
-- CSS3
-- JavaScript (ES6)
+Both apps are deployed independently on Vercel and communicate over a REST API.
+
+---
+
+## 🚀 Getting Started
 
 ### Backend
-
-- Node.js
-- Express.js
-- JWT Authentication
-- REST API
-
-### Database
-
-- MongoDB
-- Mongoose
-
----
-
-## 📁 Project Structure
-
-```
-FirmTrack
-│
-├── backend
-│   ├── controllers
-│   ├── middlewares
-│   ├── models
-│   ├── routes
-│   ├── db.js
-│   ├── server.js
-│   └── package.json
-│
-├── frontend
-│   ├── src
-│   ├── pages
-│   ├── context
-│   ├── public
-│   ├── assets
-│   └── package.json
-│
-└── README.md
-```
-
----
-
-## 🔐 Authentication
-
-- JWT Authentication
-- Protected Routes
-- Role-Based Access (Admin & Employee)
-
----
-
-## 📱 QR Code Attendance
-
-Employees can:
-
-- Scan QR Code
-- Mark Attendance
-- Prevent duplicate attendance
-- Store attendance with date and time
-
----
-
-## 📈 Reports
-
-The system generates:
-
-- Daily Attendance Report
-- Monthly Attendance Report
-- Employee Attendance Summary
-- Payroll Report
-- Salary Deduction Report
-
----
-
-## ⚙️ Installation
-
-### Clone Repository
-
-```bash
-git clone https://github.com/yourusername/FirmTrack.git
-```
-
----
-
-### Backend Setup
-
 ```bash
 cd backend
 npm install
-```
-
-Create a `.env` file:
-
-```env
-PORT=3000
-MONGO_URI=YOUR_MONGODB_CONNECTION_STRING
-JWT_SECRET=YOUR_SECRET_KEY
-```
-
-Run Backend
-
-```bash
-npm start
-```
-
-or
-
-```bash
+# add your .env (DB connection string, JWT/cookie secret, etc.)
 npm run dev
 ```
 
----
-
-### Frontend Setup
-
+### Frontend
 ```bash
 cd frontend
 npm install
@@ -180,39 +111,28 @@ npm run dev
 
 ---
 
-## 📸 Screens
-
-- Login
-- Dashboard
-- Employee Management
-- QR Attendance
-- Attendance History
-- Deduction Settings
-- Reports
+## 📌 Roadmap
+- Push notifications for leave approval/rejection
+- Analytics dashboard for attendance trends
+- Role-based access for multiple admins
 
 ---
 
-## Future Improvements
+## 🤝 Contributors
 
-- Email Notifications
-- Leave Management
-- Face Recognition Attendance
-- Multi-Branch Support
-- Excel & PDF Report Export
-- Dashboard Analytics
-- Employee Profile Pictures
+| Name | Role | GitHub |
+|---|---|---|
+| **Talha Bin Zubair** | Web Application & Backend (React, Node.js, Express, MongoDB Atlas) | [@Talha-Bin-Zubair2125](https://github.com/Talha-Bin-Zubair2125) |
+| **Sheikh Muhammad Tahir** | Mobile Application | [@sheikhnuml](https://github.com/sheikhnuml) |
 
 ---
 
-## Author
+## 👤 Author
 
 **Talha Bin Zubair**
-
-GitHub:
-https://github.com/Talha-Bin-Zubair2125
+Full-Stack MERN Developer
+[LinkedIn](https://linkedin.com) · [Portfolio](https://talha-bin-zubair2125.github.io/my-portfolio/)
 
 ---
 
-## License
-
-This project is developed for learning, portfolio, and academic purposes.
+*Built for Nutro Jenix to digitize attendance and payroll deduction workflows.*
