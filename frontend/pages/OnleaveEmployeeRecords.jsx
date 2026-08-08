@@ -3,7 +3,7 @@ import API from "../src/api/axios";
 import { useNavigate } from "react-router-dom";
 import "../stylings/ViewAttendance.css";
 
-export default function OnleaveEmployeeRecords() {
+export default function PresentEmployeeReocrds() {
   const navigate = useNavigate();
   const [attendance, setAttendance] = useState([]);
   const [filtered, setFiltered] = useState([]);
@@ -136,7 +136,6 @@ export default function OnleaveEmployeeRecords() {
   return (
     <>
       <div className="attendance-wrapper">
-        {/* Full-width Top Navbar */}
         <div className="attendance-topbar">
           <button
             className="attendance-back"
@@ -153,7 +152,7 @@ export default function OnleaveEmployeeRecords() {
         <div className="attendance-container">
           <div className="attendance-header">
             <div>
-              <h1>Employees on Leave</h1>
+              <h1>On Leave Employees</h1>
               <p>
                 <span>{filtered.length}</span> records found
               </p>
@@ -177,7 +176,6 @@ export default function OnleaveEmployeeRecords() {
               />
             </div>
 
-            {/* Date Picker replacing the old Month/Year dropdowns */}
             <div className="filter-search">
               <input
                 type="date"
