@@ -90,7 +90,7 @@ export default function PresentEmployeeReocrds() {
   const applyFilters = useCallback(() => {
     let result = [...attendance];
 
-    result = result.filter((a) => a.status?.toLowerCase().trim() === "halfday");
+    result = result.filter((a) => a.status?.toLowerCase().trim() === "half-day") || result.filter((a) => a.status?.toLowerCase().trim() === "half day");
 
     if (filterDate) {
       result = result.filter((a) => {
@@ -126,7 +126,8 @@ export default function PresentEmployeeReocrds() {
   const getStatusClass = (status) => {
     const s = status?.toLowerCase().trim() || "";
     switch (s) {
-      case "halfday":
+      case "half day":
+      case "half-day":
         return "status-halfday";
       default:
         return "";
