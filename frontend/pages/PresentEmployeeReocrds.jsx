@@ -90,9 +90,7 @@ export default function PresentEmployeeReocrds() {
   const applyFilters = useCallback(() => {
     let result = [...attendance];
 
-
     result = result.filter((a) => a.status?.toLowerCase().trim() === "present");
-
 
     if (filterDate) {
       result = result.filter((a) => {
@@ -186,11 +184,10 @@ export default function PresentEmployeeReocrds() {
                 className="filter-date-input"
                 style={{
                   width: "100%",
-                  padding: "8px",
-                  borderRadius: "4px",
-                  border: "1px solid #ccc",
-                  background: "var(--bg-elevated)",
-                  color: "var(--text-primary)",
+                  border: "none",
+                  background: "transparent",
+                  outline: "none",
+                  color: "inherit",
                 }}
               />
             </div>
