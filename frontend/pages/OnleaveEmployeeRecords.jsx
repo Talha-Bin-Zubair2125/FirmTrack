@@ -11,22 +11,25 @@ export default function OnleaveEmployeeRecords() {
   const [error, setError] = useState("");
 
   const [searchName, setSearchName] = useState("");
-  const [filterMonth, setFilterMonth] = useState("");
-  const [filterYear, setFilterYear] = useState(
-    new Date().getFullYear().toString(),
-  );
-  const [filterStatus, setFilterStatus] = useState("");
 
-  // Fetch attendance based on whether a month is selected
+  const getTodayPKT = () => {
+    return new Date().toLocaleDateString("en-CA", {
+      timeZone: "Asia/Karachi",
+    });
+  };
+
+  const [filterDate, setFilterDate] = useState(getTodayPKT());
+
   const fetchAttendance = useCallback(async () => {
     setLoading(true);
     setError("");
     try {
       let response;
-      if (filterMonth) {
+      if (filterDate) {
+        const [year, month] = filterDate.split("-");
         const params = new URLSearchParams({
-          month: filterMonth,
-          year: filterYear,
+          month: parseInt(month, 10).toString(),
+          year: year,
         });
         response = await API.get(
           `/admin/attendance/getbymonth?${params.toString()}`,
@@ -52,7 +55,7 @@ export default function OnleaveEmployeeRecords() {
     } finally {
       setLoading(false);
     }
-  }, [filterMonth, filterYear]);
+  }, [filterDate]);
 
   useEffect(() => {
     fetchAttendance();
@@ -87,10 +90,17 @@ export default function OnleaveEmployeeRecords() {
   const applyFilters = useCallback(() => {
     let result = [...attendance];
 
-    
-    result = result.filter(
-      (a) => a.status?.toLowerCase().trim() === "leave"
-    );
+    result = result.filter((a) => a.status?.toLowerCase().trim() === "leave");
+
+    if (filterDate) {
+      result = result.filter((a) => {
+        if (!a.date) return false;
+        const recordDate = new Date(a.date).toLocaleDateString("en-CA", {
+          timeZone: "Asia/Karachi",
+        });
+        return recordDate === filterDate;
+      });
+    }
 
     if (searchName.trim()) {
       const q = searchName.toLowerCase();
@@ -101,12 +111,8 @@ export default function OnleaveEmployeeRecords() {
       );
     }
 
-    if (filterStatus) {
-      result = result.filter((a) => a.status === filterStatus);
-    }
-
     setFiltered(result);
-  }, [attendance, searchName, filterStatus]);
+  }, [attendance, searchName, filterDate]);
 
   useEffect(() => {
     applyFilters();
@@ -114,9 +120,7 @@ export default function OnleaveEmployeeRecords() {
 
   const clearFilters = () => {
     setSearchName("");
-    setFilterMonth("");
-    setFilterYear(new Date().getFullYear().toString());
-    setFilterStatus("");
+    setFilterDate(getTodayPKT());
   };
 
   const getStatusClass = (status) => {
@@ -129,20 +133,6 @@ export default function OnleaveEmployeeRecords() {
     }
   };
 
-  const months = [
-    "January",
-    "February",
-    "March",
-    "April",
-    "May",
-    "June",
-    "July",
-    "August",
-    "September",
-    "October",
-    "November",
-    "December",
-  ];
   return (
     <>
       <div className="attendance-wrapper">
@@ -163,7 +153,7 @@ export default function OnleaveEmployeeRecords() {
         <div className="attendance-container">
           <div className="attendance-header">
             <div>
-              <h1>Attendance Records</h1>
+              <h1>Employees on Leave</h1>
               <p>
                 <span>{filtered.length}</span> records found
               </p>
@@ -187,39 +177,25 @@ export default function OnleaveEmployeeRecords() {
               />
             </div>
 
-            <select
-              value={filterMonth}
-              onChange={(e) => setFilterMonth(e.target.value)}
-              className="filter-select"
-            >
-              <option value="">All Months (General View)</option>
-              {months.map((month, index) => (
-                <option key={month} value={index + 1}>
-                  {month}
-                </option>
-              ))}
-            </select>
-
-            {filterMonth && (
+            {/* Date Picker replacing the old Month/Year dropdowns */}
+            <div className="filter-search">
               <input
-                type="number"
-                value={filterYear}
-                onChange={(e) => setFilterYear(e.target.value)}
-                className="filter-input-year"
-                placeholder="Year"
+                type="date"
+                value={filterDate}
+                onChange={(e) => setFilterDate(e.target.value)}
+                className="filter-date-input"
+                style={{
+                  width: "100%",
+                  padding: "8px",
+                  borderRadius: "4px",
+                  border: "1px solid #ccc",
+                  background: "var(--bg-elevated)",
+                  color: "var(--text-primary)",
+                }}
               />
-            )}
+            </div>
 
-            <select
-              value={filterStatus}
-              onChange={(e) => setFilterStatus(e.target.value)}
-              className="filter-select"
-            >
-              <option value="">All Status</option>
-              <option value="leave">Leave</option>
-            </select>
-
-            {(searchName || filterMonth || filterStatus) && (
+            {(searchName || filterDate !== getTodayPKT()) && (
               <button className="filter-clear" onClick={clearFilters}>
                 ✕ Clear
               </button>
@@ -235,7 +211,9 @@ export default function OnleaveEmployeeRecords() {
             <div className="attendance-empty">
               <span>📋</span>
               <h3>No records found</h3>
-              <p>Try adjusting your search filters or select a month/year</p>
+              <p>
+                Try adjusting your search filters or select a different date.
+              </p>
             </div>
           ) : (
             <div className="attendance-table-wrapper">
@@ -280,13 +258,17 @@ export default function OnleaveEmployeeRecords() {
                       </td>
                       <td>
                         <span
-                          className={`status-badge ${getStatusClass(record.status)}`}
+                          className={`status-badge ${getStatusClass(
+                            record.status,
+                          )}`}
                         >
                           {record.status || "—"}
                         </span>
                       </td>
                       <td
-                        className={`td-deduction ${Number(record.deduction) > 0 ? "has-deduction" : ""}`}
+                        className={`td-deduction ${
+                          Number(record.deduction) > 0 ? "has-deduction" : ""
+                        }`}
                       >
                         {Number(record.deduction) > 0
                           ? `-${Number(record.deduction).toLocaleString()}`
