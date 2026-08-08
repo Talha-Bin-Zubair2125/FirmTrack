@@ -3,7 +3,7 @@ import API from "../src/api/axios";
 import { useNavigate } from "react-router-dom";
 import "../stylings/ViewAttendance.css";
 
-export default function LateEmployeRecords() {
+export default function PresentEmployeeReocrds() {
   const navigate = useNavigate();
   const [attendance, setAttendance] = useState([]);
   const [filtered, setFiltered] = useState([]);
@@ -11,22 +11,25 @@ export default function LateEmployeRecords() {
   const [error, setError] = useState("");
 
   const [searchName, setSearchName] = useState("");
-  const [filterMonth, setFilterMonth] = useState("");
-  const [filterYear, setFilterYear] = useState(
-    new Date().getFullYear().toString(),
-  );
-  const [filterStatus, setFilterStatus] = useState("");
 
-  // Fetch attendance based on whether a month is selected
+  const getTodayPKT = () => {
+    return new Date().toLocaleDateString("en-CA", {
+      timeZone: "Asia/Karachi",
+    });
+  };
+
+  const [filterDate, setFilterDate] = useState(getTodayPKT());
+
   const fetchAttendance = useCallback(async () => {
     setLoading(true);
     setError("");
     try {
       let response;
-      if (filterMonth) {
+      if (filterDate) {
+        const [year, month] = filterDate.split("-");
         const params = new URLSearchParams({
-          month: filterMonth,
-          year: filterYear,
+          month: parseInt(month, 10).toString(),
+          year: year,
         });
         response = await API.get(
           `/admin/attendance/getbymonth?${params.toString()}`,
@@ -52,7 +55,7 @@ export default function LateEmployeRecords() {
     } finally {
       setLoading(false);
     }
-  }, [filterMonth, filterYear]);
+  }, [filterDate]);
 
   useEffect(() => {
     fetchAttendance();
@@ -87,10 +90,17 @@ export default function LateEmployeRecords() {
   const applyFilters = useCallback(() => {
     let result = [...attendance];
 
-    
-    result = result.filter(
-      (a) => a.status?.toLowerCase().trim() === "late"
-    );
+    result = result.filter((a) => a.status?.toLowerCase().trim() === "late");
+
+    if (filterDate) {
+      result = result.filter((a) => {
+        if (!a.date) return false;
+        const recordDate = new Date(a.date).toLocaleDateString("en-CA", {
+          timeZone: "Asia/Karachi",
+        });
+        return recordDate === filterDate;
+      });
+    }
 
     if (searchName.trim()) {
       const q = searchName.toLowerCase();
@@ -101,12 +111,8 @@ export default function LateEmployeRecords() {
       );
     }
 
-    if (filterStatus) {
-      result = result.filter((a) => a.status === filterStatus);
-    }
-
     setFiltered(result);
-  }, [attendance, searchName, filterStatus]);
+  }, [attendance, searchName, filterDate]);
 
   useEffect(() => {
     applyFilters();
@@ -114,9 +120,7 @@ export default function LateEmployeRecords() {
 
   const clearFilters = () => {
     setSearchName("");
-    setFilterMonth("");
-    setFilterYear(new Date().getFullYear().toString());
-    setFilterStatus("");
+    setFilterDate(getTodayPKT());
   };
 
   const getStatusClass = (status) => {
@@ -129,178 +133,153 @@ export default function LateEmployeRecords() {
     }
   };
 
-  const months = [
-    "January",
-    "February",
-    "March",
-    "April",
-    "May",
-    "June",
-    "July",
-    "August",
-    "September",
-    "October",
-    "November",
-    "December",
-  ];
   return (
     <>
-    <div className="attendance-wrapper">
-      {/* Full-width Top Navbar */}
-      <div className="attendance-topbar">
-        <button
-          className="attendance-back"
-          onClick={() => navigate("/profile")}
-        >
-          &larr; Back to Dashboard
-        </button>
-        <div className="topbar-brand">
-          <span className="brand-logo">N</span>
-          <h2>NutroAttend</h2>
-        </div>
-      </div>
-
-      <div className="attendance-container">
-        <div className="attendance-header">
-          <div>
-            <h1>Attendance Records</h1>
-            <p>
-              <span>{filtered.length}</span> records found
-            </p>
-          </div>
-        </div>
-
-        {error && (
-          <div className="attendance-error" onClick={() => setError("")}>
-            <span>⚠</span> {error}
-          </div>
-        )}
-
-        <div className="attendance-filters">
-          <div className="filter-search">
-            <span>🔍</span>
-            <input
-              type="text"
-              placeholder="Filter by name or employee ID..."
-              value={searchName}
-              onChange={(e) => setSearchName(e.target.value)}
-            />
-          </div>
-
-          <select
-            value={filterMonth}
-            onChange={(e) => setFilterMonth(e.target.value)}
-            className="filter-select"
+      <div className="attendance-wrapper">
+        <div className="attendance-topbar">
+          <button
+            className="attendance-back"
+            onClick={() => navigate("/profile")}
           >
-            <option value="">All Months (General View)</option>
-            {months.map((month, index) => (
-              <option key={month} value={index + 1}>
-                {month}
-              </option>
-            ))}
-          </select>
+            &larr; Back to Dashboard
+          </button>
+          <div className="topbar-brand">
+            <span className="brand-logo">N</span>
+            <h2>NutroAttend</h2>
+          </div>
+        </div>
 
-          {filterMonth && (
-            <input
-              type="number"
-              value={filterYear}
-              onChange={(e) => setFilterYear(e.target.value)}
-              className="filter-input-year"
-              placeholder="Year"
-            />
+        <div className="attendance-container">
+          <div className="attendance-header">
+            <div>
+              <h1>Late Employees</h1>
+              <p>
+                <span>{filtered.length}</span> records found
+              </p>
+            </div>
+          </div>
+
+          {error && (
+            <div className="attendance-error" onClick={() => setError("")}>
+              <span>⚠</span> {error}
+            </div>
           )}
 
-          <select
-            value={filterStatus}
-            onChange={(e) => setFilterStatus(e.target.value)}
-            className="filter-select"
-          >
-            <option value="">All Status</option>
-            <option value="present">Late</option>
-          </select>
+          <div className="attendance-filters">
+            <div className="filter-search">
+              <span>🔍</span>
+              <input
+                type="text"
+                placeholder="Filter by name or employee ID..."
+                value={searchName}
+                onChange={(e) => setSearchName(e.target.value)}
+              />
+            </div>
 
-          {(searchName || filterMonth || filterStatus) && (
-            <button className="filter-clear" onClick={clearFilters}>
-              ✕ Clear
-            </button>
-          )}
-        </div>
+            <div className="filter-search">
+              <input
+                type="date"
+                value={filterDate}
+                onChange={(e) => setFilterDate(e.target.value)}
+                className="filter-date-input"
+                style={{
+                  width: "100%",
+                  padding: "8px",
+                  borderRadius: "4px",
+                  border: "1px solid #ccc",
+                  background: "var(--bg-elevated)",
+                  color: "var(--text-primary)",
+                }}
+              />
+            </div>
 
-        {loading ? (
-          <div className="attendance-loading">
-            <div className="loading-spinner"></div>
-            <p>Loading records...</p>
+            {(searchName || filterDate !== getTodayPKT()) && (
+              <button className="filter-clear" onClick={clearFilters}>
+                ✕ Clear
+              </button>
+            )}
           </div>
-        ) : filtered.length === 0 ? (
-          <div className="attendance-empty">
-            <span>📋</span>
-            <h3>No records found</h3>
-            <p>Try adjusting your search filters or select a month/year</p>
-          </div>
-        ) : (
-          <div className="attendance-table-wrapper">
-            <table className="attendance-table">
-              <thead>
-                <tr>
-                  <th>#</th>
-                  <th>Employee ID</th>
-                  <th>Name</th>
-                  <th>Role</th>
-                  <th>Date (PKT)</th>
-                  <th>Check In (PKT)</th>
-                  <th>Status</th>
-                  <th>Deduction (PKR)</th>
-                </tr>
-              </thead>
-              <tbody>
-                {filtered.map((record, index) => (
-                  <tr key={record._id || index}>
-                    <td className="td-index">{index + 1}</td>
-                    <td className="td-id">
-                      {record.employeeId?.employeeID || "—"}
-                    </td>
-                    <td className="td-name">
-                      <div className="emp-avatar">
-                        {record.employeeId?.EmployeeName?.charAt(
-                          0,
-                        ).toUpperCase() || "?"}
-                      </div>
-                      {record.employeeId?.EmployeeName || "—"}
-                    </td>
-                    <td>
-                      <span className="role-badge">
-                        {record.employeeId?.EmployeeRole || "—"}
-                      </span>
-                    </td>
-                    <td>{formatDatePKT(record.date)}</td>
-                    <td>
-                      {record.status === "leave" || !record.checkInTime
-                        ? "—"
-                        : formatTimePKT(record.checkInTime)}
-                    </td>
-                    <td>
-                      <span
-                        className={`status-badge ${getStatusClass(record.status)}`}
-                      >
-                        {record.status || "—"}
-                      </span>
-                    </td>
-                    <td
-                      className={`td-deduction ${Number(record.deduction) > 0 ? "has-deduction" : ""}`}
-                    >
-                      {Number(record.deduction) > 0
-                        ? `-${Number(record.deduction).toLocaleString()}`
-                        : "0"}
-                    </td>
+
+          {loading ? (
+            <div className="attendance-loading">
+              <div className="loading-spinner"></div>
+              <p>Loading records...</p>
+            </div>
+          ) : filtered.length === 0 ? (
+            <div className="attendance-empty">
+              <span>📋</span>
+              <h3>No records found</h3>
+              <p>
+                Try adjusting your search filters or select a different date.
+              </p>
+            </div>
+          ) : (
+            <div className="attendance-table-wrapper">
+              <table className="attendance-table">
+                <thead>
+                  <tr>
+                    <th>#</th>
+                    <th>Employee ID</th>
+                    <th>Name</th>
+                    <th>Role</th>
+                    <th>Date (PKT)</th>
+                    <th>Check In (PKT)</th>
+                    <th>Status</th>
+                    <th>Deduction (PKR)</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        )}
+                </thead>
+                <tbody>
+                  {filtered.map((record, index) => (
+                    <tr key={record._id || index}>
+                      <td className="td-index">{index + 1}</td>
+                      <td className="td-id">
+                        {record.employeeId?.employeeID || "—"}
+                      </td>
+                      <td className="td-name">
+                        <div className="emp-avatar">
+                          {record.employeeId?.EmployeeName?.charAt(
+                            0,
+                          ).toUpperCase() || "?"}
+                        </div>
+                        {record.employeeId?.EmployeeName || "—"}
+                      </td>
+                      <td>
+                        <span className="role-badge">
+                          {record.employeeId?.EmployeeRole || "—"}
+                        </span>
+                      </td>
+                      <td>{formatDatePKT(record.date)}</td>
+                      <td>
+                        {record.status === "leave" || !record.checkInTime
+                          ? "—"
+                          : formatTimePKT(record.checkInTime)}
+                      </td>
+                      <td>
+                        <span
+                          className={`status-badge ${getStatusClass(
+                            record.status,
+                          )}`}
+                        >
+                          {record.status || "—"}
+                        </span>
+                      </td>
+                      <td
+                        className={`td-deduction ${
+                          Number(record.deduction) > 0 ? "has-deduction" : ""
+                        }`}
+                      >
+                        {Number(record.deduction) > 0
+                          ? `-${Number(record.deduction).toLocaleString()}`
+                          : "0"}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
+        </div>
       </div>
-    </div>
-    
     </>
   );
 }
